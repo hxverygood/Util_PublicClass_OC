@@ -1,2 +1,4 @@
 # Util_PublicClass_OC
-some tool and public class for objective-c
+Some tools and public classes for objective-c.
+Use it by myself, because it contains lots of bugs and needs optimization.
+
