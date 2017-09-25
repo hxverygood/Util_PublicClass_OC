@@ -84,6 +84,24 @@
     return result;
 }
 
+/// 将数字字符串转换为千分位显示
+- (NSString * _Nullable)convertWithThousandSeparator {
+    if (!self) {
+        return nil;
+    }
+    
+    // 判断是否是数字
+    NSNumber *num = [self convertToNumber];
+    if (!num) {
+        return nil;
+    }
+    
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setPositiveFormat:@",###.00;"];
+    NSString *resultStr = [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[self doubleValue]]];
+    return [resultStr copy];
+}
+
 /// 隐藏身份证部分数字
 - (NSString * _Nullable)hidePartalIdCard {
     if (!self) {
