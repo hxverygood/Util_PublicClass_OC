@@ -18,7 +18,6 @@
 - (void)backBarButtonItemWithImageName:(NSString *)imageName {
     if (self) {
         UIImage *backButtonImage = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-        
         id appearance = nil;
         if ([UIDevice currentDevice].systemVersion.floatValue < 9.0) {
             appearance = [UIBarButtonItem appearanceWhenContainedIn:[self.navigationController class], nil];
@@ -27,9 +26,11 @@
         }
         
         [appearance setBackButtonBackgroundImage:backButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-        UIBarButtonItem *backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@" " style:UIBarButtonItemStyleDone target:self.navigationController action:nil];
+        
+        UIBarButtonItem *backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleDone target:self.navigationController action:nil];
         self.navigationItem.backBarButtonItem = backBarButtonItem;
         self.navigationItem.backBarButtonItem.title = @"";
+        self.navigationController.navigationBar.tintColor = [UIColor clearColor];
     }
 }
 
@@ -122,10 +123,22 @@
 //    }
 }
 
+/// 从导航栈中移除fromViewControllerClasses 到[self class]之间的VC
+- (void)removeViewControllerFromNavigationStackWithStartControllerClasses:(NSArray *)startClasses {
+    for (int i = 0; i < startClasses.count; i++) {
+        Class startClass = startClasses[i];
+        BOOL flag;
+        flag = [self canRemoveViewControllerFromNavigationStackFrom:startClass to: [self class]];
+        if (flag) {
+            break;
+        }
+    }
+}
+
 /// 从导航栈中移除fromViewControllerClass 到 toViewControllerClass之间的VC
-- (void)removeViewControllerFromNavigationStackFrom:(Class)fromClass
-                                                 to:(Class)toClass {
-    NSMutableArray *viewControllers = [[NSMutableArray alloc] initWithArray:self.navigationController.childViewControllers];
+- (BOOL)canRemoveViewControllerFromNavigationStackFrom:(Class)fromClass
+                                                    to:(Class)toClass {
+    NSMutableArray *viewControllers = [[NSMutableArray alloc] initWithArray:self.navigationController.viewControllers];
     // 将要删除的VC放到该数组中
     NSMutableArray *removedVCs = [NSMutableArray array];
     
@@ -155,7 +168,7 @@
         fromIndex == -1 &&
         toIndex == -1 &&
         fromIndex >= toIndex) {
-        return;
+        return NO;
     }
     
     for (UIViewController *vc in removedVCs) {
@@ -163,20 +176,68 @@
     }
     
     self.navigationController.viewControllers = viewControllers;
+    return YES;
 }
 
 /// 跳转至某个UIViewController，如果找不到该Controller则什么也不做
-- (void)jumpToViewControllerWith:(Class)viewControllerClass {
+- (BOOL)jumpToViewControllerWith:(Class)viewControllerClass {
     if (!self) {
-        return;
+        return NO;
     }
     
+    BOOL flag = NO;
+    UIViewController *destController = nil;
     NSArray *childControllers = self.navigationController.childViewControllers;
     for (UIViewController *vc in childControllers) {
         if ([vc isKindOfClass: viewControllerClass]) {
-            [self.navigationController popToViewController:vc animated:YES];
+            flag = YES;
+            destController = vc;
+            break;
         }
     }
+    
+    if (flag == YES) {
+        [self.navigationController popToViewController:destController animated:YES];
+    }
+    return flag;
+}
+
+/// 跳转至某之前的第一个相同的UIViewController（返回YES），如果找不到该Controller则什么也不做，返回NO
+- (BOOL)popToFirstSameViewControllerWith:(Class)viewControllerClass {
+    if (!self) {
+        return NO;
+    }
+    
+    NSMutableArray *lastSomeVCArray = [NSMutableArray array];
+    NSArray *childControllers = self.navigationController.childViewControllers;
+    for (UIViewController *vc in childControllers) {
+        if ([vc isKindOfClass: viewControllerClass]) {
+            [lastSomeVCArray addObject:vc];
+        }
+    }
+    if (lastSomeVCArray.count > 0) {
+        [self.navigationController popToViewController:[lastSomeVCArray firstObject] animated:YES];
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+
+#pragma mark - Private Func
+
+- (BOOL)containViewControllerWith:(Class)viewControllerClass {
+    NSMutableArray *viewControllers = [[NSMutableArray alloc] initWithArray:self.navigationController.viewControllers];
+    BOOL flag = NO;
+    
+    for (int i = 0; i < viewControllers.count; i++) {
+        UIViewController *vc = viewControllers[i];
+        if ([vc isKindOfClass:viewControllerClass]) {
+            flag = YES;
+            break;
+        }
+    }
+    return flag;
 }
 
 @end
