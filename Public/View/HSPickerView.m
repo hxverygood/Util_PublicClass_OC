@@ -83,18 +83,22 @@ static CGFloat height = 220.0;
 #pragma mark - Initailizer
 
 - (instancetype)initWithDataArrays:(NSArray<NSArray *> *)dataArrays {
+    HSPickerView *pickerView = [[HSPickerView alloc] init];
+    pickerView.dataArrays = dataArrays;
+    return pickerView;
+}
+
+- (instancetype)init {
     self = [super init];
     
     if (self) {
-        self.dataArrays = dataArrays;
-        
         self.pickerView.delegate = self;
         self.pickerView.dataSource = self;
         
         [self addSubview:self.pickerView];
         [self addSubview:self.toolbar];
         
-//        self.hidden = YES;
+        //        self.hidden = YES;
         self.backgroundColor = [UIColor whiteColor];
     }
     
@@ -171,8 +175,8 @@ static CGFloat height = 220.0;
         
         /// 返回的_selectTitle可能为nil，使用时要最判断
         self.selectRowBlock(_currentDataIndex, _selectedRow, [_selectedTitle copy]);
-        [self dismiss];
     }
+    [self dismiss];
 }
 
 
@@ -197,11 +201,13 @@ static CGFloat height = 220.0;
 - (void)show {
     // 收起键盘
     [[[UIApplication sharedApplication] keyWindow] endEditing:YES];
-    
-    if (_selectedDataIndex != _currentDataIndex) {
-        [self.pickerView reloadAllComponents];
-        [self.pickerView selectRow:0 inComponent:0 animated:YES];
-    }
+    _selectedRow = 0;
+    _selectedTitle = @"";
+    [self.pickerView reloadAllComponents];
+//    if (_selectedDataIndex != _currentDataIndex) {
+//        [self.pickerView reloadAllComponents];
+//        [self.pickerView selectRow:0 inComponent:0 animated:YES];
+//    }
     
     UIView *currentView = self.superview;
     if (currentView) {
@@ -231,7 +237,13 @@ static CGFloat height = 220.0;
     } completion:^(BOOL complete){
         [self.bgView removeFromSuperview];
         _visable = NO;
+        [self.pickerView selectRow:0 inComponent:0 animated:YES];
     }];
+}
+
+- (void)setData:(NSArray<NSArray<NSString *> *> *)dataArray {
+    _dataArrays = dataArray;
+    [self.pickerView reloadAllComponents];
 }
 
 @end

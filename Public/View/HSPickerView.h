@@ -20,5 +20,6 @@
 - (void)show;
 - (void)showWithDataArrayIndex:(NSInteger)selectedDataIndex;
 - (void)dismiss;
+- (void)setData:(NSArray<NSArray<NSString *> *> *)dataArray;
 
 @end
