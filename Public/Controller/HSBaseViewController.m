@@ -27,7 +27,7 @@
         //    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
         // 返回按钮
         [self backBarButtonItemWithImageName:@"button_back_white"];
-        
+        //[self backBarButtonItemWithImageName:@""];
         // navbar title的颜色
         self.navigationController.navigationBar.titleTextAttributes = \
         @{NSFontAttributeName:[UIFont systemFontOfSize:18.0],
@@ -45,6 +45,8 @@
         //    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
         // 返回按钮
         [self backBarButtonItemWithImageName:@"button_back_white"];
+        //[self backBarButtonItemWithImageName:@""];
+        
         
         self.navigationController.navigationBar.translucent = YES;
         self.navigationController.edgesForExtendedLayout = UIRectEdgeTop;
@@ -64,7 +66,7 @@
         //    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
         // 返回按钮
         [self backBarButtonItemWithImageName:@"button_back"];
-        
+        //[self backBarButtonItemWithImageName:@""];
         self.navigationController.navigationBar.translucent = NO;
         self.navigationController.edgesForExtendedLayout = UIRectEdgeTop;
         // navbar title的颜色
@@ -75,7 +77,11 @@
         self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
     }
     
-    
+    if (@available(iOS 11.0, *)) {
+        
+    } else {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

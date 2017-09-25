@@ -16,17 +16,50 @@
 
 @implementation HSBaseTableView
 
+- (instancetype)initWithFrame:(CGRect)frame style:(UITableViewStyle)style {
+    self = [super initWithFrame:frame style:style];
+    if (self) {
+        self.backgroundColor = [UIColor clearColor];
+        
+        if (@available(iOS 11.0, *)) {
+            self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+            self.estimatedRowHeight = 0;
+            self.estimatedSectionHeaderHeight = 0;
+            self.estimatedSectionFooterHeight = 0;
+        }
+    }
+    return self;
+}
+
 - (instancetype)init {
     self = [super init];
     if (self) {
-//        HSBaseTableView *baseTV = [[HSBaseTableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
         self.backgroundColor = [UIColor clearColor];
         self.separatorStyle = UITableViewCellSeparatorStyleNone;
-//        self = baseTV;
+
+        if (@available(iOS 11.0, *)) {
+            self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+            self.estimatedRowHeight = 0;
+            self.estimatedSectionHeaderHeight = 0;
+            self.estimatedSectionFooterHeight = 0;
+        }
     }
     
     return self;
 }
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    
+    if (@available(iOS 11.0, *)) {
+        self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        self.estimatedRowHeight = 0;
+        self.estimatedSectionHeaderHeight = 0;
+        self.estimatedSectionFooterHeight = 0;
+    }
+}
+
+
 
 
 #pragma mark - CYLTableViewPlaceHolder Delegate
@@ -35,7 +68,7 @@
     HSNoDataCustomeView *noDataView = [[HSNoDataCustomeView alloc] initWithFrame:self.frame content:self.placeholderContent];
     return noDataView;
 }
-
+ 
 - (BOOL)enableScrollWhenPlaceHolderViewShowing {
     return YES;
 }
