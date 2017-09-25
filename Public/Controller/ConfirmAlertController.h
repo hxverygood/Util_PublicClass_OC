@@ -71,7 +71,7 @@
  
  @param title 标题
  @param message 信息
- @param cancelTitle 取消按钮文字
+ @param confirmTitle 确定按钮文字
  @param viewController 要显示弹框的viewController
  @param actionBlock 按钮回调
  */

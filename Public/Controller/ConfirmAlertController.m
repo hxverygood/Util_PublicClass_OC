@@ -91,7 +91,7 @@
                         actionBlock:(void(^ __nullable)(NSInteger confirmIndex, UIAlertAction * __nullable cancelAction))actionBlock {
     
     __weak typeof(viewController) weakVC = viewController;
-    ConfirmAlertController *alertViewController = [[ConfirmAlertController alloc] initWithTitle:title message:message buttonCount:1 confirmTitles:@[confirmTitle] cancelTitle:nil style:UIAlertControllerStyleAlert actionStyle:actionStyle  viewController:viewController actionBlock:actionBlock];
+    ConfirmAlertController *alertViewController = [[ConfirmAlertController alloc] initWithTitle:title message:message buttonCount:1 confirmTitles:confirmTitle ? @[confirmTitle] : @[@"确定"] cancelTitle:nil style:UIAlertControllerStyleAlert actionStyle:actionStyle  viewController:viewController actionBlock:actionBlock];
     [weakVC presentViewController:alertViewController animated:YES completion:nil];
 }
 
