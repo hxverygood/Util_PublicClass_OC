@@ -58,7 +58,7 @@ static HSLMZXManager * _instance = nil;
 #pragma mark - 监听结果回调
 - (void)handleResult:(NSString *)functionType {
     
-    __block typeof(self) weakSelf = self;
+//    __block typeof(self) weakSelf = self;
     _lmzxSDK.lmzxResultBlock = ^(NSInteger code, LMZXSDKFunction function, id obj, NSString * token){
         NSLog(@"SDK结果回调:%ld,%d,%@,%@",(long)code,function,obj,token);
         if (code == 0 ||code == 2) {//查询成功

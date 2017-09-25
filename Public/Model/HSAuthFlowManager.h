@@ -50,6 +50,8 @@
 /// 芝麻秒贷的认证流程是否完成，如没有完成则跳转
 - (NSInteger)authIsFinishedForFirstProduct;
 - (BOOL)product1AuthIsNotFinishedAndJump;
+/// 查找处于认证中的”必要认证“索引
+- (NSInteger)requriedAuthIsInProccessing;
 
 /// 土豪贷的认证流程是否完成，如没有完成则跳转
 - (NSInteger)authIsFinishedForSecondProduct;
@@ -90,7 +92,7 @@
 - (void)getCurrentLoanData:(void (^)(ProductOption productType, HSLoanListModel *loanListModel, HSHomeDataModel *homeDataModel))completion;
 
 
-- (void)jumpToBorrowVC;
+//- (void)jumpToBorrowVC;
 /// 跳转至产品概要界面
 - (void)jumpToProductSchemaVC;
 

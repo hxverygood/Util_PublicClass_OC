@@ -113,7 +113,7 @@ static HSAuthFlowManager *man;
     if (!_product1AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
 //        [tmpArray addObjectsFromArray:self.requiredAuthNames];
-        [tmpArray addObjectsFromArray:@[@"bankBillFlow", @"zhima", @"taobao"]];
+        [tmpArray addObjectsFromArray:@[@"bankBillFlow", @"zhima"]];
         _product1AuthNames = [tmpArray copy];
     }
     return _product1AuthNames;
@@ -133,7 +133,7 @@ static HSAuthFlowManager *man;
     if (!_product3AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
 //        [tmpArray addObjectsFromArray:self.requiredAuthNames];
-        [tmpArray addObjectsFromArray:@[@"chsi", @"taobao", @"credit"]];
+        [tmpArray addObjectsFromArray:@[@"chsi", @"credit"]];
         _product3AuthNames = [tmpArray copy];
     }
     return _product3AuthNames;
@@ -197,15 +197,28 @@ static HSAuthFlowManager * _instance = nil;
     }
     
     // 如果是部分认证
-    BOOL partialIsAuthed = NO;
-    for (int i = 0; i < authArray.count; i++) {
-        if ([authArray[i] isEqualToString:@"0"]) {
-            partialIsAuthed = YES;
-        }
+    //BOOL partialIsAuthed = NO;
+    //for (int i = 0; i < authArray.count; i++) {
+     //   if ([authArray[i] isEqualToString:@"0"]) {
+     //       partialIsAuthed = YES;
+     //   }
+    //}
+    
+    //NSInteger result = (partialIsAuthed ? 1000 : 0) + authIndex;
+    //return result;
+    return authIndex;
+}
+
+- (NSInteger)requriedAuthIsInProccessing {
+    NSArray *authArray = [self authedResultWithAuthNameArray:self.requiredAuthNames];
+    NSInteger authIndex = [self findInProccessingAuthedIndexWithArray:authArray];
+    
+    // 如果authIndex没有标记，说明通过了所有必填认证，需弹出认证完成弹出框
+    if (authIndex == -1) {
+        return -100;
     }
     
-    NSInteger result = (partialIsAuthed ? 1000 : 0) + authIndex;
-    return result;
+    return authIndex;
 }
 
 - (BOOL)requriedAuthIsNotFinishedAndJump {
@@ -582,7 +595,36 @@ static HSAuthFlowManager * _instance = nil;
     NSInteger authIndex = -1;
     
     for (int i = 0; i < authArray.count; i++) {
-        if ([authArray[i] isEqualToString:@"1"]) {
+        NSString *string = authArray[i];
+        if (![string isEqualToString:@"0"]) {
+            authIndex = i;
+            break;
+        }
+        
+//        if (![string isEqualToString:@"0"]) {
+//            if ([string isEqualToString:@"1"]) {
+//                i += 10;
+//            } else if ([string isEqualToString:@"2"]) {
+//                i += 20;
+//            } else if ([string isEqualToString:@"3"]) {
+//                i += 30;
+//            }
+//            authIndex = i;
+//            break;
+//        }
+    }
+    
+    // 如果authIndex没有标记，说明通过了所有必填认证，需弹出认证完成弹出框
+    return authIndex;
+}
+
+/// 查找处于认证中的index
+- (NSInteger)findInProccessingAuthedIndexWithArray:(NSArray *)authArray {
+    NSInteger authIndex = -1;
+    
+    for (int i = 0; i < authArray.count; i++) {
+        NSString *string = authArray[i];
+        if ([string isEqualToString:@"3"]) {
             authIndex = i;
             break;
         }
@@ -590,13 +632,6 @@ static HSAuthFlowManager * _instance = nil;
     
     // 如果authIndex没有标记，说明通过了所有必填认证，需弹出认证完成弹出框
     return authIndex;
-    
-//    // 如果authIndex没有标记，说明通过了所有必填认证，需弹出认证完成弹出框
-//    if (authIndex == -1) {
-//        return -1;
-//    } else {
-//        return authIndex;
-//    }
 }
 
 /// 判断该字段是否已经认证
@@ -962,9 +997,12 @@ static HSAuthFlowManager * _instance = nil;
     [self fetchGradeCompletion:^() {
         if ([_homeDataModel.Amt integerValue] < 5000) {
             [SVProgressHUD showInfoWithStatus:@"最低申请额度为5000元，您的可借额度不足5000元"];
-            UIViewController *currentVC = [UIViewController currentViewController];
-            [currentVC.navigationController popViewControllerAnimated:YES];
-            return;
+            CGFloat duration = [@"最低申请额度为5000元，您的可借额度不足5000元" hudShowDuration];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                UIViewController *currentVC = [UIViewController currentViewController];
+                [currentVC.navigationController popViewControllerAnimated:YES];
+                return;
+            });
         }
         
         HSLimitActivationViewController *vc = [[HSLimitActivationViewController alloc] initWithloanListModel:_loanListModel homeDataModel:_homeDataModel];
@@ -983,9 +1021,9 @@ static HSAuthFlowManager * _instance = nil;
 - (void)fetchGradeCompletion:(void (^)())completion
 {
     HSUser *user = [HSLoginInfo savedLoginInfo];
-    NSString *PHONE = user.phone;
+//    NSString *PHONE = user.phone;
     NSString *ID = user.ID;
-    NSString *UUID = user.UUID;
+//    NSString *UUID = user.UUID;
     NSString *PRODID = _loanListModel.applyApprovAll;
     if ([NSString isBlankString:PRODID]) {
         [SVProgressHUD showInfoWithStatus:@"请重新选择产品"];
@@ -1096,7 +1134,7 @@ static HSAuthFlowManager * _instance = nil;
                 case AuthTipOptionProduct1:
                 {
                     if ([self authIsFinishedForFirstProduct] == -100) {
-                        [self jumpToBorrowVC];
+//                        [self jumpToBorrowVC];
                     } else {
                         HSAuthAlertView *alertView = [HSAuthAlertView alertViewWithTitle:@"认证成功" butttonTitle:@"继续认证" buttonPressedBlock:^{
                             [self product1AuthIsNotFinishedAndJump];
@@ -1112,7 +1150,7 @@ static HSAuthFlowManager * _instance = nil;
                 case AuthTipOptionProduct2:
                 {
                     if ([self authIsFinishedForSecondProduct] == -100) {
-                        [self jumpToBorrowVC];
+//                        [self jumpToBorrowVC];
                     } else {
                         HSAuthAlertView *alertView = [HSAuthAlertView alertViewWithTitle:@"认证成功" butttonTitle:@"继续认证" buttonPressedBlock:^{
                             [self product2AuthIsNotFinishedAndJump];
@@ -1128,7 +1166,7 @@ static HSAuthFlowManager * _instance = nil;
                 case AuthTipOptionProduct3:
                 {
                     if ([self authIsFinishedForThirdProduct] == -100) {
-                        [self jumpToBorrowVC];
+//                        [self jumpToBorrowVC];
                     } else {
                         HSAuthAlertView *alertView = [HSAuthAlertView alertViewWithTitle:@"认证成功" butttonTitle:@"继续认证" buttonPressedBlock:^{
                             [self product3AuthIsNotFinishedAndJump];
@@ -1144,7 +1182,7 @@ static HSAuthFlowManager * _instance = nil;
                 case AuthTipOptionProduct4:
                 {
                     if ([self authIsFinishedForFourthProduct] == -100) {
-                        [self jumpToBorrowVC];
+//                        [self jumpToBorrowVC];
                     } else {
                         HSAuthAlertView *alertView = [HSAuthAlertView alertViewWithTitle:@"认证成功" butttonTitle:@"继续认证" buttonPressedBlock:^{
                             [self product4AuthIsNotFinishedAndJump];
