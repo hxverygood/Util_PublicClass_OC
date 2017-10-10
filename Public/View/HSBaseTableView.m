@@ -19,7 +19,7 @@
 - (instancetype)initWithFrame:(CGRect)frame style:(UITableViewStyle)style {
     self = [super initWithFrame:frame style:style];
     if (self) {
-        self.backgroundColor = [UIColor clearColor];
+        self.backgroundColor = HS_BACKGROUND;
         
         if (@available(iOS 11.0, *)) {
             self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
@@ -34,7 +34,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.backgroundColor = [UIColor clearColor];
+        self.backgroundColor = HS_BACKGROUND;
         self.separatorStyle = UITableViewCellSeparatorStyleNone;
 
         if (@available(iOS 11.0, *)) {
