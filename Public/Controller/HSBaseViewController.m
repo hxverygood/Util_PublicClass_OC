@@ -21,6 +21,33 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    [self changeNavigationBar];
+    [self adapterForIOSVersion];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    [self changeNavigationBar];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    self.navigationController.navigationBar.shadowImage = nil;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    _navbarIsTrans = _navbarIsTranslucent;
+}
+
+
+
+#pragma mark - Private Func
+
+- (void)changeNavigationBar {
     if (_navbarIsDark) {
         // 状态栏样式
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
@@ -33,7 +60,7 @@
         @{NSFontAttributeName:[UIFont systemFontOfSize:18.0],
           NSForegroundColorAttributeName:[UIColor whiteColor]};
         // navbar背景颜色
-//        self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:53/255.0 green:57/255.0 blue:66/255.0 alpha:1.0];
+        //        self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:53/255.0 green:57/255.0 blue:66/255.0 alpha:1.0];
         self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:38/255.0 green:41/255.0 blue:48/255.0 alpha:1.0];
         
         return;
@@ -66,6 +93,7 @@
         //    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
         // 返回按钮
         [self backBarButtonItemWithImageName:@"button_back"];
+        [self currentVCBackBarButtonItemWithName:@"button_back"];
         //[self backBarButtonItemWithImageName:@""];
         self.navigationController.navigationBar.translucent = NO;
         self.navigationController.edgesForExtendedLayout = UIRectEdgeTop;
@@ -76,24 +104,15 @@
         // navbar背景颜色
         self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
     }
-    
+}
+
+/// 对不同的iOS版本进行适配
+- (void)adapterForIOSVersion {
     if (@available(iOS 11.0, *)) {
         
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    
-    self.navigationController.navigationBar.shadowImage = nil;
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    _navbarIsTrans = _navbarIsTranslucent;
 }
 
 
