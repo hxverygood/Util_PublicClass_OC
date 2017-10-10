@@ -36,7 +36,7 @@
             
             self.bigView.frame = CGRectMake(0, 0, W-115, 177);
             
-        }else if (iphone6Plus_5_5){
+        }else if (iphonePlus_5_5){
             self.bigView.frame = CGRectMake(0, 0, W-134, 177);
         }
         
@@ -150,7 +150,7 @@
             
              self.bigView.frame = CGRectMake(0, 0, W-115, 177);
            
-        }else if (iphone6Plus_5_5){
+        }else if (iphonePlus_5_5){
               self.bigView.frame = CGRectMake(0, 0, W-134, 177);
         }
         
