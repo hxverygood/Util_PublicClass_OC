@@ -546,7 +546,7 @@ static HSAuthFlowManager * _instance = nil;
 
 - (NSString *)convertAuthName:(NSString *)authName {
     if ([authName isEqualToString:@"realName"]) {
-        return @"个人信息填写";
+        return @"实名认证";
     }
     else if ([authName isEqualToString:@"addressBook"]) {
         return @"通讯录授权";
@@ -996,13 +996,12 @@ static HSAuthFlowManager * _instance = nil;
     // 调用
     [self fetchGradeCompletion:^() {
         if ([_homeDataModel.Amt integerValue] < 5000) {
-            [SVProgressHUD showInfoWithStatus:@"最低申请额度为5000元，您的可借额度不足5000元"];
-            CGFloat duration = [@"最低申请额度为5000元，您的可借额度不足5000元" hudShowDuration];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                UIViewController *currentVC = [UIViewController currentViewController];
-                [currentVC.navigationController popViewControllerAnimated:YES];
-                return;
-            });
+            [SVProgressHUD showInfoWithStatus:@"最低申请额度为5000元，您的可借额度不足5000元，无法激活额度"];
+            UIViewController *currentVC = [UIViewController currentViewController];
+            [currentVC jumpToViewControllerWith:[HSProductSchemaViewController class]];
+            [currentVC jumpToViewControllerWith:[HSDataManagementViewController class]];
+            [currentVC jumpToViewControllerWith:[HSLimitPromotionViewController class]];
+            return;
         }
         
         HSLimitActivationViewController *vc = [[HSLimitActivationViewController alloc] initWithloanListModel:_loanListModel homeDataModel:_homeDataModel];
