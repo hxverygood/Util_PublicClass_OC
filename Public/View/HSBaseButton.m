@@ -152,7 +152,7 @@
             [button setTitle:title forState:UIControlStateNormal];
         }
         
-        button.titleLabel.font = [UIFont systemFontOfSize:titleSize > 0.1 ? titleSize : 14.0];
+        button.titleLabel.font = [UIFont systemFontOfSize:titleSize > 0.1 ? titleSize : 15.0];
         
         if (cornerRadius > 0.0) {
             [button setTitleColor:titleColor cornerRadius:cornerRadius];
