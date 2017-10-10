@@ -143,7 +143,7 @@
     if (!self) {
         return 0.0;
     }
-    CGFloat minimum = MAX((CGFloat)self.length * 0.14 + 0.5, 5.0);
+    CGFloat minimum = MAX((CGFloat)self.length * 0.14 + 0.5, 0.8);
     return MIN(minimum, 5.0);
 }
 
