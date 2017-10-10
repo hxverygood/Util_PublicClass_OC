@@ -20,6 +20,7 @@
 @property (nonatomic, strong) CNPhoneNumber *phoneNumber;
 @property (nonatomic, strong) NSMutableArray *dataMuArray;
 @property (nonatomic, strong) NSData *jsonData;
+//@property (nonatomic, assign) NSInteger count;
 @end
 
 @implementation HSPublicFunc
@@ -315,5 +316,29 @@
         return YES;
     }
 }
+
+
+//#pragma mark - 倒计时
+
+//- (void)startCountDown {
+//    self.count = kCountDownTime;
+//    //    __strong typeof(weakSelf) strongSelf = weakSelf;
+////    [self setupCodeButtonIsEnabled:NO];
+//    __unused NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(countDown:) userInfo:nil repeats:YES];
+//}
+//
+//- (void)countDown:(NSTimer *)timer {
+//    NSString *countingText = [NSString stringWithFormat:@"%ld秒后重新发送", (long)self.count];
+////    self.countLabel.text = countingText;
+//
+//    if (self.count == 0) {
+//        [timer invalidate];
+//        timer = nil;
+//        _count = kCountDownTime;
+////        [self setupCodeButtonIsEnabled:YES];
+//        return;
+//    }
+//    _count -= 1;
+//}
 
 @end
