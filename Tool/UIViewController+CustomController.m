@@ -25,13 +25,25 @@
             appearance = [UIBarButtonItem appearanceWhenContainedInInstancesOfClasses:@[[self.navigationController class]]];
         }
         
+        if (!appearance) {
+            return;
+        }
+        
         [appearance setBackButtonBackgroundImage:backButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
         
         UIBarButtonItem *backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleDone target:self.navigationController action:nil];
         self.navigationItem.backBarButtonItem = backBarButtonItem;
         self.navigationItem.backBarButtonItem.title = @"";
+        self.navigationController.navigationBar.backIndicatorTransitionMaskImage = [UIImage imageNamed:imageName];
         self.navigationController.navigationBar.tintColor = [UIColor clearColor];
     }
+}
+
+- (void)currentVCBackBarButtonItemWithName:(NSString *)imageName {
+    UIImage *backButtonImage = [[UIImage imageNamed:imageName] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0) resizingMode:UIImageResizingModeTile];
+    [[UIBarButtonItem appearance] setBackButtonBackgroundImage:backButtonImage
+                                                      forState:UIControlStateNormal
+                                                    barMetrics:UIBarMetricsDefault];
 }
 
 
@@ -128,7 +140,7 @@
     for (int i = 0; i < startClasses.count; i++) {
         Class startClass = startClasses[i];
         BOOL flag;
-        flag = [self canRemoveViewControllerFromNavigationStackFrom:startClass to: [self class]];
+        flag = [self canRemoveViewControllerFromNavigationStackFrom:startClass to:[self class]];
         if (flag) {
             break;
         }
@@ -136,7 +148,7 @@
 }
 
 /// 从导航栈中移除fromViewControllerClass 到 toViewControllerClass之间的VC
-- (BOOL)canRemoveViewControllerFromNavigationStackFrom:(Class)fromClass
+- (BOOL) canRemoveViewControllerFromNavigationStackFrom:(Class)fromClass
                                                     to:(Class)toClass {
     NSMutableArray *viewControllers = [[NSMutableArray alloc] initWithArray:self.navigationController.viewControllers];
     // 将要删除的VC放到该数组中
@@ -164,10 +176,10 @@
         }
     }
     
-    if (flag == NO &&
-        fromIndex == -1 &&
-        toIndex == -1 &&
-        fromIndex >= toIndex) {
+//    if (flag == NO &&
+//        (fromIndex == -1 || toIndex == -1) ||
+//        fromIndex >= toIndex) {
+    if (flag == NO) {
         return NO;
     }
     
