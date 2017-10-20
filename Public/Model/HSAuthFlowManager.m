@@ -23,7 +23,7 @@
 #import "HSCallRecordsChinaMobileFirstViewController.h"
 //#import "HSCallRecordsChinaMobileViewController.h"
 #import "HSCallRecordsChinaMobileFirstViewController.h"     // 移动认证第1步
-#import "HSCallRecordsChinaUnicornViewController.h"
+#import "HSCallRecordsChinaUnicornFirstViewController.h"
 #import "HSCallRecordsChinaTelecomVC.h"
 #import "HSContactInfoViewController.h"                     // 联系人信息认证VC
 #import "HSCreditInvestigationViewController.h"             // 征信认证VC
@@ -995,12 +995,27 @@ static HSAuthFlowManager * _instance = nil;
 - (void)jumpToLimitActivationVC {
     // 调用
     [self fetchGradeCompletion:^() {
-        if ([_homeDataModel.Amt integerValue] < 5000) {
-            [SVProgressHUD showInfoWithStatus:@"最低申请额度为5000元，您的可借额度不足5000元，无法激活额度"];
+        NSNumber *minNum = [self.loanListModel.mixCreditAmt convertToNumber];
+        if (!minNum) {
             UIViewController *currentVC = [UIViewController currentViewController];
             [currentVC jumpToViewControllerWith:[HSProductSchemaViewController class]];
             [currentVC jumpToViewControllerWith:[HSDataManagementViewController class]];
             [currentVC jumpToViewControllerWith:[HSLimitPromotionViewController class]];
+            return;
+        }
+        
+        CGFloat min = [minNum floatValue];
+        if ([_homeDataModel.Amt integerValue] < min) {
+            NSString *tips = [NSString stringWithFormat:@"您的可借额度不足%.f元，无法激活额度", min];
+            [SVProgressHUD showInfoWithStatus:tips];
+            
+            CGFloat duration = [tips hudShowDuration];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                UIViewController *currentVC = [UIViewController currentViewController];
+                [currentVC jumpToViewControllerWith:[HSProductSchemaViewController class]];
+                [currentVC jumpToViewControllerWith:[HSDataManagementViewController class]];
+                [currentVC jumpToViewControllerWith:[HSLimitPromotionViewController class]];
+            });
             return;
         }
         
@@ -1017,7 +1032,7 @@ static HSAuthFlowManager * _instance = nil;
 
 #pragma mark - Api
 
-- (void)fetchGradeCompletion:(void (^)())completion
+- (void)fetchGradeCompletion:(void (^)(void))completion
 {
     HSUser *user = [HSLoginInfo savedLoginInfo];
 //    NSString *PHONE = user.phone;
@@ -1250,14 +1265,14 @@ static HSAuthFlowManager * _instance = nil;
                 }
                 else if ([model.MobileBelong containsString:@"联通"])
                 {
-                    HSCallRecordsChinaUnicornViewController *callRecordsChinaUnicornViewController = [[HSCallRecordsChinaUnicornViewController alloc] init];
-                    callRecordsChinaUnicornViewController.isInAuthFlow = YES;
-                    callRecordsChinaUnicornViewController.mobileBelongModel = model;
-                    callRecordsChinaUnicornViewController.hidesBottomBarWhenPushed = YES;
+                    HSCallRecordsChinaUnicornFirstViewController *callRecordsChinaUnicornFirstViewController = [[HSCallRecordsChinaUnicornFirstViewController alloc] init];
+                    callRecordsChinaUnicornFirstViewController.isInAuthFlow = YES;
+                    callRecordsChinaUnicornFirstViewController.mobileBelongModel = model;
+                    callRecordsChinaUnicornFirstViewController.hidesBottomBarWhenPushed = YES;
                     
                     UIViewController *vc = [UIViewController currentViewController];
                     [vc backBarButtonItemWithImageName:@"button_back"];
-                    [vc.navigationController pushViewController:callRecordsChinaUnicornViewController animated:YES];
+                    [vc.navigationController pushViewController:callRecordsChinaUnicornFirstViewController animated:YES];
                 }
                 else if ([model.MobileBelong containsString:@"电信"])
                 {

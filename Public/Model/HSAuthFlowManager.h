@@ -94,7 +94,7 @@
 
 //- (void)jumpToBorrowVC;
 /// 跳转至产品概要界面
-- (void)jumpToProductSchemaVC;
+//- (void)jumpToProductSchemaVC;
 
 /// 自动跳转至相关认证VC
 - (void)jumpToAuthVC;

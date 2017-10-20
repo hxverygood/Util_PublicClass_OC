@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-typedef void(^ReloadButtonClickBlock)() ;
+typedef void(^ReloadButtonClickBlock)(void) ;
 
 @interface HSNoDataView : UIView
 

@@ -28,7 +28,7 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [self changeNavigationBar];
+//    [self changeNavigationBar];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -52,8 +52,10 @@
         // 状态栏样式
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
         //    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+        
         // 返回按钮
         [self backBarButtonItemWithImageName:@"button_back_white"];
+        
         //[self backBarButtonItemWithImageName:@""];
         // navbar title的颜色
         self.navigationController.navigationBar.titleTextAttributes = \
@@ -72,7 +74,7 @@
         //    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
         // 返回按钮
         [self backBarButtonItemWithImageName:@"button_back_white"];
-        //[self backBarButtonItemWithImageName:@""];
+        //[self backBarButtonItemWithImageName:@"button_back"];
         
         
         self.navigationController.navigationBar.translucent = YES;
@@ -92,8 +94,8 @@
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
         //    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
         // 返回按钮
+//        [self backBarButtonItemWithImageName:@"button_back"];
         [self backBarButtonItemWithImageName:@"button_back"];
-        [self currentVCBackBarButtonItemWithName:@"button_back"];
         //[self backBarButtonItemWithImageName:@""];
         self.navigationController.navigationBar.translucent = NO;
         self.navigationController.edgesForExtendedLayout = UIRectEdgeTop;

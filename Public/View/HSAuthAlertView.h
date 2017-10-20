@@ -12,8 +12,8 @@
 
 + (instancetype)alertViewWithTitle:(NSString *)title
                       butttonTitle:(NSString *)buttonTitle
-                buttonPressedBlock:(void (^)())buttonPressedBlock
-               cancelButtonPressed:(void (^)())cancelButtonPressed;
+                buttonPressedBlock:(void (^)(void))buttonPressedBlock
+               cancelButtonPressed:(void (^)(void))cancelButtonPressed;
 
 - (void)show;
 

@@ -13,7 +13,7 @@
 /// 设置下一个退出界面的返回图标
 - (void)backBarButtonItemWithImageName:(NSString *)imageName;
 /// 设置当前VC的返回按钮
-- (void)currentVCBackBarButtonItemWithName:(NSString *)imageName;
+//- (void)currentVCBackBarButtonItemWithName:(NSString *)imageName;
 
 /// 获取当前VC
 + (UIViewController *)currentViewController;
@@ -46,14 +46,17 @@
 /// 跳转至某个UIViewController，如果找不到该Controller则什么也不做
 - (BOOL)jumpToViewControllerWith:(Class)viewControllerClass;
 
-/// 跳转至某之前的第一个相同的UIViewController（返回YES），如果找不到该Controller则什么也不做，返回NO
-- (BOOL)popToFirstSameViewControllerWith:(Class)viewControllerClass;
-
 /// 从导航栈中移除fromViewControllerClasses 到[self class]之间的VC
 - (void)removeViewControllerFromNavigationStackWithStartControllerClasses:(NSArray *)startClasses;
 
 /// 从导航栈中移除fromViewControllerClass 到 toViewControllerClass之间的VC
 - (BOOL)canRemoveViewControllerFromNavigationStackFrom:(Class)fromClass
                                                     to:(Class)toClass;
+
+/// 跳转至某之前的第一个相同的UIViewController（返回YES），如果找不到该Controller则什么也不做，返回NO
+- (BOOL)popToFirstSameViewControllerWith:(Class)viewControllerClass;
+
+/// pop次数
+- (void)popToViewControllerWithPopCount:(NSInteger)count;
 
 @end

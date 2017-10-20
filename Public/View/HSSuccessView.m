@@ -18,7 +18,7 @@
 @property (nonatomic, strong) UIColor *startColor;
 @property (nonatomic, strong) UIColor *endColor;
 
-@property (nonatomic, copy) void (^closelButtonPressedBlock)();
+@property (nonatomic, copy) void (^closelButtonPressedBlock)(void);
 
 @end
 
@@ -26,13 +26,13 @@
 
 + (instancetype)showSucccessViewWithImageName:(NSString *)imageName
                                       content:(NSString *)content
-                          closelButtonPressed:(void (^)())closelButtonPressedBlock {
+                          closelButtonPressed:(void (^)(void))closelButtonPressedBlock {
     return [[HSSuccessView alloc] initWithImageName:imageName content:content closelButtonPressed:closelButtonPressedBlock];
 }
 
 - (instancetype)initWithImageName:(NSString *)imageName
                           content:(NSString *)content
-              closelButtonPressed:(void (^)())closelButtonPressedBlock {
+              closelButtonPressed:(void (^)(void))closelButtonPressedBlock {
     self = [super init];
     if (self) {
         self = [[[NSBundle mainBundle] loadNibNamed:@"HSSuccessView" owner:nil options:nil] lastObject];

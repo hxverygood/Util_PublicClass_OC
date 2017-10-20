@@ -261,7 +261,8 @@
 
 //中文、英文、数字
 + (BOOL)validateHanAndEnglishAndNumber:(NSString *)string {
-    NSString *hanRegex = @"[^x00-xff]|[0-9a-zA-Z]{2,}";
+    NSString *hanRegex = @"[a-zA-Z0-9\\u4e00-\\u9fa5]+";
+//    NSString *hanRegex = @"[^x00-xff]|[0-9a-zA-Z]{2,}";
     NSPredicate *HanTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",hanRegex];
     return [HanTest evaluateWithObject:string];
 }

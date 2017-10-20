@@ -24,4 +24,7 @@
 /// 开始定位
 - (void)findCurrentLocation;
 
+/// 是否开启了定位权限，如果没有，则弹框
+- (BOOL)canLocationAndAuthorization;
+
 @end

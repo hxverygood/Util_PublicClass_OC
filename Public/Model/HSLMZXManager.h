@@ -7,12 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "LMZXSDK.h"
+//#import "LMZXSDK.h"
 
 @interface HSLMZXManager : NSObject
 
-+ (instancetype)manager;
-
--(void)getLMsdkFunction:(LMZXSDKFunction)sdkfunction and:(NSString *)handerResultString;
+//+ (instancetype)manager;
+//
+//-(void)getLMsdkFunction:(LMZXSDKFunction)sdkfunction and:(NSString *)handerResultString;
 
 @end

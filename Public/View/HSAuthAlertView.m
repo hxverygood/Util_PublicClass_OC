@@ -13,8 +13,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UIButton *authButton;
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
-@property (nonatomic, copy) void (^ButtonPressedBlock)();
-@property (nonatomic, copy) void (^cancelButtonPressedBlock)();
+@property (nonatomic, copy) void (^ButtonPressedBlock)(void);
+@property (nonatomic, copy) void (^cancelButtonPressedBlock)(void);
 
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *buttonTitle;
@@ -60,8 +60,8 @@
 
 + (instancetype)alertViewWithTitle:(NSString *)title
                       butttonTitle:(NSString *)buttonTitle
-                buttonPressedBlock:(void (^)())buttonPressedBlock
-               cancelButtonPressed:(void (^)())cancelButtonPressed {
+                buttonPressedBlock:(void (^)(void))buttonPressedBlock
+               cancelButtonPressed:(void (^)(void))cancelButtonPressed {
 //    HSAuthAlertView *view = [[[NSBundle mainBundle] loadNibNamed:@"HSAuthAlertView" owner:nil options:nil] lastObject];
 //    
 //    view.titleLabel.text = title ?: @"";
@@ -85,8 +85,8 @@
 
 - (instancetype)initWithTitle:(NSString *)title
                  butttonTitle:(NSString *)buttonTitle
-           buttonPressedBlock:(void (^)())buttonPressedBlock
-          cancelButtonPressed:(void (^)())cancelButtonPressed {
+           buttonPressedBlock:(void (^)(void))buttonPressedBlock
+          cancelButtonPressed:(void (^)(void))cancelButtonPressed {
     self = [super init];
     if (self) {
         self = [[[NSBundle mainBundle] loadNibNamed:@"HSAuthAlertView" owner:nil options:nil] lastObject];

@@ -62,7 +62,7 @@
     if (!self) {
         return nil;
     }
-    NSNumberFormatter *formatter=[[NSNumberFormatter alloc]init];
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *numberObj = [formatter numberFromString:self];
     return numberObj;

@@ -15,6 +15,7 @@
 @property (nonatomic, strong) CAGradientLayer *gradientLayer;
 @property (nonatomic, strong) CAGradientLayer *gradientLayer_selected;
 
+@property (nonatomic, strong) UIColor *defaultTitleColor;
 @property (nonatomic, strong) UIColor *defaultBackgrouodColor;
 
 @end
@@ -24,6 +25,13 @@
 @implementation HSBaseButton
 
 #pragma mark - Getter
+
+- (UIColor *)defaultTitleColor {
+    if (!_defaultTitleColor) {
+        _defaultTitleColor = [UIColor whiteColor];
+    }
+    return _defaultTitleColor;
+}
 
 - (UIColor *)defaultBackgrouodColor {
     if (!_defaultBackgrouodColor) {
@@ -61,6 +69,16 @@
 
 
 #pragma mark - Initializer
+
++ (instancetype _Nullable)buttonWithFrame:(CGRect)frame
+                                    title:(NSString * _Nullable)title {
+    return [[HSBaseButton alloc] initWithFrame:frame
+                                         title:title
+                                    titleColor:nil
+                                     titleSize:0.0
+                                    backgroundColor:nil
+                                  cornerRadius:0.0];
+}
 
 + (instancetype _Nullable)buttonWithFrame:(CGRect)frame
                                     title:(NSString * _Nullable)title
@@ -151,6 +169,8 @@
         if (title) {
             [button setTitle:title forState:UIControlStateNormal];
         }
+        
+        [button setTitleColor:titleColor ?: self.defaultTitleColor forState:UIControlStateNormal];
         
         button.titleLabel.font = [UIFont systemFontOfSize:titleSize > 0.1 ? titleSize : 15.0];
         

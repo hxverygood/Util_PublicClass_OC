@@ -19,13 +19,13 @@
         }
     }];
     
-    [header setImages:[HSHelper sharedHelper].imagesForIdleState forState:MJRefreshStateIdle];
-    [header setImages:[HSHelper sharedHelper].imagesForPullingState forState:MJRefreshStatePulling];
-    [header setImages:[HSHelper sharedHelper].imagesForRefreshingState forState:MJRefreshStateRefreshing];
-    
-//    header.ignoredScrollViewContentInsetTop = adViewHeight+kSegmentButtonHeight-10.0f;
-    header.lastUpdatedTimeLabel.hidden = YES;
-    header.stateLabel.hidden = YES;
+//    [header setImages:[HSHelper sharedHelper].imagesForIdleState forState:MJRefreshStateIdle];
+//    [header setImages:[HSHelper sharedHelper].imagesForPullingState forState:MJRefreshStatePulling];
+//    [header setImages:[HSHelper sharedHelper].imagesForRefreshingState forState:MJRefreshStateRefreshing];
+//
+////    header.ignoredScrollViewContentInsetTop = adViewHeight+kSegmentButtonHeight-10.0f;
+//    header.lastUpdatedTimeLabel.hidden = YES;
+//    header.stateLabel.hidden = YES;
     self.mj_header = header;
 }
 

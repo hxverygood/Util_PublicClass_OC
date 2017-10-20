@@ -63,11 +63,24 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
             textRestrict = [[HSCharacterCountTextRestrict alloc] init];
             break;
             
+        case HSRestrictTypeCharacterAndNumber:
+            textRestrict = [[HSCharacterAndNumberTextRestrict alloc] init];
+            break;
+            
+        case HSRestrictTypeChineseAndCharAndNumber:
+            textRestrict = [[HSChineseAndCharAndNumberTextRestrict alloc] init];
+            break;
+        
+        case HSRestrictTypeIdCard:
+            textRestrict = [[HSIdCardTextRestrict alloc] init];
+            break;
+            
         case HSRestrictTypeCustom:
             textRestrict = [[HSCustomTextRestrict alloc] init];
             break;
             
         default:
+            
             break;
     }
     textRestrict.maxLength = (maxTextLength == 0) ? NSUIntegerMax : maxTextLength;
@@ -116,7 +129,6 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 }
 
 @end
-
 // 只允许非中文输入
 @implementation HSCharacterTextRestrict
 
@@ -161,6 +173,55 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 }
 
 @end
+
+
+/// 判断字母和数字
+@implementation HSCharacterAndNumberTextRestrict
+
+- (void)textDidChanged:(UITextField *)textField
+{
+    if (textField.text.length > self.maxLength) {
+        textField.text = [textField.text substringToIndex:self.maxLength];
+    }
+    textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
+        return kMatchStringFormat(aString, @"^[A-Za-z0-9]+$");
+    });
+}
+
+@end
+
+
+/// 判断中文、字母和数字
+@implementation HSChineseAndCharAndNumberTextRestrict
+
+- (void)textDidChanged:(UITextField *)textField
+{
+    if (textField.text.length > self.maxLength) {
+        textField.text = [textField.text substringToIndex:self.maxLength];
+    }
+    textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
+        return kMatchStringFormat(aString,@"^[a-zA-Z0-9\\u4e00-\\u9fa5]+");
+    });
+}
+
+@end
+
+
+///  判断身份证
+@implementation HSIdCardTextRestrict
+
+- (void)textDidChanged:(UITextField *)textField
+{
+    if (textField.text.length > self.maxLength) {
+        textField.text = [textField.text substringToIndex:self.maxLength];
+    }
+    textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
+        return kMatchStringFormat(aString, @"^[Xx0-9]+$");
+    });
+}
+
+@end
+
 
 
 // 自定义正则

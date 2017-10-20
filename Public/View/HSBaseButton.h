@@ -19,6 +19,9 @@
 #pragma mark - Initializer
 
 + (instancetype _Nullable)buttonWithFrame:(CGRect)frame
+                                    title:(NSString * _Nullable)title;
+
++ (instancetype _Nullable)buttonWithFrame:(CGRect)frame
                                     title:(NSString * _Nullable)title
                                titleColor:(UIColor *_Nullable)titleColor;
 

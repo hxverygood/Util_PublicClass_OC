@@ -16,7 +16,11 @@ typedef NS_ENUM(NSInteger, HSRestrictType)
     HSRestrictTypeOnlyCharacter,                ///<  只允许输入非中文字符
     HSRestrictTypeOnlyChinese,                  /// 只允许输入中文
     HSRestrictTypeCharacterCount,               ///< 判断字符数量，需配合maxLength属性使用
+    HSRestrictTypeCharacterAndNumber,           /// 判断字母和数字
+    HSRestrictTypeChineseAndCharAndNumber,      /// 判断中文、字母和数字
+    HSRestrictTypeIdCard,                       ///  判断身份证
     HSRestrictTypeCustom,                       ///< 自定义规则
+    HSRestrictTypeNumberOrCharacter,             /// 只允许输入数字和字母
 };
 
 
@@ -26,7 +30,7 @@ typedef NS_ENUM(NSInteger, HSRestrictType)
 @interface HSTextRestrict : NSObject
 
 @property (nonatomic, assign) NSUInteger maxLength;
-@property (nonatomic, readonly) HSRestrictType restrictType;
+@property (nonatomic, assign, readonly) HSRestrictType restrictType;
 @property (nonatomic, strong) NSString *predicateStr;
 
 // 工厂
@@ -38,6 +42,9 @@ typedef NS_ENUM(NSInteger, HSRestrictType)
 @end
 
 
+
+@interface HSNUmberTextOrCharacter : HSTextRestrict
+@end;
 
 @interface HSNumberTextRestrict : HSTextRestrict
 @end
@@ -54,5 +61,15 @@ typedef NS_ENUM(NSInteger, HSRestrictType)
 @interface HSCharacterCountTextRestrict : HSTextRestrict
 @end
 
+@interface HSCharacterAndNumberTextRestrict : HSTextRestrict
+@end
+
+@interface HSChineseAndCharAndNumberTextRestrict : HSTextRestrict
+@end
+
+@interface HSIdCardTextRestrict : HSTextRestrict
+@end
+
 @interface HSCustomTextRestrict : HSTextRestrict
 @end
+
