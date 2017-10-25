@@ -26,6 +26,8 @@
 ////    header.ignoredScrollViewContentInsetTop = adViewHeight+kSegmentButtonHeight-10.0f;
 //    header.lastUpdatedTimeLabel.hidden = YES;
 //    header.stateLabel.hidden = YES;
+    header.stateLabel.textColor = Gray180;
+    header.lastUpdatedTimeLabel.textColor = Gray180;
     self.mj_header = header;
 }
 
