@@ -56,4 +56,7 @@
 /// 使用SVProgressHUD时，根据文字多少计算HUD要显示的时间。计算方法来自SVProgressHUD
 - (CGFloat)hudShowDuration;
 
+/// 判断字符串是否是url
+- (BOOL)isUrl;
+
 @end
