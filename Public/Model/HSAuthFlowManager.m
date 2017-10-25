@@ -60,6 +60,10 @@ static HSAuthFlowManager *man;
 @property (nonatomic, strong) NSArray *product2AuthNames;
 @property (nonatomic, strong) NSArray *product3AuthNames;
 @property (nonatomic, strong) NSArray *product4AuthNames;
+@property (nonatomic, strong) NSArray *offlineProduct1AuthNames;
+@property (nonatomic, strong) NSArray *offlineProduct2AuthNames;
+@property (nonatomic, strong) NSArray *offlineProduct3AuthNames;
+@property (nonatomic, strong) NSArray *offlineProduct4AuthNames;
 
 // 当前的认证模式
 @property (nonatomic, assign) AuthTipOption currentAuthOption;
@@ -71,6 +75,7 @@ static HSAuthFlowManager *man;
 @property (nonatomic, assign) CGFloat longitude;
 @property (nonatomic, assign) CGFloat latitude;
 @property (nonatomic, assign) ProductOption productType;
+@property (nonatomic, assign) BOOL isOfflineProduct;
 //@property (nonatomic, assign) BOOL needJumpToBorrowVC;
 
 @end
@@ -147,6 +152,42 @@ static HSAuthFlowManager *man;
         _product4AuthNames = [tmpArray copy];
     }
     return _product4AuthNames;
+}
+
+- (NSArray *)offlineProduct1AuthNames {
+    if (!_offlineProduct1AuthNames) {
+        NSMutableArray *tmpArray = [NSMutableArray array];
+        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFundAndSocialSecurity"]];
+        _offlineProduct1AuthNames = [tmpArray copy];
+    }
+    return _offlineProduct1AuthNames;
+}
+
+- (NSArray *)offlineProduct2AuthNames {
+    if (!_offlineProduct2AuthNames) {
+        NSMutableArray *tmpArray = [NSMutableArray array];
+        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFundAndSocialSecurity"]];
+        _offlineProduct2AuthNames = [tmpArray copy];
+    }
+    return _offlineProduct2AuthNames;
+}
+
+- (NSArray *)offlineProduct3AuthNames {
+    if (!_offlineProduct3AuthNames) {
+        NSMutableArray *tmpArray = [NSMutableArray array];
+        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFundAndSocialSecurity", @"taobao"]];
+        _offlineProduct3AuthNames = [tmpArray copy];
+    }
+    return _offlineProduct3AuthNames;
+}
+
+- (NSArray *)offlineProduct4AuthNames {
+    if (!_offlineProduct4AuthNames) {
+        NSMutableArray *tmpArray = [NSMutableArray array];
+        [tmpArray addObjectsFromArray:@[@"credit"]];
+        _offlineProduct4AuthNames = [tmpArray copy];
+    }
+    return _offlineProduct4AuthNames ;
 }
 
 - (AuthTipOption)authOption {
@@ -522,6 +563,135 @@ static HSAuthFlowManager * _instance = nil;
     
     return YES;
 }
+
+#pragma mark - 线下产品 融易贷
+
+- (NSInteger)authIsFinishedForOfflineProduct1 {
+    NSArray *authArray = [self authedResultWithAuthNameArray:self.offlineProduct1AuthNames];
+    NSInteger authIndex = [self findUnAuthedIndexWithArray:authArray];
+    
+    // 如果authIndex没有标记，说明通过了所有必填认证，需弹出认证完成弹出框
+    if (authIndex == -1) {
+        return -100;
+    } else {
+        return authIndex;
+    }
+}
+
+- (BOOL)offlineProduct1AuthIsNotFinishedAndJump {
+    self.currentAuthOption = AuthTipOptionProduct4;
+    
+    NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForFourthProduct];
+    
+    if (authIndex == -100) {
+        return NO;
+    }
+    
+    if (authIndex >=0 && authIndex < 4) {
+        [self requriedAuthIsNotFinishedAndJump];
+        return NO;
+    }
+    
+    [self jumpWithAuthName:self.product4AuthNames[authIndex]];
+    return YES;
+}
+
+#pragma mark - 线下产品 薪居贷
+
+- (NSInteger)authIsFinishedForOfflineProduct2 {
+    NSArray *authArray = [self authedResultWithAuthNameArray:self.offlineProduct2AuthNames];
+    NSInteger authIndex = [self findUnAuthedIndexWithArray:authArray];
+    
+    // 如果authIndex没有标记，说明通过了所有必填认证，需弹出认证完成弹出框
+    if (authIndex == -1) {
+        return -100;
+    } else {
+        return authIndex;
+    }
+}
+
+- (BOOL)offlineProduct2AuthIsNotFinishedAndJump {
+    self.currentAuthOption = AuthTipOptionProduct4;
+    
+    NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForFourthProduct];
+    
+    if (authIndex == -100) {
+        return NO;
+    }
+    
+    if (authIndex >=0 && authIndex < 4) {
+        [self requriedAuthIsNotFinishedAndJump];
+        return NO;
+    }
+    
+    [self jumpWithAuthName:self.offlineProduct2AuthNames[authIndex]];
+    return YES;
+}
+
+#pragma mark - 线下产品 开薪贷
+
+- (NSInteger)authIsFinishedForOfflineProduct3 {
+    NSArray *authArray = [self authedResultWithAuthNameArray:self.offlineProduct3AuthNames];
+    NSInteger authIndex = [self findUnAuthedIndexWithArray:authArray];
+    
+    // 如果authIndex没有标记，说明通过了所有必填认证，需弹出认证完成弹出框
+    if (authIndex == -1) {
+        return -100;
+    } else {
+        return authIndex;
+    }
+}
+
+- (BOOL)offlineProduct3AuthIsNotFinishedAndJump {
+    self.currentAuthOption = AuthTipOptionProduct4;
+    
+    NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForFourthProduct];
+    
+    if (authIndex == -100) {
+        return NO;
+    }
+    
+    if (authIndex >=0 && authIndex < 4) {
+        [self requriedAuthIsNotFinishedAndJump];
+        return NO;
+    }
+    
+    [self jumpWithAuthName:self.offlineProduct3AuthNames[authIndex]];
+    return YES;
+}
+
+#pragma mark - 线下产品 安居贷
+
+- (NSInteger)authIsFinishedForOfflineProduct4 {
+    NSArray *authArray = [self authedResultWithAuthNameArray:self.offlineProduct4AuthNames];
+    NSInteger authIndex = [self findUnAuthedIndexWithArray:authArray];
+    
+    // 如果authIndex没有标记，说明通过了所有必填认证，需弹出认证完成弹出框
+    if (authIndex == -1) {
+        return -100;
+    } else {
+        return authIndex;
+    }
+}
+
+- (BOOL)offlineProduct4AuthIsNotFinishedAndJump {
+    self.currentAuthOption = AuthTipOptionProduct4;
+    
+    NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForFourthProduct];
+    
+    if (authIndex == -100) {
+        return NO;
+    }
+    
+    if (authIndex >=0 && authIndex < 4) {
+        [self requriedAuthIsNotFinishedAndJump];
+        return NO;
+    }
+    
+    [self jumpWithAuthName:self.offlineProduct4AuthNames[authIndex]];
+    return YES;
+}
+
 
 
 
@@ -973,21 +1143,23 @@ static HSAuthFlowManager * _instance = nil;
 /// 保存当前借款产品信息，可用于跳转至额度激活界面
 - (void)saveCurrentProductWithType:(ProductOption)productType
                      loanListModel:(HSLoanListModel *)loanListModel
-                     homeDataModel:(HSHomeDataModel *)homeDataModel {
+                     homeDataModel:(HSHomeDataModel *)homeDataModel
+                  isOfflineProduct:(BOOL)isOfflineProduct {
     self.productType = productType;
     self.loanListModel = loanListModel;
     self.homeDataModel = homeDataModel;
+    self.isOfflineProduct = isOfflineProduct;
 //    self.needJumpToBorrowVC = YES;
 }
 
-- (void)moveCurrentLoanModel {
+- (void)removeCurrentLoanModel {
     self.loanListModel = nil;
     self.homeDataModel = nil;
 }
 
 /// 获取当前借款产品信息
-- (void)getCurrentLoanData:(void (^)(ProductOption productType, HSLoanListModel *loanListModel, HSHomeDataModel *homeDataModel))completion {
-    completion(self.productType, self.loanListModel, self.homeDataModel);
+- (void)getCurrentLoanData:(void (^)(ProductOption productType, HSLoanListModel *loanListModel, HSHomeDataModel *homeDataModel, BOOL isOfflineProduct))completion {
+    completion(self.productType, self.loanListModel, self.homeDataModel, self.isOfflineProduct);
 //    self.needJumpToBorrowVC = NO;
 }
 
@@ -1135,8 +1307,13 @@ static HSAuthFlowManager * _instance = nil;
                 case AuthTipOptionRequired:
                 {
                     if ([self requriedAuthIsFinished] == -100) {
-                        /// 跳转至产品概要界面
-                        [self jumpToLimitActivationVC];
+                        if (_isOfflineProduct) {
+                            UIViewController *currentVC = [UIViewController currentViewController];
+                            [currentVC jumpToViewControllerWith:[HSProductSchemaViewController class]];
+                        } else {
+                            /// 跳转至产品概要界面
+                            [self jumpToLimitActivationVC];
+                        }
 //                        UIViewController *currentVC = [UIViewController currentViewController];
 //                        [currentVC.navigationController popViewControllerAnimated:YES];
                     } else {
@@ -1227,7 +1404,6 @@ static HSAuthFlowManager * _instance = nil;
     vc.hidesBottomBarWhenPushed = YES;
     
     UIViewController *currentVC = [UIViewController currentViewController];
-    [currentVC backBarButtonItemWithImageName:@"button_back"];
     [currentVC.navigationController pushViewController:vc animated:YES];
 }
 
@@ -1306,7 +1482,6 @@ static HSAuthFlowManager * _instance = nil;
     vc.hidesBottomBarWhenPushed = YES;
     
     UIViewController *currentVC = [UIViewController currentViewController];
-    [currentVC backBarButtonItemWithImageName:@"button_back"];
     [currentVC.navigationController pushViewController:vc animated:YES];
 }
 

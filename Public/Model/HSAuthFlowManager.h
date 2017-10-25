@@ -65,6 +65,22 @@
 - (NSInteger)authIsFinishedForFourthProduct;
 - (BOOL)product4AuthIsNotFinishedAndJump;
 
+/// 线下产品 融易贷
+- (NSInteger)authIsFinishedForOfflineProduct1;
+- (BOOL)offlineProduct1AuthIsNotFinishedAndJump;
+
+/// 线下产品 薪居贷
+- (NSInteger)authIsFinishedForOfflineProduct2;
+- (BOOL)offlineProduct2AuthIsNotFinishedAndJump;
+
+/// 线下产品 开薪贷
+- (NSInteger)authIsFinishedForOfflineProduct3;
+- (BOOL)offlineProduct3AuthIsNotFinishedAndJump;
+
+/// 线下产品 安居贷
+- (NSInteger)authIsFinishedForOfflineProduct4;
+- (BOOL)offlineProduct4AuthIsNotFinishedAndJump;
+
 /// 产品的标题数组
 - (NSArray<NSArray *> *)product1AuthTitles;
 - (NSArray<NSArray *> *)product2AuthTitles;
@@ -85,11 +101,14 @@
 /// 保存当前借款产品信息，可用于跳转至额度激活界面
 - (void)saveCurrentProductWithType:(ProductOption)productType
                      loanListModel:(HSLoanListModel *)loanListModel
-                     homeDataModel:(HSHomeDataModel *)homeDataModel;
-- (void)moveCurrentLoanModel;
+                     homeDataModel:(HSHomeDataModel *)homeDataModel
+                  isOfflineProduct:(BOOL)isOfflineProduct;
 
 /// 获取当前借款产品信息
-- (void)getCurrentLoanData:(void (^)(ProductOption productType, HSLoanListModel *loanListModel, HSHomeDataModel *homeDataModel))completion;
+- (void)getCurrentLoanData:(void (^)(ProductOption productType, HSLoanListModel *loanListModel, HSHomeDataModel *homeDataModel, BOOL isOfflineProduct))completion;
+
+/// 移除当前借款产品信息
+- (void)removeCurrentLoanModel;
 
 
 //- (void)jumpToBorrowVC;
