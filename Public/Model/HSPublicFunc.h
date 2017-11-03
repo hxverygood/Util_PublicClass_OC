@@ -14,6 +14,8 @@
 @property (nonatomic, assign) BOOL contactAuthoried;
 
 + (BOOL)contactAuthoried;
+/// 判断通讯录权限，如果没有授权则弹出alertView提示用户跳转至授权界面
++ (BOOL)contactAuthoriedAndShowAlert;
 
 /// 获取通讯录保存在沙盒中的路径
 - (void)fetchContactPath;

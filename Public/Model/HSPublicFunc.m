@@ -60,12 +60,47 @@
 
 
 
-#pragma mark - 获取通讯录工厂方法
+#pragma mark - 获取通讯录是否授权的工厂方法
 
 + (BOOL)contactAuthoried {
     HSPublicFunc *func = [[HSPublicFunc alloc] init];
     return func.contactAuthoried;
 }
+
+/// 判断通讯录权限，如果没有授权则弹出alertView提示用户跳转至授权界面
++ (BOOL)contactAuthoriedAndShowAlert {
+    BOOL contactAuthoried = [HSPublicFunc contactAuthoried];
+    if (!contactAuthoried) {
+        NSString *message = @"请打开通讯录访问权限";
+        NSString *confirmTitle = @"设置";
+        
+        __weak UIViewController *currentVC = [UIViewController currentViewController];
+//        __weak typeof(currentVC) weakVC = currentVC;
+        [ConfirmAlertController actionSheetWithTitle:@"提示" message:message confirmTitle:confirmTitle cancelTitle:nil actionStyle:UIAlertActionStyleDestructive viewController:currentVC actionBlock:^(NSInteger confirmIndex, UIAlertAction * _Nullable cancelAction) {
+            if (confirmIndex >= 0) {
+                NSURL *url = nil;
+                
+                if ([[UIDevice currentDevice] systemVersion].floatValue < 10.0) {
+                    // app名称
+                    url = [NSURL URLWithString:[NSString stringWithFormat:@"prefs:root=%@", [HSConfig shared].kBundleID]];
+                    if( [[UIApplication sharedApplication] canOpenURL:url] ) {
+                        [[UIApplication sharedApplication] openURL:url];
+                    }
+                } else {
+                    url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+                    if( [[UIApplication sharedApplication] canOpenURL:url] ) {
+                        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+                        }];
+                    }
+                }
+            }
+        }];
+    }
+    
+    return contactAuthoried;
+}
+
+
 
 
 
