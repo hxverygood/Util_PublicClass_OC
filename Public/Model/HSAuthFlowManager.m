@@ -157,7 +157,7 @@ static HSAuthFlowManager *man;
 - (NSArray *)offlineProduct1AuthNames {
     if (!_offlineProduct1AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
-        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFundAndSocialSecurity"]];
+        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFund", @"socialSecurity"]];
         _offlineProduct1AuthNames = [tmpArray copy];
     }
     return _offlineProduct1AuthNames;
@@ -166,7 +166,7 @@ static HSAuthFlowManager *man;
 - (NSArray *)offlineProduct2AuthNames {
     if (!_offlineProduct2AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
-        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFundAndSocialSecurity"]];
+        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFund", @"socialSecurity"]];
         _offlineProduct2AuthNames = [tmpArray copy];
     }
     return _offlineProduct2AuthNames;
@@ -175,7 +175,7 @@ static HSAuthFlowManager *man;
 - (NSArray *)offlineProduct3AuthNames {
     if (!_offlineProduct3AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
-        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFundAndSocialSecurity", @"taobao"]];
+        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFund", @"socialSecurity"]];
         _offlineProduct3AuthNames = [tmpArray copy];
     }
     return _offlineProduct3AuthNames;
