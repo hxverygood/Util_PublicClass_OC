@@ -32,4 +32,7 @@ typedef NS_ENUM(NSInteger, DateFormatterType) {
 + (instancetype)stringFromCurrentTimeStampWithDateFormatter:(DateFormatterType)dateFormaterType
                                                andSeparator:(NSString *)separator;
 
+/// 获取当前时间戳
++ (instancetype)getCurrentTimeStamp;
+
 @end

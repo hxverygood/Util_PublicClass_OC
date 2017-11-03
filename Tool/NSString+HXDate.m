@@ -79,4 +79,12 @@
     return dateStr;
 }
 
+/// 获取当前时间戳
++ (instancetype)getCurrentTimeStamp {
+    NSTimeInterval nowtime = [[NSDate date] timeIntervalSince1970]*1000;
+    long long theTime = [[NSNumber numberWithDouble:nowtime] longLongValue];
+    NSString *curTime = [NSString stringWithFormat:@"%llu",theTime];
+    return curTime;
+}
+
 @end
