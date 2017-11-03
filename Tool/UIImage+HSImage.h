@@ -65,4 +65,11 @@
  */
 - (NSString *)getInfoFromImage;
 
+/// 设置图片透明度
+- (UIImage *)convertImageAlpha:(CGFloat)alpha
+                         image:(UIImage*)image;
+
+/// 将UIView转化成image
++ (UIImage*)convertImageWithView:(UIView*)view;
+
 @end
