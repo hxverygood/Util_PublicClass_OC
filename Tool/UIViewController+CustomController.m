@@ -21,110 +21,15 @@
     }
     
     UIImage *backButtonImage = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-//    [UINavigationBar appearance].backIndicatorTransitionMaskImage = backButtonImage;
-//    [UINavigationBar appearance].backIndicatorImage = backButtonImage;
     self.navigationController.navigationBar.backIndicatorImage = backButtonImage;
     self.navigationController.navigationBar.backIndicatorTransitionMaskImage = backButtonImage;
 
     UIBarButtonItem *backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@" " style:UIBarButtonItemStyleDone target:self.navigationController action:nil];
     self.navigationItem.backBarButtonItem = backBarButtonItem;
     [self.navigationController.navigationBar setTintColor:[UIColor clearColor]];
-    
-    
-//    UIEdgeInsets insets = UIEdgeInsetsMake(20, 0, 0, 0);
-//    UIImage *backButtonImage = [[[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] imageWithAlignmentRectInsets:insets];
-    
-//    UIImage *backButtonImage = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-
-//    backButtonImage.resizingMode
-//    backButtonImage
-    
-    
-//    self.navigationItem.backBarButtonItem.title = @"";
-//    self.navigationController.navigationBar.tintColor = [UIColor clearColor];
-    
-//    [[UIBarButtonItem appearance] setBackButtonBackgroundImage:backButtonImage
-//                                                      forState:UIControlStateNormal
-//                                                    barMetrics:UIBarMetricsDefault];
-//    // 自定义文字部分
-//    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin)
-//                                                         forBarMetrics:UIBarMetricsDefault];
-    
-//    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] initWithTitle:@""
-//                                                                style:UIBarButtonItemStylePlain
-//                                                               target:nil
-//                                                               action:nil];
-
-    //主要是以下两个图片设置
-//    self.navigationController.navigationBar.backIndicatorImage = backButtonImage;
-//    self.navigationController.navigationBar.backIndicatorTransitionMaskImage = backButtonImage;
-//    self.navigationItem.backBarButtonItem = backItem;
-    
-    
-//    id appearance = nil;
-//    if ([UIDevice currentDevice].systemVersion.floatValue < 9.0) {
-//        appearance = [UIBarButtonItem appearanceWhenContainedIn:[self.navigationController class], nil];
-//    } else {
-//        appearance = [UIBarButtonItem appearanceWhenContainedInInstancesOfClasses:@[[self.navigationController class]]];
-//    }
-//
-//    if (!appearance) {
-//        return;
-//    }
-//
-//    [UINavigationBar appearance].backIndicatorTransitionMaskImage = backButtonImage;
-//    [UINavigationBar appearance].backIndicatorImage = backButtonImage;
-//    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin)
-//                                                         forBarMetrics:UIBarMetricsDefault];
-    
-//    [appearance setBackButtonBackgroundImage:backButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-
-//    UIBarButtonItem *backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStyleDone target:self.navigationController action:nil];
-//    self.navigationItem.backBarButtonItem = backBarButtonItem;
-    
-//    self.navigationController.navigationBar.backIndicatorImage = backButtonImage;
-//    self.navigationController.navigationBar.backIndicatorTransitionMaskImage = backButtonImage;
-//    self.navigationItem.backBarButtonItem.title = @"";
-//    self.navigationController.navigationBar.tintColor = [UIColor clearColor];
 }
 
 - (void)currentVCBackBarButtonItemWithName:(NSString *)imageName {
-//    UIImage *backButtonImage = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-
-//    [[UIBarButtonItem appearance] setBackButtonBackgroundImage:backButtonImage
-//                                                      forState:UIControlStateNormal
-//                                                    barMetrics:UIBarMetricsDefault];
-//    // 自定义文字部分
-//    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin)
-//                                                         forBarMetrics:UIBarMetricsDefault];
-    
-//    id appearance = nil;
-//    if ([UIDevice currentDevice].systemVersion.floatValue < 9.0) {
-//        appearance = [UIBarButtonItem appearanceWhenContainedIn:[self.navigationController class], nil];
-//    } else {
-//        appearance = [UIBarButtonItem appearanceWhenContainedInInstancesOfClasses:@[[self.navigationController class]]];
-//    }
-//
-//    if (!appearance) {
-//        return;
-//    }
-//    [appearance setBackButtonBackgroundImage:backButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-    
-    
-    
-//    UIEdgeInsets insets = UIEdgeInsetsMake(20, 0, 0, 0);
-//    UIImage *backButtonImage = [[[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] imageWithAlignmentRectInsets:insets];
-    
-//    UIImage *backButtonImage = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-//    [UINavigationBar appearance].backIndicatorTransitionMaskImage = backButtonImage;
-//    [UINavigationBar appearance].backIndicatorImage = backButtonImage;
-//    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(NSIntegerMin, NSIntegerMin)
-//                                                         forBarMetrics:UIBarMetricsDefault];
-    
-//    self.navigationController.navigationBar.backIndicatorImage = backButtonImage;
-//    self.navigationController.navigationBar.backIndicatorTransitionMaskImage = backButtonImage;
-//    self.navigationItem.backBarButtonItem.title = @"";
-//    self.navigationController.navigationBar.tintColor = [UIColor clearColor];
     
     if (!self) {
         return;
