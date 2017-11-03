@@ -7,6 +7,7 @@
 //
 
 #import "HSBaseViewController.h"
+#import "UIImage+HSImage.h"
 
 @interface HSBaseViewController ()
 
@@ -23,12 +24,6 @@
     
     [self changeNavigationBar];
     [self adapterForIOSVersion];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    
-//    [self changeNavigationBar];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -48,6 +43,7 @@
 #pragma mark - Private Func
 
 - (void)changeNavigationBar {
+    
     if (_navbarIsDark) {
         // 状态栏样式
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
@@ -76,19 +72,21 @@
         [self backBarButtonItemWithImageName:@"button_back_white"];
         //[self backBarButtonItemWithImageName:@"button_back"];
         
-        
         self.navigationController.navigationBar.translucent = YES;
-        self.navigationController.edgesForExtendedLayout = UIRectEdgeTop;
-        // navbar title的颜色
-        self.navigationController.navigationBar.titleTextAttributes = \
-        @{NSFontAttributeName:[UIFont systemFontOfSize:18.0],
-          NSForegroundColorAttributeName:[UIColor whiteColor]};
         // 导航栏背景透明
         [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
                                                       forBarMetrics:UIBarMetricsDefault];
         self.navigationController.navigationBar.shadowImage = [UIImage new];
         // navbar背景颜色
         self.navigationController.navigationBar.barTintColor = [UIColor clearColor];
+        
+        
+        self.navigationController.edgesForExtendedLayout = UIRectEdgeTop;
+        // navbar title的颜色
+        self.navigationController.navigationBar.titleTextAttributes = \
+        @{NSFontAttributeName:[UIFont systemFontOfSize:18.0],
+          NSForegroundColorAttributeName:[UIColor whiteColor]};
+        
     } else {
         // 状态栏样式
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
