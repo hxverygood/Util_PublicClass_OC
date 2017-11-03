@@ -59,4 +59,7 @@
 /// 判断字符串是否是url
 - (BOOL)isUrl;
 
+//判断用户手机型号
++ (NSString * _Nullable)deviceVersion;
+
 @end
