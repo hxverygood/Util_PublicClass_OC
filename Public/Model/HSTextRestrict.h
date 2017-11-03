@@ -19,8 +19,8 @@ typedef NS_ENUM(NSInteger, HSRestrictType)
     HSRestrictTypeCharacterAndNumber,           /// 判断字母和数字
     HSRestrictTypeChineseAndCharAndNumber,      /// 判断中文、字母和数字
     HSRestrictTypeIdCard,                       ///  判断身份证
-    HSRestrictTypeCustom,                       ///< 自定义规则
     HSRestrictTypeNumberOrCharacter,             /// 只允许输入数字和字母
+    HSRestrictTypeCustom,                       ///< 自定义规则
 };
 
 

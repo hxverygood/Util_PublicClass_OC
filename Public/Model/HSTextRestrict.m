@@ -103,7 +103,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 
 - (void)textDidChanged:(UITextField *)textField
 {
-    if (textField.text.length > self.maxLength) {
+    if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
     }
     
@@ -119,7 +119,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 
 - (void)textDidChanged:(UITextField *)textField
 {
-    if (textField.text.length > self.maxLength) {
+    if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
     }
     
@@ -134,7 +134,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 
 - (void)textDidChanged:(UITextField *)textField
 {
-    if (textField.text.length > self.maxLength) {
+    if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
     }
     
@@ -150,7 +150,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 
 - (void)textDidChanged:(UITextField *)textField
 {
-    if (textField.text.length > self.maxLength) {
+    if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
     }
     
@@ -167,7 +167,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 
 - (void)textDidChanged:(UITextField *)textField
 {
-    if (textField.text.length > self.maxLength) {
+    if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
     }
 }
@@ -180,7 +180,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 
 - (void)textDidChanged:(UITextField *)textField
 {
-    if (textField.text.length > self.maxLength) {
+    if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
     }
     textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
@@ -196,7 +196,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 
 - (void)textDidChanged:(UITextField *)textField
 {
-    if (textField.text.length > self.maxLength) {
+    if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
     }
     textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
@@ -212,7 +212,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 
 - (void)textDidChanged:(UITextField *)textField
 {
-    if (textField.text.length > self.maxLength) {
+    if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
     }
     textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
@@ -229,15 +229,29 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 
 - (void)textDidChanged:(UITextField *)textField
 {
-    if (textField.text.length > self.maxLength) {
+    if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
     }
     
-    if (![self isBlankString:self.predicateStr]) {
-        textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
-            return kMatchStringFormat(aString, self.predicateStr);
-        });
+    if ([self isBlankString:self.predicateStr]) {
+        return;
     }
+    
+    textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
+        return kMatchStringFormat(aString, self.predicateStr);
+    });
+    
+//    NSMutableString * modifyString = textField.text.mutableCopy;
+//    for (NSInteger idx = 0; idx < modifyString.length;) {
+//        NSString * subString = [modifyString substringWithRange: NSMakeRange(idx, 1)];
+//        NSPredicate * predicate = [NSPredicate predicateWithFormat: @"SELF MATCHES %@", self.predicateStr];
+//        if ([predicate evaluateWithObject: subString]) {
+//            idx++;
+//        } else {
+//            [modifyString deleteCharactersInRange: NSMakeRange(idx, 1)];
+//        }
+//    }
+//    textField.text = modifyString;
 }
 
 
