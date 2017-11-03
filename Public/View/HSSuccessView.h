@@ -12,6 +12,6 @@
 
 + (instancetype)showSucccessViewWithImageName:(NSString *)imageName
                                       content:(NSString *)content
-                          closelButtonPressed:(void (^)(void))closelButtonPressedBlock;
+                           closeButtonPressed:(void (^)(void))closelButtonPressedBlock;
 
 @end

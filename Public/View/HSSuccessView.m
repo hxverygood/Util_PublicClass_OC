@@ -26,7 +26,7 @@
 
 + (instancetype)showSucccessViewWithImageName:(NSString *)imageName
                                       content:(NSString *)content
-                          closelButtonPressed:(void (^)(void))closelButtonPressedBlock {
+                           closeButtonPressed:(void (^)(void))closelButtonPressedBlock {
     return [[HSSuccessView alloc] initWithImageName:imageName content:content closelButtonPressed:closelButtonPressedBlock];
 }
 
