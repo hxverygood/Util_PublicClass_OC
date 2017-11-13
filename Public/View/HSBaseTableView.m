@@ -16,7 +16,8 @@
 
 @implementation HSBaseTableView
 
-- (instancetype)initWithFrame:(CGRect)frame style:(UITableViewStyle)style {
+- (instancetype)initWithFrame:(CGRect)frame
+                        style:(UITableViewStyle)style {
     self = [super initWithFrame:frame style:style];
     if (self) {
         self.backgroundColor = HS_BACKGROUND;
@@ -27,6 +28,8 @@
             self.estimatedSectionHeaderHeight = 0;
             self.estimatedSectionFooterHeight = 0;
         }
+        
+        self.contentInset = UIEdgeInsetsMake(0.0, 0.0, [self isIPhoneX] ? 34.0 : 0.0, 0.0);
     }
     return self;
 }
@@ -43,6 +46,8 @@
             self.estimatedSectionHeaderHeight = 0;
             self.estimatedSectionFooterHeight = 0;
         }
+        
+        self.contentInset = UIEdgeInsetsMake(0.0, 0.0, [self isIPhoneX] ? 34.0 : 0.0, 0.0);
     }
     
     return self;
@@ -61,7 +66,6 @@
 
 
 
-
 #pragma mark - CYLTableViewPlaceHolder Delegate
 
 - (UIView *)makePlaceHolderView {
@@ -71,6 +75,15 @@
  
 - (BOOL)enableScrollWhenPlaceHolderViewShowing {
     return YES;
+}
+
+
+
+#pragma mark - Fun
+
+- (BOOL)isIPhoneX {
+    BOOL flag = [[UIScreen mainScreen] bounds].size.width == 375.f && [[UIScreen mainScreen] bounds].size.height == 812.f ? YES : NO;
+    return flag;
 }
 
 @end

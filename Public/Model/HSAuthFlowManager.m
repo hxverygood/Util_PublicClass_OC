@@ -41,6 +41,7 @@
 
 #import "HSAuthAlertView.h"                                 // 认证弹出框
 #import "HSLimitActivationViewController.h"                 // 激活额度VC
+#import "HSIncomeCertifyViewController.h"                   // 收入证明认证VC
 
 
 #import "HSLoanListModel.h"
@@ -88,7 +89,7 @@ static HSAuthFlowManager *man;
 
 - (NSArray *)totalAuthNames {
     if (!_totalAuthNames) {
-        _totalAuthNames = @[@"realName", @"callLog", @"career", @"contact", @"zhima", @"accumulationFund", @"socialSecurity", @"credit", @"chsi", @"taobao", @"bankBillFlow"];
+        _totalAuthNames = @[@"realName", @"callLog", @"career", @"contact", @"zhima", @"accumulationFund", @"socialSecurity", @"credit", @"chsi", @"taobao", @"bankBillFlow", @"income"];
     }
     return _totalAuthNames;
 }
@@ -128,7 +129,7 @@ static HSAuthFlowManager *man;
     if (!_product2AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
 //        [tmpArray addObjectsFromArray:self.requiredAuthNames];
-        [tmpArray addObjectsFromArray:@[@"accumulationFund", @"socialSecurity", @"credit"]];
+        [tmpArray addObjectsFromArray:@[@"accumulationFund", @"credit"]];
         _product2AuthNames = [tmpArray copy];
     }
     return _product2AuthNames;
@@ -154,15 +155,17 @@ static HSAuthFlowManager *man;
     return _product4AuthNames;
 }
 
+/// 融易贷
 - (NSArray *)offlineProduct1AuthNames {
     if (!_offlineProduct1AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
-        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFund", @"socialSecurity"]];
+        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFund", @"socialSecurity", @"income"]];
         _offlineProduct1AuthNames = [tmpArray copy];
     }
     return _offlineProduct1AuthNames;
 }
 
+/// 薪居贷
 - (NSArray *)offlineProduct2AuthNames {
     if (!_offlineProduct2AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
@@ -172,15 +175,18 @@ static HSAuthFlowManager *man;
     return _offlineProduct2AuthNames;
 }
 
+
+/// 开薪贷
 - (NSArray *)offlineProduct3AuthNames {
     if (!_offlineProduct3AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
-        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFund", @"socialSecurity"]];
+        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFund", @"socialSecurity", @"income"]];
         _offlineProduct3AuthNames = [tmpArray copy];
     }
     return _offlineProduct3AuthNames;
 }
 
+/// 安居贷、微加贷
 - (NSArray *)offlineProduct4AuthNames {
     if (!_offlineProduct4AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
@@ -579,7 +585,7 @@ static HSAuthFlowManager * _instance = nil;
 }
 
 - (BOOL)offlineProduct1AuthIsNotFinishedAndJump {
-    self.currentAuthOption = AuthTipOptionProduct4;
+    self.currentAuthOption = AuthTipOptionProductOffline1;
     
     NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForFourthProduct];
     
@@ -592,7 +598,7 @@ static HSAuthFlowManager * _instance = nil;
         return NO;
     }
     
-    [self jumpWithAuthName:self.product4AuthNames[authIndex]];
+    [self jumpWithAuthName:self.offlineProduct1AuthNames[authIndex]];
     return YES;
 }
 
@@ -611,7 +617,7 @@ static HSAuthFlowManager * _instance = nil;
 }
 
 - (BOOL)offlineProduct2AuthIsNotFinishedAndJump {
-    self.currentAuthOption = AuthTipOptionProduct4;
+    self.currentAuthOption = AuthTipOptionProductOffline2;
     
     NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForFourthProduct];
     
@@ -643,7 +649,7 @@ static HSAuthFlowManager * _instance = nil;
 }
 
 - (BOOL)offlineProduct3AuthIsNotFinishedAndJump {
-    self.currentAuthOption = AuthTipOptionProduct4;
+    self.currentAuthOption = AuthTipOptionProductOffline3;
     
     NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForFourthProduct];
     
@@ -675,7 +681,7 @@ static HSAuthFlowManager * _instance = nil;
 }
 
 - (BOOL)offlineProduct4AuthIsNotFinishedAndJump {
-    self.currentAuthOption = AuthTipOptionProduct4;
+    self.currentAuthOption = AuthTipOptionProductOffline4;
     
     NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForFourthProduct];
     
@@ -752,6 +758,9 @@ static HSAuthFlowManager * _instance = nil;
     }
     else if ([authName isEqualToString:@"bankBillFlow"]) {
         return @"信用卡账单";
+    }
+    else if ([authName isEqualToString:@"income"]) {
+        return @"收入认证";
     }
     return nil;
 }
@@ -888,51 +897,14 @@ static HSAuthFlowManager * _instance = nil;
             }
             [authArray addObject:[isCert copy]];
         }
+        else if ([authName isEqualToString:@"income"]) {
+            isCert = user.auth.incomeCode;
+            if (!isCert) {
+                isCert = @"1";
+            }
+            [authArray addObject:[isCert copy]];
+        }
     }
-    
-    // 是否实名认证
-    //    NSString *isCert = user.auth.errorCode;
-    //    if (!isCert) {
-    //        isCert = @"1";
-    //    }
-    //    [authArray addObject:isCert];
-    
-    // 是否获取了通话详单
-    //    NSString *isCallLog = user.auth.callLog;
-    //    if (!isCallLog) {
-    //        isCallLog = @"1";
-    //    }
-    //    [authArray addObject:isCallLog];
-    
-    
-    //    // 是否认证了淘宝
-    //    NSString *isTaobao = user.auth.taoBao;
-    //    if (!isTaobao) {
-    //        isTaobao = @"1";
-    //    }
-    //    [authArray addObject:isTaobao];
-    //
-    //    // 是否进行了芝麻授权
-    //    NSString *isZhima = user.auth.zhimaCode;
-    //    if (!isZhima) {
-    //        isZhima = @"1";
-    //    }
-    //    [authArray addObject:isZhima];
-    //
-    //
-    //    // 是否进行了征信认证
-    //    NSString *isCreditInvestigation = user.auth.creditInvestigation;
-    //    if (!isCreditInvestigation) {
-    //        isCreditInvestigation = @"1";
-    //    }
-    //    [authArray addObject:isCreditInvestigation];
-    //
-    //    NSInteger zhimaScore = 0;
-    //    NSNumber *zhimaScoreNum = [user.auth.zhimaInfo convertToInt];
-    //    // 如果芝麻分存在，则转换为数字，否则就当做0分（有可能没有进行芝麻认证）
-    //    if (zhimaScoreNum) {
-    //        zhimaScore = [zhimaScoreNum integerValue];
-    //    }
     
     return authArray;
 }
@@ -1286,6 +1258,9 @@ static HSAuthFlowManager * _instance = nil;
     else if (authIndex == 10) {
         [manager jumpToCreditCardVC];
     }
+    else if (authIndex == 11) {
+        [manager jumpToIncomeVC];
+    }
 }
 
 /// 自动跳转至相关认证VC
@@ -1631,79 +1606,15 @@ static HSAuthFlowManager * _instance = nil;
     [currentVC.navigationController pushViewController:vc animated:YES];
 }
 
-/// 获取额度并显示额度界面
-//+ (void)getGradeAndShowAuthSuccessView {
-//    HSUser *user = [HSLoginInfo savedLoginInfo];
-//    
-//    NSString *idcard = [HSLoginInfo savedLoginInfo].PAPERID;
-//    if ([NSString isBlankString:idcard]) {
-//        NSLog(@"idCard为空，无法获取首页金额数据");
-//        return;
-//    }
-//    
-//    NSString *ID = [HSLoginInfo savedLoginInfo].ID;
-//    if ([NSString isBlankString:ID]) {
-//        return;
-//    }
-//    
-//    if (!user.auth.errorCode ||
-//        ![user.auth.errorCode isEqualToString:@"0"]) {
-//        return;
-//    }
-//    
-//    [SVProgressHUD showWithStatus:@"正在获取数据"];
-//    
-//    [HSInterface getMainGradeWithIdCard:idcard ID:ID completion:^(BOOL success, NSString *message, HSHomeDataModel *model) {
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            if (success) {
-//                [SVProgressHUD dismiss];
-//                
-//                NSNumber *applyAmountNum = [model.Amt convertToInt];
-//                if (applyAmountNum) {
-//                    HSUser *user = [HSLoginInfo savedLoginInfo];
-//                    user.Amt = model.Amt;
-//                    [HSLoginInfo saveLoginInfo:user];
-//                    
-//                    HSAuthCompletionView *alertView = [HSAuthCompletionView alertSuccessViewWithLimit:model.Amt buttonPressedBlock:^(BOOL applyButtonPressed, BOOL promptLimitButtonPressed) {
-//                        if (applyButtonPressed) {
-//                            HSHomeDetailViewController *vc = [[HSHomeDetailViewController alloc] init];
-//                            vc.hidesBottomBarWhenPushed = YES;
-//                            
-//                            UIViewController *currentVC = [UIViewController currentViewController];
-//                            [currentVC.navigationController pushViewController:vc animated:YES];
-//                            return;
-//                        }
-//                        
-//                        if (promptLimitButtonPressed) {
-//                            UIViewController *currentVC = [UIViewController currentViewController];
-//                            NSArray<UIViewController *> *controllerArray = [currentVC.navigationController childViewControllers];
-//                            // 如果上一个VC是认证界面，则直接pop
-//                            if (controllerArray.count > 0) {
-//                                UIViewController *lastVC = controllerArray[controllerArray.count-1];
-//                                if ([lastVC isKindOfClass:[HSInfoAuthViewController class]]) {
-//                                    [currentVC.navigationController popViewControllerAnimated:YES];
-//                                } else {
-//                                    HSInfoAuthViewController *vc = [[HSInfoAuthViewController alloc] init];
-//                                    vc.hidesBottomdBarWhenPushed = YES;
-//                                    [currentVC.navigationController pushViewController:vc animated:YES];
-//                                }
-//                            }
-//                        }
-//                    }];
-//                    [alertView show];
-//                }
-//            }
-//            else
-//            {
-//                if (![NSString isBlankString:message]) {
-//                    [SVProgressHUD showInfoWithStatus:message];
-//                    return;
-//                }
-//                [SVProgressHUD dismiss];
-//            }
-//        });
-//    }];
-//}
+/// 跳转收入证明认证
+- (void)jumpToIncomeVC {
+    HSIncomeCertifyViewController *vc = [[HSIncomeCertifyViewController alloc] init];
+    vc.isInAuthFlow = YES;
+    vc.hidesBottomBarWhenPushed = YES;
+    UIViewController *currentVC = [UIViewController currentViewController];
+    [currentVC backBarButtonItemWithImageName:@"button_back"];
+    [currentVC.navigationController pushViewController:vc animated:YES];
+}
 
 
 @end

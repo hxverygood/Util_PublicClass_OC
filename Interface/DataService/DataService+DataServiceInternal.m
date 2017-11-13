@@ -49,11 +49,11 @@
     {
         urlString = [NSString stringWithFormat:@"%@/%@", mainDirectory, apiName];
     }
-
-
-    NSLog(@"请求地址----------：%@",urlString);
+    
     // 对请求参数进行组合
     NSDictionary *newParams = [self combinePostParamBodyWithAPIName:apiName params:params];
+    NSLog(@"%@", urlString);
+    NSLog(@"%@", newParams);
 
     HSHttpSessionManager *manager = [HSHttpSessionManager sharedSessionManager];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/plain", nil];
@@ -76,7 +76,9 @@
         NSLog(@"api return");
         NSLog(@"apiName：%@", apiName);
         NSLog(@"json: %@", json);
-        NSLog(@"err：%@", err);
+        if (err) {
+            NSLog(@"err：%@", err);
+        }
 #endif
 
         DataServiceCompletionModel *compModel = [[DataServiceCompletionModel alloc] init];
@@ -272,7 +274,8 @@
 //    [manager.requestSerializer setValue:@"application/x-www-form-urlencoded;charset=utf8" forHTTPHeaderField:@"Content-Type"];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/plain", nil];
     
-    [manager POST:urlString parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+    [manager POST:urlString parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData)
+    {
         [formData appendPartWithFileData:fileData name:@"file" fileName:fileName mimeType:mimeType];
         
     } progress:^(NSProgress * _Nonnull uploadProgress) {
@@ -474,9 +477,9 @@
 //        body[@"loginInfo"] = [HSLoginInfo loginInfo];
     }
     
-    NSLog(@"%@", self.baseUrlString);
-    NSLog(@"%@", apiName);
-    NSLog(@"%@", body);
+//    NSLog(@"%@", self.baseUrlString);
+//    NSLog(@"%@", apiName);
+//    NSLog(@"%@", body);
     
     
     //    NSString *dataValue = [dataValueString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet characterSetWithCharactersInString:@""]];
@@ -501,7 +504,7 @@
 /// 请求头不需要包含验签信息“字段sign”
 - (BOOL)excludeSignInHttpHeaderForAPIName:(NSString *)apiName {
     // sign不作为请求头参数
-    NSArray *includeItems = @[@"registerandlogin/isregister.do", @"product/product.do", @"banner/banner.do", @"notice/getNews.do", @"registerandlogin/login.do"];
+    NSArray *includeItems = @[@"registerandlogin/isregister.do", @"product/product.do", @"banner/banner.do", @"notice/getNews.do", @"registerandlogin/login.do",@"person/AddressBook"];
     if ([includeItems containsObject:apiName]) {
         return NO;
     }

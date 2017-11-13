@@ -78,7 +78,7 @@
             // 登录过期，删除登录信息，弹出提示框
             if (model.apiModel.errorCode.integerValue == 1003) {
                 [HSLoginInfo removeSavedLoginInfo];
-                [HSLoginInfo removeRegistrationID];
+//                [HSLoginInfo removeRegistrationID];
                 // 删除手势、指纹密码
                 [SCSecureHelper openGesture:NO];
                 [SCSecureHelper touchIDOpen:NO];
