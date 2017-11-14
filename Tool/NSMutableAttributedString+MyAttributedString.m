@@ -206,17 +206,35 @@
 
 
 
-+ (instancetype)attributedDeleteLineWithString:(NSString *)string {
-    return [[NSMutableAttributedString alloc] initWithDeleteLineWithString:string];
+//+ (instancetype)attributedDeleteLineWithString:(NSString *)string {
+//    return [[NSMutableAttributedString alloc] initWithDeleteLineWithString:string];
+//}
+//
+//- (instancetype)initWithDeleteLineWithString:(NSString *)string {
+//    NSDictionary *attributes = @{NSStrikethroughStyleAttributeName:@(NSUnderlineStyleSingle|NSUnderlinePatternSolid)};
+//    NSMutableAttributedString *attrStr =
+//    [[NSMutableAttributedString alloc]initWithString:string
+//                                   attributes:attributes];
+//    return attrStr;
+//}
+
+
++ (instancetype)attributedDeleteLineWithString:(NSString *)string
+                                         color:(UIColor *)color {
+    return [[NSMutableAttributedString alloc] initWithDeleteLineWithString:string color:color];
 }
 
-- (instancetype)initWithDeleteLineWithString:(NSString *)string {
-    NSDictionary *attributes = @{NSStrikethroughStyleAttributeName:@(NSUnderlineStyleSingle|NSUnderlinePatternSolid)};
+- (instancetype)initWithDeleteLineWithString:(NSString *)string
+                                       color:(UIColor *)color {
+    NSDictionary *attributes = @{NSForegroundColorAttributeName : color,
+                                 NSStrikethroughStyleAttributeName:@(NSUnderlineStyleSingle|NSUnderlinePatternSolid)};
     NSMutableAttributedString *attrStr =
     [[NSMutableAttributedString alloc]initWithString:string
-                                   attributes:attributes];
+                                          attributes:attributes];
     return attrStr;
 }
+
+
 
 
 /// 添加下划线

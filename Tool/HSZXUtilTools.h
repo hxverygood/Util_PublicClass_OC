@@ -190,4 +190,5 @@
 
 -(BOOL)FirstGetNewVersionByNotForce;
 
+
 @end

@@ -1607,7 +1607,8 @@ static HSAuthFlowManager * _instance = nil;
 }
 
 /// 跳转收入证明认证
-- (void)jumpToIncomeVC {
+- (void)jumpToIncomeVC
+{
     HSIncomeCertifyViewController *vc = [[HSIncomeCertifyViewController alloc] init];
     vc.isInAuthFlow = YES;
     vc.hidesBottomBarWhenPushed = YES;

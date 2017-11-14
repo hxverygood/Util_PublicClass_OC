@@ -115,7 +115,8 @@
 
 #pragma mark - Private Func
 
-- (void)show {
+- (void)show
+{
     UIWindow *window = [UIApplication sharedApplication].keyWindow;
     [window addSubview:_backgroudView];
     [window addSubview:self];

@@ -462,9 +462,11 @@
     {
         return NO;
     }
-    
     [kUserDefault setObject:KFirstGetNewVersion forKey:KFirstGetNewVersion];
     return YES;
 }
+
+
+
 
 @end
