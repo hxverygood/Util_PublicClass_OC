@@ -51,7 +51,7 @@
 
 /// 隐藏部分字符串
 - (NSString * _Nullable)hideStringWithFrontPartialCount:(NSInteger)frontPartialCount
-                              endPartialCount:(NSInteger)endPartialCount;
+                                        endPartialCount:(NSInteger)endPartialCount;
 
 /// 使用SVProgressHUD时，根据文字多少计算HUD要显示的时间。计算方法来自SVProgressHUD
 - (CGFloat)hudShowDuration;
@@ -61,5 +61,8 @@
 
 //判断用户手机型号
 + (NSString * _Nullable)deviceVersion;
+
+/// NSString转NSDictionary
+- (NSDictionary *_Nullable)dictionaryWithJsonString;
 
 @end

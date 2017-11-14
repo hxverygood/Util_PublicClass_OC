@@ -247,6 +247,26 @@
     return deviceString;
 }
 
+- (NSDictionary *_Nullable)dictionaryWithJsonString {
+    if (self == nil) {
+        return nil;
+    }
+    
+    NSData *jsonData = [self dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *err;
+    NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                        options:NSJSONReadingMutableContainers
+                                                          error:&err];
+    if(err) {
+        NSLog(@"json解析失败：%@",err);
+        return nil;
+    }
+    return dic;
+}
+
+
+
+
 #pragma mark - Private Func
 
 #pragma mark 隐藏部分字符串
