@@ -52,8 +52,8 @@
     
     // 对请求参数进行组合
     NSDictionary *newParams = [self combinePostParamBodyWithAPIName:apiName params:params];
-    NSLog(@"%@", urlString);
-    NSLog(@"%@", newParams);
+    NSLog(@"\n%@\n%@", urlString, newParams);
+//    NSLog(@"%@", newParams);
 
     HSHttpSessionManager *manager = [HSHttpSessionManager sharedSessionManager];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/plain", nil];
@@ -73,9 +73,11 @@
         id json = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&err];
         
 #ifdef DEBUG
-        NSLog(@"api return");
-        NSLog(@"apiName：%@", apiName);
-        NSLog(@"json: %@", json);
+        NSLog(@"\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>> api return >>>>>>>>>>>>>>>>>>>>>>>>>>>\n\
+%@/\n%@\n%@\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\
+_", mainDirectory, apiName, json);
+//        NSLog(@"apiName：%@", apiName);
+//        NSLog(@"json: %@", json);
         if (err) {
             NSLog(@"err：%@", err);
         }
@@ -494,7 +496,7 @@
 - (BOOL)shouldIncludeLoginInfoForAPIName:(NSString *)apiName
 {
     // 使用loginfo作为参数的接口
-    NSArray *includeItems = @[@"register.do", @"findpwd", @"updatepwd", @"validation.do", @"homepage/getcheck.do", @"homePage/getGradePro", @"Repayment/checkpwd", @"activity/Dopostconfirm",@"activity/getDetail.do", @"msg/getdatamsg", @"PersonMesg/getMsg", @"addapply/addApply.do"];
+    NSArray *includeItems = @[@"register.do", @"findpwd", @"updatepwd", @"validation.do", @"homepage/getcheck.do", @"homePage/getGradePro", @"Repayment/checkpwd", @"activity/Dopostconfirm",@"activity/getDetail.do", @"msg/getdatamsg", @"PersonMesg/getMsg", @"addapply/addApply.do",@"getDetials",@"getDetailAccount",@"tabLogin.html", @"queryCredit.html"];
     if ([includeItems containsObject:apiName]) {
         return YES;
     }
