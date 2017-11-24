@@ -302,4 +302,27 @@
 
 
 
+/**
+ 金额转换为千分位金额
+ 
+ @param digitString  未转换的金额
+ @return 转换后的金额
+ */
++(NSString * _Nullable)separatedDigitStringWithStr:(NSString * _Nullable)digitString
+{
+    if(!digitString || [digitString floatValue] == 0)
+    {
+        return @"0.00";
+    }
+    if (digitString.floatValue < 1000)
+    {
+        return [NSString stringWithFormat:@"%.2f",digitString.floatValue];
+    };
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setPositiveFormat:@",###.00;"];
+    return [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[digitString doubleValue]]];
+}
+
+
+
 @end

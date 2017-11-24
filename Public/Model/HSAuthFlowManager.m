@@ -757,7 +757,7 @@ static HSAuthFlowManager * _instance = nil;
         return @"淘宝认证";
     }
     else if ([authName isEqualToString:@"bankBillFlow"]) {
-        return @"信用卡账单";
+        return @"信用卡账单认证";
     }
     else if ([authName isEqualToString:@"income"]) {
         return @"收入认证";
@@ -898,7 +898,30 @@ static HSAuthFlowManager * _instance = nil;
             [authArray addObject:[isCert copy]];
         }
         else if ([authName isEqualToString:@"income"]) {
-            isCert = user.auth.incomeCode;
+            NSString *incomeIsCert = user.auth.incomeCode;
+            NSString *savingIsCert = user.auth.savings;
+            
+            // 未认证
+            if ([incomeIsCert isEqualToString:@"1"] &&
+                [savingIsCert isEqualToString:@"1"]) {
+                isCert = @"1";
+            }
+            else if ([incomeIsCert isEqualToString:@"0"] ||
+                     [savingIsCert isEqualToString:@"0"]) {
+                // 已认证
+                isCert = @"0";
+            }
+            else if ([incomeIsCert isEqualToString:@"2"] ||
+                     [savingIsCert isEqualToString:@"2"]) {
+                // 认证失败
+                isCert = @"2";
+            }
+            else if ([incomeIsCert isEqualToString:@"3"] ||
+                     [savingIsCert isEqualToString:@"3"]) {
+                // 认证中
+                isCert = @"3";
+            }
+
             if (!isCert) {
                 isCert = @"1";
             }
@@ -1156,9 +1179,11 @@ static HSAuthFlowManager * _instance = nil;
             CGFloat duration = [tips hudShowDuration];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 UIViewController *currentVC = [UIViewController currentViewController];
-                [currentVC jumpToViewControllerWith:[HSProductSchemaViewController class]];
-                [currentVC jumpToViewControllerWith:[HSDataManagementViewController class]];
-                [currentVC jumpToViewControllerWith:[HSLimitPromotionViewController class]];
+                if ([currentVC jumpToViewControllerWith:[HSLimitPromotionViewController class]] == NO) {
+                    if ([currentVC jumpToViewControllerWith:[HSProductSchemaViewController class]] == NO) {
+                        [currentVC jumpToViewControllerWith:[HSDataManagementViewController class]];
+                    }
+                }
             });
             return;
         }
@@ -1518,7 +1543,7 @@ static HSAuthFlowManager * _instance = nil;
             [SVProgressHUD dismiss];
             HSZhimaWebViewController *zhimaWebViewController = [[HSZhimaWebViewController alloc] init];
             zhimaWebViewController.zhimaUrl = model.errorInfo;
-            zhimaWebViewController.isInAuthFlow = YES;
+//            zhimaWebViewController.isInAuthFlow = YES;
             zhimaWebViewController.hidesBottomBarWhenPushed = YES;
             
             UIViewController *vc = [UIViewController currentViewController];

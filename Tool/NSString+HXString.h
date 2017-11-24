@@ -63,6 +63,14 @@
 + (NSString * _Nullable)deviceVersion;
 
 /// NSString转NSDictionary
-- (NSDictionary *_Nullable)dictionaryWithJsonString;
+- (NSDictionary * _Nullable)dictionaryWithJsonString;
+
+/**
+ 金额转换为千分位金额
+ 
+ @param digitString  未转换的金额
+ @return 转换后的金额
+ */
++(NSString * _Nullable)separatedDigitStringWithStr:(NSString * _Nullable)digitString;
 
 @end

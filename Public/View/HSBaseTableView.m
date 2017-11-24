@@ -29,7 +29,7 @@
             self.estimatedSectionFooterHeight = 0;
         }
         
-        self.contentInset = UIEdgeInsetsMake(0.0, 0.0, [self isIPhoneX] ? 34.0 : 0.0, 0.0);
+//        self.contentInset = UIEdgeInsetsMake(0.0, 0.0, [self isIPhoneX] ? 34.0 : 0.0, 0.0);
     }
     return self;
 }
@@ -47,7 +47,7 @@
             self.estimatedSectionFooterHeight = 0;
         }
         
-        self.contentInset = UIEdgeInsetsMake(0.0, 0.0, [self isIPhoneX] ? 34.0 : 0.0, 0.0);
+//        self.contentInset = UIEdgeInsetsMake(0.0, 0.0, [self isIPhoneX] ? 34.0 : 0.0, 0.0);
     }
     
     return self;
@@ -79,7 +79,7 @@
 
 
 
-#pragma mark - Fun
+#pragma mark - Func
 
 - (BOOL)isIPhoneX {
     BOOL flag = [[UIScreen mainScreen] bounds].size.width == 375.f && [[UIScreen mainScreen] bounds].size.height == 812.f ? YES : NO;

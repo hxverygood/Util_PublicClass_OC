@@ -32,6 +32,7 @@
 /// 获取指定的ViewControllerClass数组（首页、个人中心首页）
 + (NSArray<Class> *)mainViewControllerClassArray;
 
+
 #pragma mark 是否实名认证
 
 + (BOOL)isRealName;
