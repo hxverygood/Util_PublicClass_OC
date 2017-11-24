@@ -52,10 +52,8 @@
 //        
 //        // 添加自适应屏幕宽度js调用的方法
 //        [wkWebConfig.userContentController addUserScript:wkUserScript];
-        BOOL navIsTranlucent = [UINavigationBar appearance].translucent;
-        CGFloat heightDiff = navIsTranlucent ? 0.0 : 64.0;
         
-        _webView = [[WKWebView alloc] initWithFrame:CGRectMake(0.0, 0.0, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame)-heightDiff) configuration:wkWebConfig];
+        _webView = [[WKWebView alloc] initWithFrame:[UIView fullScreenFrame] configuration:wkWebConfig];
         [self.view addSubview:_webView];
     }
     return _webView;
@@ -112,6 +110,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.view.backgroundColor = [UIColor whiteColor];
     if (![NSString isBlankString:self.titleStr]) {
         self.title = self.titleStr;
     }
@@ -130,7 +129,7 @@
     [super viewDidLayoutSubviews];
     
     self.progressView.frame = CGRectMake(0.0, 0.0, [[UIScreen mainScreen] bounds].size.width, 2.0);
-    self.webView.frame = CGRectMake(0.0, 0.0, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame));
+    self.webView.frame = [UIView fullScreenFrame];
     
     // 加水印
     if (_waterMarkContent.length > 0) {
