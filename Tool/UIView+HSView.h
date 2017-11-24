@@ -9,5 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface UIView (HSView)
-+(UIView *)viewWithImageView:(NSString*)imageView Categary:(CGRect)rect;
+
++ (UIView *)viewWithImageView:(NSString*)imageView Categary:(CGRect)rect;
+
++ (CGRect)fullScreenFrame;
+
 @end

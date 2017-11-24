@@ -24,7 +24,35 @@
     return view;
 }
 
++ (CGRect)fullScreenFrame {
+    BOOL navIsTranlucent = [UINavigationBar appearance].translucent;
+    BOOL isIPhoneX = ([[UIScreen mainScreen] bounds].size.width == 375.f && [[UIScreen mainScreen] bounds].size.height == 812.f) ? YES : NO;
+    
+    CGFloat navHeight = isIPhoneX ? 88.0 : 64.0;
+    CGFloat naviHeightDiff = navIsTranlucent ? 0.0 : navHeight;
+    CGFloat bottomDiff = isIPhoneX ? 34.0 : 0.0;
+    
+    CGFloat viewHeight = CGRectGetHeight([UIScreen mainScreen].bounds) - naviHeightDiff - bottomDiff;
+    CGRect viewFrame = CGRectMake(0.0, 0.0, kScreenWidth, viewHeight);
+    
+    return viewFrame;
+}
 
 
+
+#pragma mark - Private Func
+
+- (CGFloat)navigationBarHeight {
+    BOOL navIsTranlucent = [UINavigationBar appearance].translucent;
+    
+    CGFloat navHeight = [self isIPhoneX] ? 88.0 : 64.0;
+    CGFloat heightDiff = navIsTranlucent ? 0.0 : navHeight;
+    return heightDiff;
+}
+
+- (BOOL)isIPhoneX {
+    BOOL isIPhoneX = ([[UIScreen mainScreen] bounds].size.width == 375.f && [[UIScreen mainScreen] bounds].size.height == 812.f) ? YES : NO;
+    return isIPhoneX;
+}
 
 @end
