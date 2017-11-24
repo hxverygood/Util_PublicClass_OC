@@ -10,6 +10,17 @@
 
 @interface ConfirmAlertController : UIAlertController
 
+@property (nonatomic, strong) NSMutableAttributedString * _Nullable attrMessage;
+
+/**
+ 显示界面中间弹出的提示框(1个按钮)，message是attributedString
+ 只有确定按钮有回调
+ */
++ (instancetype _Nullable)oneButtonAlertWithTitle:(NSString * __nullable)title
+                                     confirmTitle:(NSString * __nullable)confirmTitle
+                                      actionStyle:(UIAlertActionStyle)actionStyle
+                                   viewController:(UIViewController * __nonnull)viewController
+                                      actionBlock:(void(^ __nullable)(NSInteger confirmIndex, UIAlertAction * __nullable cancelAction))actionBlock;
 
 /**
  显示从底部弹出的ActionSheet
@@ -81,5 +92,7 @@
                         actionStyle:(UIAlertActionStyle)actionStyle
                      viewController:(UIViewController * __nonnull)viewController
                         actionBlock:(void(^ __nullable)(NSInteger confirmIndex, UIAlertAction * __nullable cancelAction))actionBlock;
+
+- (void)show;
 
 @end

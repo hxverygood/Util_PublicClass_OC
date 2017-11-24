@@ -11,6 +11,7 @@
 @interface ConfirmAlertController ()
 
 @property (nonatomic, copy) void(^ __nullable actionBlock)(NSInteger confirmIndex, UIAlertAction * __nullable cancelAction);
+@property (nonatomic, weak) UIViewController *vc;
 
 @end
 
@@ -18,9 +19,30 @@
 
 @implementation ConfirmAlertController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
+#pragma mark - Setter
 
+- (void)setAttrMessage:(NSMutableAttributedString *)attrMessage {
+    _attrMessage = attrMessage;
+
+    [self setValue:attrMessage forKey:@"attributedMessage"];
+}
+
+
+
+#pragma mark - Initializer
+
+/**
+ 显示界面中间弹出的提示框(1个按钮)，message是attributedString
+ 只有确定按钮有回调
+ */
++ (instancetype _Nullable)oneButtonAlertWithTitle:(NSString * __nullable)title
+                                     confirmTitle:(NSString * __nullable)confirmTitle
+                                      actionStyle:(UIAlertActionStyle)actionStyle
+                                   viewController:(UIViewController * __nonnull)viewController
+                                      actionBlock:(void(^ __nullable)(NSInteger confirmIndex, UIAlertAction * __nullable cancelAction))actionBlock {
+    ConfirmAlertController *alertViewController = [[ConfirmAlertController alloc] initWithTitle:title message:nil buttonCount:1 confirmTitles:confirmTitle ? @[confirmTitle] : @[@"确定"] cancelTitle:nil style:UIAlertControllerStyleAlert actionStyle:actionStyle viewController:viewController actionBlock:actionBlock];
+    
+    return alertViewController;
 }
 
 /// 显示ActionSheet
@@ -95,10 +117,6 @@
     [weakVC presentViewController:alertViewController animated:YES completion:nil];
 }
 
-
-
-#pragma mark - Initializer
-
 - (instancetype)initWithTitle:(NSString * __nullable)title
                       message:(NSString * __nullable)message
                   buttonCount:(NSInteger)buttonCount
@@ -115,13 +133,16 @@
         self.title = title;
         self.message = message;
         self.actionBlock = actionBlock;
+        self.vc = viewController;
         
         __weak typeof(alertController) weakAlertController = alertController;
         
         // 取消按钮
         if (buttonCount > 1) {
             UIAlertAction *cancel = [UIAlertAction actionWithTitle:cancelTitle ? cancelTitle : @"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-                weakAlertController.actionBlock(-1, action);
+                if (weakAlertController.actionBlock) {
+                    weakAlertController.actionBlock(-1, action);
+                }
             }];
             [alertController addAction:cancel];
         }
@@ -130,12 +151,30 @@
             NSString *confirmTitle = confirmTitles[i];
             // 确认按钮
             UIAlertAction *confirm = [UIAlertAction actionWithTitle:confirmTitle style:actionStyle handler:^(UIAlertAction * _Nonnull action) {
-                weakAlertController.actionBlock(i, nil);
+                if (weakAlertController.actionBlock) {
+                    weakAlertController.actionBlock(i, nil);
+                }
             }];
             [alertController addAction:confirm];
         }
     }
     return self;
+}
+
+
+
+#pragma mark - UI
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+}
+
+
+#pragma mark - Func
+
+- (void)show {
+    [self.vc presentViewController:self animated:YES completion:nil];
 }
 
 
