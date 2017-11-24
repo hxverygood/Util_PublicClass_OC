@@ -109,7 +109,7 @@
 /// 对不同的iOS版本进行适配
 - (void)adapterForIOSVersion {
     if (@available(iOS 11.0, *)) {
-        
+//        self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.0, 0.0, 34.0, 0.0);
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
