@@ -106,15 +106,6 @@
                            withColor:(UIColor *)color
                        andOtherColor:(UIColor *)otherColor;
 
-/**
- *  给string添加删除线
- *
- *  @param string 原始string
- *
- *  @return attributedString
- */
-+ (instancetype)attributedDeleteLineWithString:(NSString *)string;
-
 
 /// 添加下划线
 + (instancetype)attributedUnderLineWithString:(NSString *)string

@@ -53,7 +53,6 @@
     // 对请求参数进行组合
     NSDictionary *newParams = [self combinePostParamBodyWithAPIName:apiName params:params];
     NSLog(@"\n%@\n%@", urlString, newParams);
-//    NSLog(@"%@", newParams);
 
     HSHttpSessionManager *manager = [HSHttpSessionManager sharedSessionManager];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/plain", nil];

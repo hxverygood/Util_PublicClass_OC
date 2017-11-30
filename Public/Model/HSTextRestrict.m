@@ -105,6 +105,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 {
     if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
+        return;
     }
     
     textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
@@ -121,6 +122,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 {
     if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
+        return;
     }
     
     textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
@@ -136,6 +138,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 {
     if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
+        return;
     }
     
     textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
@@ -152,6 +155,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 {
     if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
+        return;
     }
     
     textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
@@ -182,6 +186,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 {
     if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
+        return;
     }
     textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
         return kMatchStringFormat(aString, @"^[A-Za-z0-9]+$");
@@ -198,6 +203,7 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 {
     if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
+        return;
     }
     textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
         return kMatchStringFormat(aString,@"^[a-zA-Z0-9\\u4e00-\\u9fa5]+");
@@ -214,9 +220,12 @@ static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat
 {
     if (self.maxLength > 0 && textField.text.length > self.maxLength) {
         textField.text = [textField.text substringToIndex:self.maxLength];
+        return;
     }
     textField.text = kFilterString(textField.text, ^BOOL(NSString *aString) {
-        return kMatchStringFormat(aString, @"^[Xx0-9]+$");
+        BOOL result = kMatchStringFormat(aString, @"^[Xx0-9]+$");
+//        NSLog(@"%@", result ? @"YES" : @"NO");
+        return result;
     });
 }
 
