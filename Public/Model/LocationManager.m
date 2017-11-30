@@ -130,6 +130,34 @@
     }
 }
 
+
+
+/**
+ 后台任务定位权限
+
+ @param completion <#completion description#>
+ */
+- (void)canLocationAndAuthorizationBackGroundCompletion:(void(^)(NSString * message, BOOL isLocation)) completion
+{
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    
+    if (status == kCLAuthorizationStatusAuthorizedAlways ||
+        status == kCLAuthorizationStatusAuthorizedWhenInUse)
+    {
+        completion(@"成功",YES);
+    }
+    else if (kCLAuthorizationStatusDenied == status || kCLAuthorizationStatusRestricted == status)
+    {
+        completion(@"请打开定位功能",NO);
+    }
+    else
+    {
+         completion(@"无法确认您的位置，请退出后重试",NO);
+    }
+}
+
+
+
 - (void)showAlertForLocationWithMessage:(NSString *)message {
     UIViewController *currentVC = [UIViewController currentViewController];
     __weak typeof(currentVC) weakCurrentVC = currentVC;

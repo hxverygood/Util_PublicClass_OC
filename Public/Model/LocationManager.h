@@ -27,4 +27,11 @@
 /// 是否开启了定位权限，如果没有，则弹框
 - (BOOL)canLocationAndAuthorization;
 
+/**
+ 后台任务定位权限
+ 
+ @param completion <#completion description#>
+ */
+- (void)canLocationAndAuthorizationBackGroundCompletion:(void(^)(NSString * message, BOOL isLocation)) completion;
+
 @end
