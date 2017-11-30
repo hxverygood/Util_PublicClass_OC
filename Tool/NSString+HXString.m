@@ -264,6 +264,49 @@
     return dic;
 }
 
+/// 保留金额小数点后2位
+- (NSString * _Nullable)reserveMoneyWithTwoDigit {
+    if (self == nil) {
+        return nil;
+    }
+    
+    return [self reserveDecimalPartWithDigitCount:2 roundingMode:NSRoundUp];
+}
+
+/// 保留小数点后指定的位数
+- (NSString * _Nullable)reserveDecimalPartWithDigitCount:(NSInteger)count
+                                            roundingMode:(NSRoundingMode)roundMode {
+    if (self == nil) {
+        return nil;
+    }
+    
+    // 判断是否是数字
+    NSNumber *num = [self convertToNumber];
+    if (!num) {
+        return nil;
+    }
+    
+    NSDecimalNumberHandler *handler = [NSDecimalNumberHandler
+                                       decimalNumberHandlerWithRoundingMode:roundMode
+                                       scale:count
+                                       raiseOnExactness:NO
+                                       raiseOnOverflow:NO
+                                       raiseOnUnderflow:NO
+                                       raiseOnDivideByZero:YES];
+    
+    // 通过字符串计算金额
+    NSDecimalNumber *decimalNumber = [NSDecimalNumber decimalNumberWithString:self];
+    NSDecimalNumber *resultDecimalNumber = [decimalNumber decimalNumberByRoundingAccordingToBehavior:handler];
+    NSString *resultDecimalStr = [NSString stringWithFormat:@"%@", resultDecimalNumber];
+    
+    // 显示2位小数
+    NSString *format = [NSString stringWithFormat:@"%%.%ldf", (long)count];
+    float number = [resultDecimalStr floatValue];
+    NSString *resultStr = [NSString stringWithFormat:format, number];
+    
+    return resultStr;
+}
+
 
 
 
@@ -322,7 +365,6 @@
     [numberFormatter setPositiveFormat:@",###.00;"];
     return [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[digitString doubleValue]]];
 }
-
 
 
 @end

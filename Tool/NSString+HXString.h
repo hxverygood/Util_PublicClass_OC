@@ -73,4 +73,11 @@
  */
 +(NSString * _Nullable)separatedDigitStringWithStr:(NSString * _Nullable)digitString;
 
+/// 保留金额小数点后2位
+- (NSString * _Nullable)reserveMoneyWithTwoDigit;
+
+/// 保留小数点后指定的位数
+- (NSString * _Nullable)reserveDecimalPartWithDigitCount:(NSInteger)count
+                                            roundingMode:(NSRoundingMode)roundMode;
+
 @end
