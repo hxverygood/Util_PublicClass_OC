@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_0" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="HXAlertView">
+            <rect key="frame" x="0.0" y="0.0" width="282" height="186"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lEx-Lh-ZBY">
+                    <rect key="frame" x="110.5" y="44" width="61.5" height="98"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="niZ-WW-I2y">
+                            <rect key="frame" x="2.5" y="0.0" width="55" height="55"/>
+                            <constraints>
+                                <constraint firstAttribute="width" secondItem="niZ-WW-I2y" secondAttribute="height" multiplier="1:1" id="8cA-aP-IrB"/>
+                                <constraint firstAttribute="width" constant="55" id="YqW-nz-sA0"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="注册成功" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eEE-tZ-UWj">
+                            <rect key="frame" x="0.0" y="80" width="61.5" height="18"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                            <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="eEE-tZ-UWj" firstAttribute="top" secondItem="niZ-WW-I2y" secondAttribute="bottom" constant="25" id="3SL-UI-zIl"/>
+                        <constraint firstItem="eEE-tZ-UWj" firstAttribute="leading" secondItem="lEx-Lh-ZBY" secondAttribute="leading" id="Zdr-oo-vpZ"/>
+                        <constraint firstAttribute="trailing" secondItem="eEE-tZ-UWj" secondAttribute="trailing" id="flp-pR-eYO"/>
+                        <constraint firstAttribute="bottom" secondItem="eEE-tZ-UWj" secondAttribute="bottom" id="lOY-8T-N52"/>
+                        <constraint firstItem="niZ-WW-I2y" firstAttribute="centerX" secondItem="lEx-Lh-ZBY" secondAttribute="centerX" id="m3k-B4-iNn"/>
+                        <constraint firstItem="niZ-WW-I2y" firstAttribute="top" secondItem="lEx-Lh-ZBY" secondAttribute="top" id="rQr-Z5-ym1"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="lEx-Lh-ZBY" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="BQJ-pZ-3mU"/>
+                <constraint firstItem="lEx-Lh-ZBY" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="PYi-Re-15d"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="contentLabel" destination="eEE-tZ-UWj" id="wAD-Go-1T7"/>
+                <outlet property="imageView" destination="niZ-WW-I2y" id="Fp2-th-FNA"/>
+            </connections>
+            <point key="canvasLocation" x="25" y="-183"/>
+        </view>
+    </objects>
+</document>

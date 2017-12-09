@@ -132,4 +132,12 @@
     self.titleLabel.font = [UIFont systemFontOfSize:fontSize];
 }
 
+/// 图标、文字居中
+- (void)verticalAlignTitleAndImageView {
+    // button标题的偏移量
+    self.titleEdgeInsets = UIEdgeInsetsMake(self.imageView.frame.size.height+5, -self.imageView.bounds.size.width, 0,0);
+    // button图片的偏移量
+    self.imageEdgeInsets = UIEdgeInsetsMake(0, self.titleLabel.frame.size.width/2, self.titleLabel.frame.size.height+5, -self.titleLabel.frame.size.width/2);
+}
+
 @end

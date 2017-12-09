@@ -13,6 +13,8 @@
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code
+    self.trueTitleLabel.textColor = [UIColor colorWithHexString:@"f45d67"];
+
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

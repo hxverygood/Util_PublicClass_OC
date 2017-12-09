@@ -40,10 +40,11 @@
 
 /// 将数字字符串转换为千分位显示
 - (NSString * _Nullable)convertWithThousandSeparator;
+/// 将数字字符串转换为千分位显示，保留2位小数
+- (NSString * _Nullable)convertWithThousandSeparatorAndTwoDigits;
 
 /// 隐藏身份证部分数字
-- (NSString * _Nullable)hidePartalIdCard
-;
+- (NSString * _Nullable)hidePartalIdCard;
 /// 隐藏手机号部分数字
 - (NSString * _Nullable)hidePhoneNumber;
 /// 隐藏部分Email

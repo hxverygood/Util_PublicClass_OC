@@ -35,7 +35,7 @@
 
 - (UIColor *)defaultBackgrouodColor {
     if (!_defaultBackgrouodColor) {
-        _defaultBackgrouodColor = Red;
+        _defaultBackgrouodColor = YELLOW;
     }
     return _defaultBackgrouodColor;
 }
@@ -172,12 +172,12 @@
         
         [button setTitleColor:titleColor ?: self.defaultTitleColor forState:UIControlStateNormal];
         
-        button.titleLabel.font = [UIFont systemFontOfSize:titleSize > 0.1 ? titleSize : 15.0];
+        button.titleLabel.font = [UIFont systemFontOfSize:titleSize > 0.1 ? titleSize : 18.0];
         
         if (cornerRadius > 0.0) {
             [button setTitleColor:titleColor cornerRadius:cornerRadius];
         } else {
-            [button setTitleColor:titleColor cornerRadius:5.0];
+            [button setTitleColor:titleColor cornerRadius:3.0];
         }
         
         
@@ -197,9 +197,10 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
 //        [self gradientBackgroudWithCornerRadius:5.0];
-        self.backgroundColor = Red;
+        self.titleLabel.font = [UIFont systemFontOfSize:18.0];
+        self.backgroundColor = YELLOW;
         [self setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        self.layer.cornerRadius = 5.0;
+        self.layer.cornerRadius = 3.0;
         self.layer.masksToBounds = YES;
     }
     return self;
@@ -209,9 +210,10 @@
     [super awakeFromNib];
     
 //    [self gradientBackgroudWithCornerRadius:5.0];
-    self.backgroundColor = Red;
+    self.titleLabel.font = [UIFont systemFontOfSize:18.0];
+    self.backgroundColor = YELLOW;
     [self setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    self.layer.cornerRadius = 5.0;
+    self.layer.cornerRadius = 3.0;
     self.layer.masksToBounds = YES;
 }
 

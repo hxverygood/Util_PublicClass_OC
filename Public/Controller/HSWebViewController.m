@@ -84,8 +84,6 @@
     
     if (_statusBarStyle) {
         [[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle animated:YES];
-    } else {
-        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
     }
     
 //    if (_allowRotation) {
@@ -96,7 +94,7 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [self backBarButtonItemWithImageName:@"button_back"];
+//    [self backBarButtonItemWithImageName:@"button_back"];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

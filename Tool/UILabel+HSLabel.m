@@ -12,7 +12,7 @@
 
 +(instancetype)labelWithText:(NSString *)text font:(CGFloat)size rect:(CGRect)rect {
     UILabel *label = [[UILabel alloc]init];
-    label.textColor = Gray93;
+    label.textColor = Black51;
     label.frame = rect;
     label.font = [UIFont systemFontOfSize:size];
     label.text = text;

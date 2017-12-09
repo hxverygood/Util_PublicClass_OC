@@ -83,7 +83,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.tintColor = Red;
+        self.tintColor = YELLOW;
     }
     return self;
 }
@@ -91,7 +91,7 @@
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        self.tintColor = Red;
+        self.tintColor = YELLOW;
     }
     return self;
 }
@@ -99,7 +99,7 @@
 - (void)awakeFromNib {
     [super awakeFromNib];
     
-    self.tintColor = Red;
+    self.tintColor = YELLOW;
 }
 
 

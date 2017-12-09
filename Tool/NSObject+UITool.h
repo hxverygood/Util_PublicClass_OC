@@ -29,4 +29,7 @@
 /// 去除导航栏底部横线
 - (UIImageView *)findHairlineImageViewUnder:(UIView *)view;
 
+/// 收起键盘
+- (void)hideKeyboard;
+
 @end

@@ -66,6 +66,7 @@ static HSAuthFlowManager *man;
 @property (nonatomic, strong) NSArray *offlineProduct3AuthNames;
 @property (nonatomic, strong) NSArray *offlineProduct4AuthNames;
 
+
 // 当前的认证模式
 @property (nonatomic, assign) AuthTipOption currentAuthOption;
 
@@ -119,7 +120,7 @@ static HSAuthFlowManager *man;
     if (!_product1AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
 //        [tmpArray addObjectsFromArray:self.requiredAuthNames];
-        [tmpArray addObjectsFromArray:@[@"bankBillFlow", @"zhima"]];
+        [tmpArray addObjectsFromArray:@[@"bankBillFlow", @"taobao"]];
         _product1AuthNames = [tmpArray copy];
     }
     return _product1AuthNames;
@@ -196,6 +197,14 @@ static HSAuthFlowManager *man;
     return _offlineProduct4AuthNames ;
 }
 
+/// 线下产品认证项数组
+- (NSArray<NSArray *> *)offlineProductNames {
+    if (!_offlineProductNames) {
+        _offlineProductNames = @[self.offlineProduct1AuthNames, self.offlineProduct2AuthNames, self.offlineProduct3AuthNames, self.offlineProduct4AuthNames];
+    }
+    return _offlineProductNames;
+}
+
 - (AuthTipOption)authOption {
     return _currentAuthOption;
 }
@@ -203,6 +212,39 @@ static HSAuthFlowManager *man;
 - (ProductOption)currentProductType {
     return _productType;
 }
+
+- (NSArray *)product1AuthNameArray {
+    return [self.product1AuthNames copy];
+}
+
+- (NSArray *)product2AuthNameArray {
+    return [self.product2AuthNames copy];
+}
+
+- (NSArray *)product3AuthNameArray {
+    return [self.product3AuthNames copy];
+}
+
+- (NSArray *)product4AuthNameArray {
+    return [self.product4AuthNames copy];
+}
+
+- (NSArray *)offlineProduct1AuthNameArray {
+    return [self.offlineProduct1AuthNames copy];
+}
+
+- (NSArray *)offlineProduct2AuthNameArray {
+    return [self.offlineProduct2AuthNames copy];
+}
+
+- (NSArray *)offlineProduct3AuthNameArray {
+    return [self.offlineProduct3AuthNames copy];
+}
+
+- (NSArray *)offlineProduct4AuthNameArray {
+    return [self.offlineProduct4AuthNames copy];
+}
+
 
 
 

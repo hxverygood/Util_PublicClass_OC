@@ -19,11 +19,26 @@
 
 @interface HSAuthFlowManager : NSObject
 
+@property (nonatomic, strong, readonly) NSArray *product1AuthNameArray;
+@property (nonatomic, strong, readonly) NSArray *product2AuthNameArray;
+@property (nonatomic, strong, readonly) NSArray *product3AuthNameArray;
+@property (nonatomic, strong, readonly) NSArray *product4AuthNameArray;
+@property (nonatomic, strong, readonly) NSArray *offlineProduct1AuthNameArray;
+@property (nonatomic, strong, readonly) NSArray *offlineProduct2AuthNameArray;
+@property (nonatomic, strong, readonly) NSArray *offlineProduct3AuthNameArray;
+@property (nonatomic, strong, readonly) NSArray *offlineProduct4AuthNameArray;
+
 @property (nonatomic, assign, readonly) CGFloat currentPercentInFlow;
 @property (nonatomic, assign, readonly) CGFloat percentAfterCurrentFlowComplete;
 @property (nonatomic, assign, readonly) NSInteger totalCount;
 @property (nonatomic, assign, readonly) AuthTipOption authOption;
 @property (nonatomic, assign, readonly) ProductOption currentProductType;
+
+/// 线下产品认证项数组
+@property (nonatomic, strong) NSArray<NSArray *> *offlineProductNames;
+
+
+
 
 + (instancetype)manager;
 
@@ -81,11 +96,13 @@
 - (NSInteger)authIsFinishedForOfflineProduct4;
 - (BOOL)offlineProduct4AuthIsNotFinishedAndJump;
 
-/// 产品的标题数组
+/// 线上产品的标题数组
 - (NSArray<NSArray *> *)product1AuthTitles;
 - (NSArray<NSArray *> *)product2AuthTitles;
 - (NSArray<NSArray *> *)product3AuthTitles;
 - (NSArray<NSArray *> *)product4AuthTitles;
+
+
 
 
 /// 保存当前选择的产品数据

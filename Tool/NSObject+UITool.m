@@ -83,4 +83,10 @@
     return nil;
 }
 
+
+/// 收起键盘
+- (void)hideKeyboard {
+    [[[UIApplication sharedApplication] keyWindow] endEditing:YES];
+}
+
 @end

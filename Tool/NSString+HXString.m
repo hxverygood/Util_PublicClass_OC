@@ -97,6 +97,24 @@
     }
     
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setPositiveFormat:@",###;"];
+    NSString *resultStr = [numberFormatter stringFromNumber:[NSNumber numberWithInteger:[self integerValue]]];
+    return [resultStr copy];
+}
+
+/// 将数字字符串转换为千分位显示，保留2位小数
+- (NSString * _Nullable)convertWithThousandSeparatorAndTwoDigits {
+    if (!self) {
+        return nil;
+    }
+    
+    // 判断是否是数字
+    NSNumber *num = [self convertToNumber];
+    if (!num) {
+        return nil;
+    }
+    
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
     [numberFormatter setPositiveFormat:@",###.00;"];
     NSString *resultStr = [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[self doubleValue]]];
     return [resultStr copy];

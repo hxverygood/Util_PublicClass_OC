@@ -51,7 +51,7 @@
     UIEdgeInsets insets = UIEdgeInsetsMake(0.0, leftInset, 0.0, 0.0);
     self.separatorInset = insets;
     self.layoutMargins = insets;
-    self.preservesSuperviewLayoutMargins = YES;
+    self.preservesSuperviewLayoutMargins = leftInset <= 0.1 ? NO : YES;
 }
 
 @end
