@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) NSString *titleStr;
 @property (nonatomic, strong) NSString *urlStr;
+@property (nonatomic, assign) UIEdgeInsets webViewInsets;
 @property (nonatomic, assign) UIStatusBarStyle statusBarStyle;
 @property (nonatomic, strong) NSString *waterMarkContent;
 

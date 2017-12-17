@@ -75,6 +75,12 @@
 
 #pragma mark - Setter
 
+- (void)setWebViewInsets:(UIEdgeInsets)webViewInsets {
+    _webViewInsets = webViewInsets;
+    
+    self.webView.scrollView.contentInset = webViewInsets;
+}
+
 
 
 #pragma mark - UI
