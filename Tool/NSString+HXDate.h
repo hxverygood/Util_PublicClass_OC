@@ -9,9 +9,10 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(NSInteger, DateFormatterType) {
-    DateFormatterTypeYMd = 0,       // 年月日
-    DateFormatterTypeYMdKKmm = 1,     // 年月日 (24)小时 分钟
-    DateFormatterTypeYMdKKmmss = 2     // 年月日 (24)小时 分钟 秒
+    DateFormatterTypeYM = 0,       // 年月
+    DateFormatterTypeYMd = 1,       // 年月日
+    DateFormatterTypeYMdKKmm = 2,     // 年月日 (24)小时 分钟
+    DateFormatterTypeYMdKKmmss = 3     // 年月日 (24)小时 分钟 秒
 };
 
 @interface NSString (HXDate)

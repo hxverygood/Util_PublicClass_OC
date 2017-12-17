@@ -27,6 +27,14 @@
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     switch (dateFormaterType) {
+        case DateFormatterTypeYM:
+            if ([NSString isBlankString:separator]) {
+                formatter.dateFormat = [NSString stringWithFormat:@"YYYY年MM月"];
+            }
+            else {
+                 formatter.dateFormat = [NSString stringWithFormat:@"YYYY%@MM", separator];
+            }
+            break;
         case DateFormatterTypeYMd:
             formatter.dateFormat = [NSString stringWithFormat:@"YYYY%@MM%@dd", separator, separator];
             break;
@@ -57,9 +65,19 @@
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     switch (dateFormaterType) {
+        case DateFormatterTypeYM:
+            if ([NSString isBlankString:separator]) {
+                formatter.dateFormat = [NSString stringWithFormat:@"YYYY年MM月"];
+            }
+            else {
+                formatter.dateFormat = [NSString stringWithFormat:@"YYYY%@MM", separator];
+            }
+        break;
+            
         case DateFormatterTypeYMd:
             formatter.dateFormat = [NSString stringWithFormat:@"YYYY%@MM%@dd", separator, separator];
             break;
+            
         case DateFormatterTypeYMdKKmm:
             formatter.dateFormat = [NSString stringWithFormat:@"YYYY%@MM%@dd  HH:mm", separator, separator];
             break;
