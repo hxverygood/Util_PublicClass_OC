@@ -51,9 +51,32 @@
 
 // Send a UTF8 String or Data.
 - (void)fl_send:(id)data seq_id:(id)seq_id;{
+//    switch ([FLSocketManager shareManager].fl_socketStatus) {
+//        case FLSocketStatusConnected:
+//        case FLSocketStatusReceived:{
+//            NSLog(@"发送中。。。");
+//            NSError *error;
+//            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:@{@"req":data,@"seq_id":seq_id} options:NSJSONWritingPrettyPrinted error:&error];
+//            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+//            [self.webSocket send:jsonString];
+//            break;
+//        }
+//        case FLSocketStatusFailed:
+//            NSLog(@"发送失败");
+//            break;
+//        case FLSocketStatusClosedByServer:
+//            NSLog(@"已经关闭");
+//            break;
+//        case FLSocketStatusClosedByUser:
+//            NSLog(@"已经关闭");
+//            break;
+//    }
+    
     switch ([FLSocketManager shareManager].fl_socketStatus) {
         case FLSocketStatusConnected:
-        case FLSocketStatusReceived:{
+        case FLSocketStatusReceived:
+        case FLSocketStatusClosedByUser:
+        {
             NSLog(@"发送中。。。");
             NSError *error;
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:@{@"req":data,@"seq_id":seq_id} options:NSJSONWritingPrettyPrinted error:&error];
@@ -67,15 +90,13 @@
         case FLSocketStatusClosedByServer:
             NSLog(@"已经关闭");
             break;
-        case FLSocketStatusClosedByUser:
-            NSLog(@"已经关闭");
-            break;
     }
     
 }
 
 #pragma mark -- private method
-- (void)fl_open:(id)params{
+- (void)fl_open:(id)params
+{
 //    NSLog(@"params = %@",params);
     NSString *urlStr = nil;
     if ([params isKindOfClass:[NSString class]]) {

@@ -16,7 +16,6 @@ static CGFloat height = 220.0;
 @property (nonatomic, strong) UIButton *confirmButton;
 @property (nonatomic, strong) UIButton *cancelButton;
 @property (nonatomic, strong) UIView *line;
-@property (nonatomic, strong) UIPickerView *pickerView;
 @property (nonatomic, strong) UIView *bgView;
 
 @property (nonatomic, strong) NSArray<NSArray<NSString *> *> *dataArrays;
@@ -37,7 +36,7 @@ static CGFloat height = 220.0;
 
 @implementation HSPickerView
 
-#pragma mark - Getter
+#pragma mark - Getter / Setter
 
 - (UIView *)toolbar {
     if (!_toolbar) {
@@ -76,6 +75,11 @@ static CGFloat height = 220.0;
 
 - (BOOL)isVisable {
     return _visable;
+}
+
+- (void)setData:(NSArray<NSArray<NSString *> *> *)dataArray {
+    _dataArrays = dataArray;
+    [self.pickerView reloadAllComponents];
 }
 
 
@@ -239,11 +243,6 @@ static CGFloat height = 220.0;
         _visable = NO;
         [self.pickerView selectRow:0 inComponent:0 animated:YES];
     }];
-}
-
-- (void)setData:(NSArray<NSArray<NSString *> *> *)dataArray {
-    _dataArrays = dataArray;
-    [self.pickerView reloadAllComponents];
 }
 
 @end

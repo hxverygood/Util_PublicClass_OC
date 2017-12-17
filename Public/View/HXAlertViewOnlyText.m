@@ -64,6 +64,12 @@
         }
     }];
 }
+- (IBAction)touchDIsmissAction:(id)sender
+{
+    [self dismissWithCompletion:^{
+        
+    }];
+}
 
 
 @end

@@ -96,8 +96,10 @@
         _pickView.backgroundColor = ZGQRGB(237, 237, 237);
         [_BJView addSubview:_pickView];
         
-        for (NSDictionary *dic in _ALLARY) {
-            if ([dic objectForKey:_ProvinceAry[_proIndex]]) {
+        for (NSDictionary *dic in _ALLARY)
+        {
+            if ([dic objectForKey:_ProvinceAry[_proIndex]])
+            {
                 _CityAry = [NSMutableArray arrayWithArray:[[dic objectForKey:_ProvinceAry[_proIndex]] allKeys]];
                 [_pickView reloadComponent:1];
                 [_pickView selectRow:0 inComponent:1 animated:YES];

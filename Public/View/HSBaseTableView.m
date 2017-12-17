@@ -38,7 +38,8 @@
     self = [super init];
     if (self) {
         self.backgroundColor = HS_BACKGROUND;
-        self.separatorStyle = UITableViewCellSeparatorStyleNone;
+        self.separatorColor = HS_BACKGROUND;
+//        self.separatorStyle = UITableViewCellSeparatorStyleNone;
 
         if (@available(iOS 11.0, *)) {
             self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
@@ -55,6 +56,9 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
+    
+    self.backgroundColor = HS_BACKGROUND;
+    self.separatorColor = HS_BACKGROUND;
     
     if (@available(iOS 11.0, *)) {
         self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;

@@ -11,13 +11,27 @@
 
 @interface HSBaseViewController ()
 
-@property (nonatomic, assign) BOOL navbarIsTrans;
 
 @end
 
 @implementation HSBaseViewController
 
 #pragma mark - UI
+
+-(instancetype)init{
+    
+    self  =[super init];
+    if (self)
+    {
+        self.isUseNavbarIsTrans = YES;
+    }
+    return self;
+}
+
+-(HSUser*)userInfo
+{
+    return [HSLoginInfo savedLoginInfo];
+}
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -38,8 +52,6 @@
     _navbarIsTrans = _navbarIsTranslucent;
 }
 
-
-
 #pragma mark - Private Func
 
 - (void)changeNavigationBar {
@@ -47,7 +59,6 @@
     if (_navbarIsDark) {
         // 状态栏样式
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
-        //    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
         
         // 返回按钮
         [self backBarButtonItemWithImageName:@"button_back_white"];
@@ -63,11 +74,16 @@
         
         return;
     }
+      
+    if (!_isUseNavbarIsTrans)
+    {
+        return;
+    }
     
     if (_navbarIsTrans) {
         // 状态栏样式
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
-        //    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+
         // 返回按钮
         [self backBarButtonItemWithImageName:@"button_back_white"];
         //[self backBarButtonItemWithImageName:@"button_back"];
@@ -87,22 +103,36 @@
         @{NSFontAttributeName:[UIFont systemFontOfSize:18.0],
           NSForegroundColorAttributeName:[UIColor whiteColor]};
         
-    } else {
+    } else
+    {
         // 状态栏样式
-        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
-        //    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
         // 返回按钮
-//        [self backBarButtonItemWithImageName:@"button_back"];
-        [self backBarButtonItemWithImageName:@"button_back"];
+        [self backBarButtonItemWithImageName:@"button_back_white"];
         //[self backBarButtonItemWithImageName:@""];
         self.navigationController.navigationBar.translucent = NO;
         self.navigationController.edgesForExtendedLayout = UIRectEdgeTop;
         // navbar title的颜色
         self.navigationController.navigationBar.titleTextAttributes = \
         @{NSFontAttributeName:[UIFont systemFontOfSize:18.0],
-          NSForegroundColorAttributeName:[UIColor blackColor]};
+          NSForegroundColorAttributeName:[UIColor whiteColor]};
         // navbar背景颜色
-        self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
+        self.navigationController.navigationBar.barTintColor = [UIColor blackColor];
+        
+//        // 状态栏样式
+//        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
+//
+//        // 返回按钮
+//        [self backBarButtonItemWithImageName:@"button_back_white"];
+//
+//        // navbar title的颜色
+//        self.navigationController.navigationBar.titleTextAttributes = \
+//        @{NSFontAttributeName:[UIFont systemFontOfSize:18.0],
+//          NSForegroundColorAttributeName:[UIColor whiteColor]};
+//        // navbar背景颜色
+//        self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:38/255.0 green:41/255.0 blue:48/255.0 alpha:1.0];
+        
+        return;
     }
 }
 
@@ -119,7 +149,8 @@
 
 #pragma mark - 内存警告
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     
 }

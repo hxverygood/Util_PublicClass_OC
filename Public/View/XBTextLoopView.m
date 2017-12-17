@@ -70,43 +70,43 @@
 {
     
     NSMutableArray <HSNewHomeNoticModel*>* modelsCacheArray = [[NSMutableArray alloc] init];
-//    [dataArray enumerateObjectsUsingBlock:^(NSMutableArray<HSNoticeModel *> * _Nonnull sectionObj, NSUInteger idx, BOOL * _Nonnull stop)
-//    {
-//        HSNewHomeNoticModel * newNoticModel = [[HSNewHomeNoticModel alloc] init];
-//        [sectionObj enumerateObjectsUsingBlock:^(HSNoticeModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop)
-//        {
-//            if (idx == 0)
-//            {
-//                newNoticModel.topTipStr = @"新闻";
-//                newNoticModel.topContentStr = obj.headline;
+    [dataArray enumerateObjectsUsingBlock:^(NSMutableArray<HSNoticeModel *> * _Nonnull sectionObj, NSUInteger idx, BOOL * _Nonnull stop)
+    {
+        HSNewHomeNoticModel * newNoticModel = [[HSNewHomeNoticModel alloc] init];
+        [sectionObj enumerateObjectsUsingBlock:^(HSNoticeModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop)
+        {
+            if (idx == 0)
+            {
+                newNoticModel.topTipStr = @"新闻";
+                newNoticModel.topContentStr = obj.headline;
+
+            }else if (idx ==1)
+            {
+                newNoticModel.bottomTipStr = @"资讯";
+                newNoticModel.bottomContentStr = obj.headline;
+                newNoticModel.showCount = 2;
+            }
+        }];
+        [modelsCacheArray addObject:newNoticModel];
+        self.modelsArray = modelsCacheArray;
+    }];
+    
+//    HSNewHomeNoticModel * newNoticModel1 = [[HSNewHomeNoticModel alloc] init];
+//    HSNewHomeNoticModel * newNoticModel2 = [[HSNewHomeNoticModel alloc] init];
 //
-//            }else if (idx ==1)
-//            {
-//                newNoticModel.bottomTipStr = @"资讯";
-//                newNoticModel.bottomContentStr = obj.headline;
-//                newNoticModel.showCount = 2;
-//            }
-//        }];
-//        [modelsCacheArray addObject:newNoticModel];
-//        self.modelsArray = modelsCacheArray;
-//    }];
-    
-    HSNewHomeNoticModel * newNoticModel1 = [[HSNewHomeNoticModel alloc] init];
-    HSNewHomeNoticModel * newNoticModel2 = [[HSNewHomeNoticModel alloc] init];
-    
-    newNoticModel1.topTipStr = @"新闻";
-    newNoticModel1.topContentStr = @"下部分测试数据";
-    newNoticModel1.bottomTipStr = @"资讯";
-    newNoticModel1.bottomContentStr = @"下部分测试数据";
-    newNoticModel1.showCount = 2;
-    
-    newNoticModel2.topTipStr = @"新闻1";
-    newNoticModel2.topContentStr = @"下部分测试数据1";
-    newNoticModel2.showCount = 1;
+//    newNoticModel1.topTipStr = @"新闻";
+//    newNoticModel1.topContentStr = @"下部分测试数据";
+//    newNoticModel1.bottomTipStr = @"资讯";
+//    newNoticModel1.bottomContentStr = @"下部分测试数据";
+//    newNoticModel1.showCount = 2;
+//
+//    newNoticModel2.topTipStr = @"新闻1";
+//    newNoticModel2.topContentStr = @"下部分测试数据1";
+//    newNoticModel2.showCount = 1;
     
     
-    [modelsCacheArray addObject:newNoticModel1];
-    [modelsCacheArray addObject:newNoticModel2];
+//    [modelsCacheArray addObject:newNoticModel1];
+//    [modelsCacheArray addObject:newNoticModel2];
     self.modelsArray = modelsCacheArray;
 }
 
@@ -157,7 +157,8 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (_selectBlock) 
     {
-        self.selectBlock(_dataSource[indexPath.row], indexPath.row);
+        HSNewHomeNoticModel * mdoel = _modelsArray[indexPath.row];
+        self.selectBlock(mdoel.topTipStr, indexPath.row);
     }
 }
 

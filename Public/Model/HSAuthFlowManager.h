@@ -24,6 +24,7 @@
 @property (nonatomic, strong, readonly) NSArray *product3AuthNameArray;
 @property (nonatomic, strong, readonly) NSArray *product4AuthNameArray;
 @property (nonatomic, strong, readonly) NSArray *offlineProduct1AuthNameArray;
+@property (nonatomic, strong, readonly) NSArray *offlineProduct1PromotionAuthNames;
 @property (nonatomic, strong, readonly) NSArray *offlineProduct2AuthNameArray;
 @property (nonatomic, strong, readonly) NSArray *offlineProduct3AuthNameArray;
 @property (nonatomic, strong, readonly) NSArray *offlineProduct4AuthNameArray;
@@ -61,6 +62,12 @@
 
 /// 是否需要实名认证
 - (BOOL)realNameIsAuthed;
+
+/// 线上产品显示的认证是否完成
+- (BOOL)onlineProductDisplayAuthIsFinished:(ProductOption)productOption;
+
+/// 线下产品显示的认证是否完成
+- (BOOL)offlineProductDisplayAuthIsFinished:(OfflineProductOption)offlineProductOption;
 
 /// 芝麻秒贷的认证流程是否完成，如没有完成则跳转
 - (NSInteger)authIsFinishedForFirstProduct;
@@ -134,6 +141,27 @@
 
 /// 自动跳转至相关认证VC
 - (void)jumpToAuthVC;
+
+/// 跳转至实名认证VC
+- (void)jumpToCertVC;
+/// 获取当前用户手机号码是哪个运营商的，并跳转至相关认证界面
+- (void)fetchOperatorInfoAndJump;
+/// 跳转至芝麻WebVC
+- (void)jumpToZhimaVC;
+/// 跳转至社保认证VC
+- (void)jumpToSocialSecurityVC;
+/// 跳转至公积金认证VC
+- (void)jumpToAccumulationFundVC;
+/// 跳转至征信VC
+- (void)jumpToCreditVC;
+/// 学信网认证VC
+- (void)jumpToCHSIAccountRegistrationViewController;
+/// 跳转至淘宝VC
+- (void)jumpToTaobaoVC;
+/// 跳转至信用卡详单VC
+- (void)jumpToCreditCardVC;
+/// 跳转收入证明认证VC
+- (void)jumpToIncomeVC;
 
 
 #pragma mark - Public Func

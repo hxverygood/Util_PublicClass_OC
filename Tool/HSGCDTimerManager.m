@@ -71,6 +71,19 @@
     
 }
 
+
+// 挂起计时器(暂停)
+-(void)suspenTimer
+{
+    dispatch_suspend(_timer);
+}
+
+// 或者启动计时器
+-(void)resumeTimer
+{
+    dispatch_resume(_timer);
+}
+
 // 停止计时器
 -(void)stopTimer
 {

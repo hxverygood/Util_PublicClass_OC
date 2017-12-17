@@ -10,6 +10,7 @@
 
 @interface HSPickerView : UIView
 
+@property (nonatomic, strong) UIPickerView *pickerView;
 @property (nonatomic, strong) UIColor *buttonColor;
 @property (nonatomic, copy) void (^selectRowBlock)(NSInteger selectedDataArrayIndex, NSInteger row, NSString *title);
 

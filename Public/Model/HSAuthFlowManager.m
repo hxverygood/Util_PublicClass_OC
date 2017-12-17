@@ -18,6 +18,7 @@
 #import "HSHomeDetailViewController.h"                      // 申请借款VC
 
 #import "HSCertificateViewController.h"                     // 实名认证VC
+#import "HSUserBasicInfoViewController.h"                   // 个人基础信息VC
 #import "HSCareerViewController.h"                          // 工作单位信息认证VC
 #import "HSZhimaWebViewController.h"
 #import "HSCallRecordsChinaMobileFirstViewController.h"
@@ -25,6 +26,8 @@
 #import "HSCallRecordsChinaMobileFirstViewController.h"     // 移动认证第1步
 #import "HSCallRecordsChinaUnicornFirstViewController.h"
 #import "HSCallRecordsChinaTelecomVC.h"
+#import "HSCallRecordThirdPartyViewController.h"            // 通话详单（第3方）
+
 #import "HSContactInfoViewController.h"                     // 联系人信息认证VC
 #import "HSCreditInvestigationViewController.h"             // 征信认证VC
 #import "HSInfoAuthViewController.h"                        // 认证VC
@@ -62,6 +65,7 @@ static HSAuthFlowManager *man;
 @property (nonatomic, strong) NSArray *product3AuthNames;
 @property (nonatomic, strong) NSArray *product4AuthNames;
 @property (nonatomic, strong) NSArray *offlineProduct1AuthNames;
+@property (nonatomic, strong) NSArray *offlineProduct1PromotionAuthNames;
 @property (nonatomic, strong) NSArray *offlineProduct2AuthNames;
 @property (nonatomic, strong) NSArray *offlineProduct3AuthNames;
 @property (nonatomic, strong) NSArray *offlineProduct4AuthNames;
@@ -74,6 +78,8 @@ static HSAuthFlowManager *man;
 @property (nonatomic, strong) HSLoanListModel *loanListHomeModel;
 @property (nonatomic, strong) HSLoanListModel *loanListModel;
 @property (nonatomic, strong) HSHomeDataModel *homeDataModel;
+/// 运营商归属
+@property (nonatomic, strong) HSMobileBelongModel *mobileBelong;
 @property (nonatomic, assign) CGFloat longitude;
 @property (nonatomic, assign) CGFloat latitude;
 @property (nonatomic, assign) ProductOption productType;
@@ -90,14 +96,14 @@ static HSAuthFlowManager *man;
 
 - (NSArray *)totalAuthNames {
     if (!_totalAuthNames) {
-        _totalAuthNames = @[@"realName", @"callLog", @"career", @"contact", @"zhima", @"accumulationFund", @"socialSecurity", @"credit", @"chsi", @"taobao", @"bankBillFlow", @"income"];
+        _totalAuthNames = @[@"realName", @"callLog", @"basicInfo", @"career", @"contact", @"zhima", @"accumulationFund", @"socialSecurity", @"credit", @"chsi", @"taobao", @"bankBillFlow", @"income"];
     }
     return _totalAuthNames;
 }
 
 - (NSArray *)requiredAuthNames {
     if (!_requiredAuthNames) {
-        _requiredAuthNames = @[@"realName", @"callLog", @"career", @"contact"];
+        _requiredAuthNames = @[@"realName", @"callLog", @"basicInfo", @"career", @"contact"];
     }
     return _requiredAuthNames;
 }
@@ -120,7 +126,7 @@ static HSAuthFlowManager *man;
     if (!_product1AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
 //        [tmpArray addObjectsFromArray:self.requiredAuthNames];
-        [tmpArray addObjectsFromArray:@[@"bankBillFlow", @"taobao"]];
+        [tmpArray addObjectsFromArray:@[@"callLog", @"bankBillFlow", @"taobao"]];
         _product1AuthNames = [tmpArray copy];
     }
     return _product1AuthNames;
@@ -130,7 +136,7 @@ static HSAuthFlowManager *man;
     if (!_product2AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
 //        [tmpArray addObjectsFromArray:self.requiredAuthNames];
-        [tmpArray addObjectsFromArray:@[@"accumulationFund", @"credit"]];
+        [tmpArray addObjectsFromArray:@[@"callLog", @"accumulationFund", @"credit"]];
         _product2AuthNames = [tmpArray copy];
     }
     return _product2AuthNames;
@@ -140,7 +146,7 @@ static HSAuthFlowManager *man;
     if (!_product3AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
 //        [tmpArray addObjectsFromArray:self.requiredAuthNames];
-        [tmpArray addObjectsFromArray:@[@"chsi", @"credit"]];
+        [tmpArray addObjectsFromArray:@[@"callLog", @"chsi", @"credit"]];
         _product3AuthNames = [tmpArray copy];
     }
     return _product3AuthNames;
@@ -150,7 +156,7 @@ static HSAuthFlowManager *man;
     if (!_product4AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
 //        [tmpArray addObjectsFromArray:self.requiredAuthNames];
-        [tmpArray addObjectsFromArray:@[@"bankBillFlow", @"credit"]];
+        [tmpArray addObjectsFromArray:@[@"callLog", @"bankBillFlow", @"credit"]];
         _product4AuthNames = [tmpArray copy];
     }
     return _product4AuthNames;
@@ -160,17 +166,21 @@ static HSAuthFlowManager *man;
 - (NSArray *)offlineProduct1AuthNames {
     if (!_offlineProduct1AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
-        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFund", @"socialSecurity", @"income"]];
+        [tmpArray addObjectsFromArray:@[@"callLog", @"credit"]];
         _offlineProduct1AuthNames = [tmpArray copy];
     }
     return _offlineProduct1AuthNames;
+}
+
+- (NSArray *)offlineProduct1PromotionAuthNames {
+    return @[@"accumulationFundAndSocialSecurity", @"income"];
 }
 
 /// 薪居贷
 - (NSArray *)offlineProduct2AuthNames {
     if (!_offlineProduct2AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
-        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFund", @"socialSecurity"]];
+        [tmpArray addObjectsFromArray:@[@"callLog", @"credit", @"accumulationFund", @"socialSecurity"]];
         _offlineProduct2AuthNames = [tmpArray copy];
     }
     return _offlineProduct2AuthNames;
@@ -181,7 +191,7 @@ static HSAuthFlowManager *man;
 - (NSArray *)offlineProduct3AuthNames {
     if (!_offlineProduct3AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
-        [tmpArray addObjectsFromArray:@[@"credit", @"accumulationFund", @"socialSecurity", @"income"]];
+        [tmpArray addObjectsFromArray:@[@"callLog", @"credit", @"accumulationFund", @"socialSecurity", @"income"]];
         _offlineProduct3AuthNames = [tmpArray copy];
     }
     return _offlineProduct3AuthNames;
@@ -191,7 +201,7 @@ static HSAuthFlowManager *man;
 - (NSArray *)offlineProduct4AuthNames {
     if (!_offlineProduct4AuthNames) {
         NSMutableArray *tmpArray = [NSMutableArray array];
-        [tmpArray addObjectsFromArray:@[@"credit"]];
+        [tmpArray addObjectsFromArray:@[@"callLog", @"credit"]];
         _offlineProduct4AuthNames = [tmpArray copy];
     }
     return _offlineProduct4AuthNames ;
@@ -329,9 +339,12 @@ static HSAuthFlowManager * _instance = nil;
         [self jumpWithAuthName:@"callLog"];
     }
     else if (authIndex == 2) {
-        [self jumpWithAuthName:@"career"];
+        [self jumpWithAuthName:@"basicInfo"];
     }
     else if (authIndex == 3) {
+        [self jumpWithAuthName:@"career"];
+    }
+    else if (authIndex == 4) {
         [self jumpWithAuthName:@"contact"];
     }
     
@@ -436,7 +449,7 @@ static HSAuthFlowManager * _instance = nil;
 
 
 
-#pragma mark - 是否实名认证
+#pragma mark - 是否认证
 
 // 是否需要实名认证
 - (BOOL)realNameIsAuthed {
@@ -454,6 +467,108 @@ static HSAuthFlowManager * _instance = nil;
     }
     return YES;
 }
+
+/// 线上产品显示的认证是否完成
+- (BOOL)onlineProductDisplayAuthIsFinished:(ProductOption)productOption {
+    BOOL flag = NO;
+    switch (productOption) {
+        case ProductOption1:
+        {
+            if ([[HSAuthFlowManager manager] authIsFinishedForFirstProduct] == -100) {
+                flag = YES;
+            } else {
+                flag = NO;
+            }
+        }
+            break;
+            
+        case ProductOption2:
+        {
+            if ([[HSAuthFlowManager manager] authIsFinishedForSecondProduct] == -100) {
+                flag = YES;
+            } else {
+                flag = NO;
+            }
+        }
+            break;
+            
+        case ProductOption3:
+        {
+            if ([[HSAuthFlowManager manager] authIsFinishedForThirdProduct] == -100) {
+                flag = YES;
+            } else {
+                flag = NO;
+            }
+        }
+            break;
+            
+        case ProductOption4:
+        {
+            if ([[HSAuthFlowManager manager] authIsFinishedForFourthProduct] == -100) {
+                flag = YES;
+            } else {
+                flag = NO;
+            }
+        }
+            break;
+            
+        default:
+            break;
+    }
+    return flag;
+}
+
+/// 线下产品显示的认证是否完成
+- (BOOL)offlineProductDisplayAuthIsFinished:(OfflineProductOption)offlineProductOption {
+    BOOL flag = NO;
+    switch (offlineProductOption) {
+        case OfflineProductOption1:
+        {
+            if ([[HSAuthFlowManager manager] authIsFinishedForOfflineProduct1] == -100) {
+                flag = YES;
+            } else {
+                flag = NO;
+            }
+        }
+            break;
+            
+        case OfflineProductOption2:
+        {
+            if ([[HSAuthFlowManager manager] authIsFinishedForOfflineProduct2] == -100) {
+                flag = YES;
+            } else {
+                flag = NO;
+            }
+        }
+            break;
+            
+        case OfflineProductOption3:
+        {
+            if ([[HSAuthFlowManager manager] authIsFinishedForOfflineProduct3] == -100) {
+                flag = YES;
+            } else {
+                flag = NO;
+            }
+        }
+            break;
+            
+        case OfflineProductOption4:
+        {
+            if ([[HSAuthFlowManager manager] authIsFinishedForOfflineProduct4] == -100) {
+                flag = YES;
+            } else {
+                flag = NO;
+            }
+        }
+            break;
+            
+        default:
+            break;
+    }
+    return flag;
+}
+
+
 
 
 #pragma mark - 芝麻秒贷
@@ -1297,35 +1412,42 @@ static HSAuthFlowManager * _instance = nil;
         //        [delegate jumpToTaobaoVC];
     }
     else if (authIndex == 2) {
-        [manager jumpToCareerVC];
+        // 需求：个人信息、职业信息、联系人信息只要一个没完成，都先从个人信息开始认证
+        [manager jumpToBasicInfoVC];
         //        [delegate fetchOperatorInfoAndJump];
     }
     else if (authIndex == 3) {
-        [manager jumpToContactInfoVC];
-        //        [delegate jumpToZhimaVC];
+        // 需求：个人信息、职业信息、联系人信息只要一个没完成，都先从个人信息开始认证
+        [manager jumpToBasicInfoVC];
+//        [manager jumpToCareerVC];
     }
     else if (authIndex == 4) {
-        [manager jumpToZhimaVC];
+        // 需求：个人信息、职业信息、联系人信息只要一个没完成，都先从个人信息开始认证
+        [manager jumpToBasicInfoVC];
+//        [manager jumpToContactInfoVC];
     }
     else if (authIndex == 5) {
-        [manager jumpToAccumulationFundVC];
+        [manager jumpToZhimaVC];
     }
     else if (authIndex == 6) {
-        [manager jumpToSocialSecurityVC];
+        [manager jumpToAccumulationFundVC];
     }
     else if (authIndex == 7) {
-        [manager jumpToCreditVC];
+        [manager jumpToSocialSecurityVC];
     }
     else if (authIndex == 8) {
-        [manager jumpToCHSIAccountRegistrationViewController];
+        [manager jumpToCreditVC];
     }
     else if (authIndex == 9) {
-        [manager jumpToTaobaoVC];
+        [manager jumpToCHSIAccountRegistrationViewController];
     }
     else if (authIndex == 10) {
-        [manager jumpToCreditCardVC];
+        [manager jumpToTaobaoVC];
     }
     else if (authIndex == 11) {
+        [manager jumpToCreditCardVC];
+    }
+    else if (authIndex == 12) {
         [manager jumpToIncomeVC];
     }
 }
@@ -1449,7 +1571,7 @@ static HSAuthFlowManager * _instance = nil;
     [currentVC.navigationController pushViewController:vc animated:YES];
 }
 
-/// 获取当前用户手机号码是哪个运营商的，并跳转
+/// 获取当前用户手机号码是哪个运营商的，并跳转至相关认证界面
 - (void)fetchOperatorInfoAndJump {
     //    self.handerResuleString = @"mobile";
     //    sdkFunction = LMZXSDKFunctionMobileCarrie;
@@ -1471,38 +1593,8 @@ static HSAuthFlowManager * _instance = nil;
         dispatch_async(dispatch_get_main_queue(), ^{
             if (success) {
                 [SVProgressHUD dismiss];
-                if ([model.MobileBelong containsString:@"移动"]) {
-                    HSCallRecordsChinaMobileFirstViewController *callRecordsChinaMobileViewController = [[HSCallRecordsChinaMobileFirstViewController alloc] init];
-                    callRecordsChinaMobileViewController.isInAuthFlow = YES;
-                    callRecordsChinaMobileViewController.mobileBelongModel = model;
-                    callRecordsChinaMobileViewController.hidesBottomBarWhenPushed = YES;
-                    
-                    UIViewController *vc = [UIViewController currentViewController];
-                    [vc backBarButtonItemWithImageName:@"button_back"];
-                    [vc.navigationController pushViewController:callRecordsChinaMobileViewController animated:YES];
-                }
-                else if ([model.MobileBelong containsString:@"联通"])
-                {
-                    HSCallRecordsChinaUnicornFirstViewController *callRecordsChinaUnicornFirstViewController = [[HSCallRecordsChinaUnicornFirstViewController alloc] init];
-                    callRecordsChinaUnicornFirstViewController.isInAuthFlow = YES;
-                    callRecordsChinaUnicornFirstViewController.mobileBelongModel = model;
-                    callRecordsChinaUnicornFirstViewController.hidesBottomBarWhenPushed = YES;
-                    
-                    UIViewController *vc = [UIViewController currentViewController];
-                    [vc backBarButtonItemWithImageName:@"button_back"];
-                    [vc.navigationController pushViewController:callRecordsChinaUnicornFirstViewController animated:YES];
-                }
-                else if ([model.MobileBelong containsString:@"电信"])
-                {
-                    HSCallRecordsChinaTelecomVC *callRecordsChinaTelecomVC = [[HSCallRecordsChinaTelecomVC alloc] init];
-                    callRecordsChinaTelecomVC.isInAuthFlow = YES;
-                    callRecordsChinaTelecomVC.mobileBelongModel = model;
-                    callRecordsChinaTelecomVC.hidesBottomBarWhenPushed = YES;
-                    
-                    UIViewController *vc = [UIViewController currentViewController];
-                    [vc backBarButtonItemWithImageName:@"button_back"];
-                    [vc.navigationController pushViewController:callRecordsChinaTelecomVC animated:YES];
-                }
+                _mobileBelong = model;
+                [self jumpToMobileAuthVC];
             }
             else
             {
@@ -1514,6 +1606,74 @@ static HSAuthFlowManager * _instance = nil;
             }
         });
     }];
+}
+
+// 跳转至通话详单认证VC
+- (void)jumpToMobileAuthVC {
+    [HSInterface judjeFethOperatorWithPhoneCompletion:^(BOOL success, NSString *message, __autoreleasing id model) {
+        if (success) {
+            if ([model isKindOfClass:[NSNumber class]]) {
+                NSNumber *num = (NSNumber *)model;
+                NSInteger result = num.integerValue;
+                if (result == 1) {
+                    HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
+                    vc.needPop = YES;
+                    vc.hidesBottomBarWhenPushed = YES;
+                    UIViewController *currentVC = [UIViewController currentViewController];
+                    [currentVC.navigationController pushViewController:vc animated:YES];
+                } else {
+                    [self jumpToOriginOperator];
+                }
+            }
+            else if ([model isEqualToString:@"1"]) {
+                HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
+                vc.needPop = YES;
+                vc.hidesBottomBarWhenPushed = YES;
+                UIViewController *currentVC = [UIViewController currentViewController];
+                [currentVC.navigationController pushViewController:vc animated:YES];
+            }else {
+                [self jumpToOriginOperator];
+            }
+        }else {
+            [SVProgressHUD showInfoWithStatus:message];
+        }
+    }];
+}
+
+- (void)jumpToOriginOperator {
+    if ([_mobileBelong.MobileBelong containsString:@"移动"]) {
+        HSCallRecordsChinaMobileFirstViewController *vc = [[HSCallRecordsChinaMobileFirstViewController alloc] init];
+        vc.hidesBottomBarWhenPushed = YES;
+        vc.needPop = YES;
+        UIViewController *currentVC = [UIViewController currentViewController];
+        [currentVC.navigationController pushViewController:vc animated:YES];
+    }
+    else if ([_mobileBelong.MobileBelong containsString:@"联通"])
+    {
+        HSCallRecordsChinaUnicornFirstViewController *vc = [[HSCallRecordsChinaUnicornFirstViewController alloc] init];
+        vc.needPop = YES;
+        vc.hidesBottomBarWhenPushed = YES;
+        UIViewController *currentVC = [UIViewController currentViewController];
+        [currentVC.navigationController pushViewController:vc animated:YES];
+    }
+    else if ([_mobileBelong.MobileBelong containsString:@"电信"])
+    {
+        HSCallRecordsChinaTelecomVC *vc = [[HSCallRecordsChinaTelecomVC alloc] init];
+        vc.needPop = YES;
+        vc.hidesBottomBarWhenPushed = YES;
+        UIViewController *currentVC = [UIViewController currentViewController];
+        [currentVC.navigationController pushViewController:vc animated:YES];
+    }else {
+        [SVProgressHUD showInfoWithStatus:@"暂时无法获取，请稍后重试"];
+    }
+}
+
+/// 跳转至个人基础信息VC
+- (void)jumpToBasicInfoVC {
+    HSUserBasicInfoViewController *vc = [[HSUserBasicInfoViewController alloc] init];
+    vc.hidesBottomBarWhenPushed = YES;
+    UIViewController *currentVC = [UIViewController currentViewController];
+    [currentVC.navigationController pushViewController:vc animated:YES];
 }
 
 /// 跳转至工作单位信息认证
@@ -1539,34 +1699,24 @@ static HSAuthFlowManager * _instance = nil;
 
 /// 跳转至淘宝VC
 - (void)jumpToTaobaoVC {
-//    HSTaoBaoViewController *vc = [[HSTaoBaoViewController alloc] init];
-//    vc.hidesBottomBarWhenPushed = YES;
-//    UIViewController *currentVC = [UIViewController currentViewController];
-//    [currentVC backBarButtonItemWithImageName:@"button_back"];
-//    [currentVC.navigationController pushViewController:vc animated:YES];
-    
-    
     //跳转至淘宝的wek界面信息
     HSTaobaoWebViewController *vc = [[HSTaobaoWebViewController alloc]init];
-//    HSTaoBaoViewController *vc = [[HSTaoBaoViewController alloc] init];
-    vc.isInAuthFlow = YES;
+//    vc.isInAuthFlow = YES;
     vc.hidesBottomBarWhenPushed = YES;
     UIViewController *currentVC = [UIViewController currentViewController];
-    [currentVC backBarButtonItemWithImageName:@"button_back"];
     [currentVC.navigationController pushViewController:vc animated:YES];
     
 //    [[HSLMZXManager manager] getLMsdkFunction:LMZXSDKFunctionTaoBao and:@"taobao"];
 }
 
-//学信网
+/// 学信网认证VC
 - (void)jumpToCHSIAccountRegistrationViewController {
     // 返回按钮
     HSCHSIAccountRegistrationViewController *vc = [[HSCHSIAccountRegistrationViewController alloc] init];
-    vc.isInAuthFlow = YES;
+//    vc.isInAuthFlow = YES;
     vc.hidesBottomBarWhenPushed = YES;
     
     UIViewController *currentVC = [UIViewController currentViewController];
-    [currentVC backBarButtonItemWithImageName:@"button_back"];
     [currentVC.navigationController pushViewController:vc animated:YES];
 }
 
@@ -1576,69 +1726,63 @@ static HSAuthFlowManager * _instance = nil;
     NSString *name = user.custname;
     NSString *cardID = user.paperid;
     NSString *ID = user.ID;
-    NSLog(@"芝麻信用未认证");
+    
+    if ([NSString isBlankString:name]) {
+        [SVProgressHUD showInfoWithStatus:@"您的姓名不存在，请检查是否进行了实名认证"];
+        return;
+    }
+    
+    if ([NSString isBlankString:cardID]) {
+        [SVProgressHUD showInfoWithStatus:@"您的身份证号为空，请检查是否进行了实名认证"];
+        return;
+    }
+    
+    if ([NSString isBlankString:ID]) {
+        [SVProgressHUD showInfoWithStatus:@"用户ID为空"];
+        return;
+    }
     
     [SVProgressHUD showWithStatus:@"正在获取数据"];
     [HSInterface fetchZhimaCreditInfoWithnameName:name cardNo:cardID ID:ID completion:^(BOOL success, NSString *message, HSUserInfoModel *model) {
-        if (success) {
-            NSLog(@"芝麻信用认证success");
-            [SVProgressHUD dismiss];
-            HSZhimaWebViewController *zhimaWebViewController = [[HSZhimaWebViewController alloc] init];
-            zhimaWebViewController.zhimaUrl = model.errorInfo;
-//            zhimaWebViewController.isInAuthFlow = YES;
-            zhimaWebViewController.hidesBottomBarWhenPushed = YES;
-            
-            UIViewController *vc = [UIViewController currentViewController];
-            [vc backBarButtonItemWithImageName:@"button_back"];
-            [vc.navigationController pushViewController:zhimaWebViewController animated:YES];
-        }
-        else
-        {
-            NSLog(@"芝麻信用认证message");
-            [SVProgressHUD showInfoWithStatus:message];
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (success) {
+                [SVProgressHUD dismiss];
+                
+                // 返回按钮
+                HSZhimaWebViewController *vc = [[HSZhimaWebViewController alloc] init];
+                vc.zhimaUrl = model.errorInfo;
+                vc.needPop = YES;
+                vc.hidesBottomBarWhenPushed = YES;
+                UIViewController *currentVC = [UIViewController currentViewController];
+                [currentVC.navigationController pushViewController:vc animated:YES];
+            } else {
+                if (![NSString isBlankString:message]) {
+                    [SVProgressHUD showInfoWithStatus:message];
+                    return;
+                }
+                [SVProgressHUD dismiss];
+            }
+        });
     }];
 }
 
-
-- (void)jumpToAccumulationFundVC {
-
-
-    HSNewAccumulationFundViewController *newAccumulationFundViewController = [[HSNewAccumulationFundViewController alloc] init];
-    newAccumulationFundViewController.hidesBottomBarWhenPushed = YES;
-    newAccumulationFundViewController.isInAuthFlow = YES;
+/// 跳转至社保认证VC
+- (void)jumpToSocialSecurityVC {
+    HSNewSocialSecurityViewController *vc = [[HSNewSocialSecurityViewController alloc] init];
+    vc.hidesBottomBarWhenPushed = YES;
 
     UIViewController *currentVC = [UIViewController currentViewController];
-    [currentVC backBarButtonItemWithImageName:@"button_back"];
-    [currentVC.navigationController pushViewController:newAccumulationFundViewController animated:YES];
-
-
-
-//    HSAccumulationFundViewController *vc = [[HSAccumulationFundViewController alloc] init];
-//    vc.isInAuthFlow = YES;
-//    vc.hidesBottomBarWhenPushed = YES;
-//    
-//    UIViewController *currentVC = [UIViewController currentViewController];
-//    [currentVC backBarButtonItemWithImageName:@"button_back"];
-//    [currentVC.navigationController pushViewController:vc animated:YES];
+    [currentVC.navigationController pushViewController:vc animated:YES];
 }
 
-- (void)jumpToSocialSecurityVC {
-//    HSSocialSecurityViewController *vc = [[HSSocialSecurityViewController alloc] init];
-//    vc.isInAuthFlow = YES;
-//    vc.hidesBottomBarWhenPushed = YES;
-//    
-//    UIViewController *currentVC = [UIViewController currentViewController];
-//    [currentVC backBarButtonItemWithImageName:@"button_back"];
-//    [currentVC.navigationController pushViewController:vc animated:YES];
-
-    HSNewSocialSecurityViewController *newSocialSecurityViewController = [[HSNewSocialSecurityViewController alloc] init];
-    newSocialSecurityViewController.hidesBottomBarWhenPushed = YES;
-    newSocialSecurityViewController.isInAuthFlow = YES;
-
+/// 跳转至公积金认证VC
+- (void)jumpToAccumulationFundVC {
+    HSNewAccumulationFundViewController *vc = [[HSNewAccumulationFundViewController alloc] init];
+    vc.hidesBottomBarWhenPushed = YES;
+//    newAccumulationFundViewController.isInAuthFlow = YES;
+    
     UIViewController *currentVC = [UIViewController currentViewController];
-    [currentVC backBarButtonItemWithImageName:@"button_back"];
-    [currentVC.navigationController pushViewController:newSocialSecurityViewController animated:YES];
+    [currentVC.navigationController pushViewController:vc animated:YES];
 }
 
 // 跳转至社保公积金tableViewController
@@ -1656,31 +1800,27 @@ static HSAuthFlowManager * _instance = nil;
 - (void)jumpToCreditVC {
     // 征信VC
     HSCreditInvestigationViewController *vc = [[HSCreditInvestigationViewController alloc] init];
-    vc.isInAuthFlow = YES;
+//    vc.isInAuthFlow = YES;
     vc.hidesBottomBarWhenPushed = YES;
     UIViewController *currentVC = [UIViewController currentViewController];
-    [currentVC backBarButtonItemWithImageName:@"button_back"];
     [currentVC.navigationController pushViewController:vc animated:YES];
 }
 
 /// 跳转至信用卡详单
 - (void)jumpToCreditCardVC {
     HSAddBankCardBillViewController *vc = [[HSAddBankCardBillViewController alloc] init];
-    vc.isInAuthFlow = YES;
+//    vc.isInAuthFlow = YES;
     vc.hidesBottomBarWhenPushed = YES;
     UIViewController *currentVC = [UIViewController currentViewController];
-    [currentVC backBarButtonItemWithImageName:@"button_back"];
     [currentVC.navigationController pushViewController:vc animated:YES];
 }
 
-/// 跳转收入证明认证
-- (void)jumpToIncomeVC
-{
+/// 跳转收入证明认证VC
+- (void)jumpToIncomeVC {
     HSIncomeCertifyViewController *vc = [[HSIncomeCertifyViewController alloc] init];
-    vc.isInAuthFlow = YES;
+//    vc.isInAuthFlow = YES;
     vc.hidesBottomBarWhenPushed = YES;
     UIViewController *currentVC = [UIViewController currentViewController];
-    [currentVC backBarButtonItemWithImageName:@"button_back"];
     [currentVC.navigationController pushViewController:vc animated:YES];
 }
 

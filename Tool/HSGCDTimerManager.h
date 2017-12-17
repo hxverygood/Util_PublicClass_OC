@@ -21,4 +21,13 @@ typedef void(^HSTimerBLock) (NSInteger count);
 -(void)startTimerCompletion:(HSTimerBLock)block;
 
 -(void)stopTimer;
+
+
+// 挂起计时器(暂停)
+-(void)suspenTimer;
+
+
+// 或者启动计时器
+-(void)resumeTimer;
+
 @end
