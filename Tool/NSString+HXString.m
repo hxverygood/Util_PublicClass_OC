@@ -380,7 +380,7 @@
         return [NSString stringWithFormat:@"%.2f",digitString.floatValue];
     };
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    [numberFormatter setPositiveFormat:@",###.00;"];
+    [numberFormatter setPositiveFormat:@",###;"];
     return [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[digitString doubleValue]]];
 }
 
