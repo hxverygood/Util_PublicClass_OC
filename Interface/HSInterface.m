@@ -19,7 +19,7 @@
 + (void)HS_POSTWithIP:(NSString *)ip
           mainApiName:(NSString *)mainApiName
                  name:(NSString *)apiName
-                 params:(NSDictionary *)params
+                 params:(id)params
              complation:(void (^)(NSInteger errorCode, NSString *errorInfo, id data, NSError *error, NSInteger localErrorStatus, BOOL allSuccess))complation
 {
     [[DataService sharedDataService] sendWithIP:ip mainDirectory:mainApiName apiName:apiName params:params data:nil completion:^(DataServiceCompletionModel * _Nullable model) {
@@ -37,16 +37,16 @@
             
             switch (model.localErrorCode) {
                 case kDataServiceStatusNetworkError:
-                    errInfo = @"网络连接异常";
+                    errInfo = @"网络连接异常，请稍候再试";
                     break;
                 case kDataServiceStatusRequestFaild:
-                    errInfo = @"网络请求异常";
+                    errInfo = @"网络请求异常，请稍候再试";
                     break;
                 case kDataServiceStatusRequestParamsBadFormat:
-                    errInfo = @"请求参数错误";
+                    errInfo = @"请求参数错误，请稍候再试";
                     break;
                 case kDataServiceStatusResponseBadFormat:
-                    errInfo = @"获取数据格式错误";
+                    errInfo = @"获取数据格式错误，请稍候再试";
                     break;
                 case kDataServiceStatusResponseServerError: {
                     NSString *newErrorDesc = [model.localErrorDescription stringByReplacingOccurrencesOfString:@"。" withString:@""];
@@ -93,102 +93,102 @@
 //    }];
 }
 
-///上传文件接口
-+ (void)HS_UploadWithName:(NSString *)apiName
-                   params:(NSDictionary *)params
-                     data:(NSArray *)data
-                 mimeType:(NSString *)mimeType
-               complation:(void (^)(NSInteger errorCode, NSString *errorInfo, id data, NSError *error, NSInteger localErrorStatus, BOOL allSuccess))complation
-{
-    [[DataService sharedDataService] uploadWithApiName:apiName parameters:params data:data mimeType:mimeType completion:^(DataServiceCompletionModel * _Nullable model) {
-        if (complation) {
-            id data = nil;
-            id errInfo ;
-            if (model.apiModel.dataDictionary != nil) {
-                data = model.apiModel.dataDictionary;
-            } else if (model.apiModel.dataArray != nil) {
-                data = model.apiModel.dataArray;
-            }else{
-                data = model.data ;
-            }
-            errInfo = model.apiModel.errorInfo;
-            
-            switch (model.localErrorCode) {
-                case kDataServiceStatusNetworkError:
-                    errInfo = @"网络连接异常";
-                    break;
-                case kDataServiceStatusRequestFaild:
-                    errInfo = @"网络请求异常";
-                    break;
-                case kDataServiceStatusRequestParamsBadFormat:
-                    errInfo = @"请求参数错误";
-                    break;
-                case kDataServiceStatusResponseBadFormat:
-                    errInfo = @"获取数据格式错误";
-                    break;
-                case kDataServiceStatusResponseServerError: {
-                    NSString *newErrorDesc = [model.localErrorDescription stringByReplacingOccurrencesOfString:@"。" withString:@""];
-                    errInfo = newErrorDesc;
-                    break;
-                }
-                    
-                default:
-                    break;
-            }
-            
-            complation(model.apiModel.errorCode.integerValue, errInfo, data, nil, model.localErrorCode, model.success);
-        }
-    }];
-}
-
-/**
- *  上传单个文件接口
- */
-+ (void)HS_UploadWithName:(NSString *)apiName
-                   params:(NSDictionary *)params
-                 fileData:(NSData *)fileData
-                 fileName:(NSString *)fileName
-                 mimeType:(NSString *)mimeType
-               complation:(void (^)(NSInteger errorCode, NSString *errorInfo, id data, NSError *error, NSInteger localErrorStatus, BOOL allSuccess))complation {
-    [[DataService sharedDataService] uploadWithApiName:apiName parameters:params fileData:fileData fileName:fileName mimeType:mimeType completion:^(DataServiceCompletionModel * _Nullable model) {
-        if (complation) {
-            id data = nil;
-            id errInfo ;
-            if (model.apiModel.dataDictionary != nil) {
-                data = model.apiModel.dataDictionary;
-            } else if (model.apiModel.dataArray != nil) {
-                data = model.apiModel.dataArray;
-            }else{
-                data = model.data ;
-            }
-            errInfo = model.apiModel.errorInfo;
-            
-            switch (model.localErrorCode) {
-                case kDataServiceStatusNetworkError:
-                    errInfo = @"网络连接异常";
-                    break;
-                case kDataServiceStatusRequestFaild:
-                    errInfo = @"网络请求异常";
-                    break;
-                case kDataServiceStatusRequestParamsBadFormat:
-                    errInfo = @"请求参数错误";
-                    break;
-                case kDataServiceStatusResponseBadFormat:
-                    errInfo = @"获取数据格式错误";
-                    break;
-                case kDataServiceStatusResponseServerError: {
-                    NSString *newErrorDesc = [model.localErrorDescription stringByReplacingOccurrencesOfString:@"。" withString:@""];
-                    errInfo = newErrorDesc;
-                    break;
-                }
-                    
-                default:
-                    break;
-            }
-            
-            complation(model.apiModel.errorCode.integerValue, errInfo, data, nil, model.localErrorCode, model.success);
-        }
-    }];
-}
+/////上传文件接口
+//+ (void)HS_UploadWithName:(NSString *)apiName
+//                   params:(NSDictionary *)params
+//                     data:(NSArray *)data
+//                 mimeType:(NSString *)mimeType
+//               complation:(void (^)(NSInteger errorCode, NSString *errorInfo, id data, NSError *error, NSInteger localErrorStatus, BOOL allSuccess))complation
+//{
+//    [[DataService sharedDataService] uploadWithApiName:apiName parameters:params data:data mimeType:mimeType completion:^(DataServiceCompletionModel * _Nullable model) {
+//        if (complation) {
+//            id data = nil;
+//            id errInfo ;
+//            if (model.apiModel.dataDictionary != nil) {
+//                data = model.apiModel.dataDictionary;
+//            } else if (model.apiModel.dataArray != nil) {
+//                data = model.apiModel.dataArray;
+//            }else{
+//                data = model.data ;
+//            }
+//            errInfo = model.apiModel.errorInfo;
+//            
+//            switch (model.localErrorCode) {
+//                case kDataServiceStatusNetworkError:
+//                    errInfo = @"网络连接异常";
+//                    break;
+//                case kDataServiceStatusRequestFaild:
+//                    errInfo = @"网络请求异常";
+//                    break;
+//                case kDataServiceStatusRequestParamsBadFormat:
+//                    errInfo = @"请求参数错误";
+//                    break;
+//                case kDataServiceStatusResponseBadFormat:
+//                    errInfo = @"获取数据格式错误";
+//                    break;
+//                case kDataServiceStatusResponseServerError: {
+//                    NSString *newErrorDesc = [model.localErrorDescription stringByReplacingOccurrencesOfString:@"。" withString:@""];
+//                    errInfo = newErrorDesc;
+//                    break;
+//                }
+//                    
+//                default:
+//                    break;
+//            }
+//            
+//            complation(model.apiModel.errorCode.integerValue, errInfo, data, nil, model.localErrorCode, model.success);
+//        }
+//    }];
+//}
+//
+///**
+// *  上传单个文件接口
+// */
+//+ (void)HS_UploadWithName:(NSString *)apiName
+//                   params:(NSDictionary *)params
+//                 fileData:(NSData *)fileData
+//                 fileName:(NSString *)fileName
+//                 mimeType:(NSString *)mimeType
+//               complation:(void (^)(NSInteger errorCode, NSString *errorInfo, id data, NSError *error, NSInteger localErrorStatus, BOOL allSuccess))complation {
+//    [[DataService sharedDataService] uploadWithApiName:apiName parameters:params fileData:fileData fileName:fileName mimeType:mimeType completion:^(DataServiceCompletionModel * _Nullable model) {
+//        if (complation) {
+//            id data = nil;
+//            id errInfo ;
+//            if (model.apiModel.dataDictionary != nil) {
+//                data = model.apiModel.dataDictionary;
+//            } else if (model.apiModel.dataArray != nil) {
+//                data = model.apiModel.dataArray;
+//            }else{
+//                data = model.data ;
+//            }
+//            errInfo = model.apiModel.errorInfo;
+//            
+//            switch (model.localErrorCode) {
+//                case kDataServiceStatusNetworkError:
+//                    errInfo = @"网络连接异常";
+//                    break;
+//                case kDataServiceStatusRequestFaild:
+//                    errInfo = @"网络请求异常";
+//                    break;
+//                case kDataServiceStatusRequestParamsBadFormat:
+//                    errInfo = @"请求参数错误";
+//                    break;
+//                case kDataServiceStatusResponseBadFormat:
+//                    errInfo = @"获取数据格式错误";
+//                    break;
+//                case kDataServiceStatusResponseServerError: {
+//                    NSString *newErrorDesc = [model.localErrorDescription stringByReplacingOccurrencesOfString:@"。" withString:@""];
+//                    errInfo = newErrorDesc;
+//                    break;
+//                }
+//                    
+//                default:
+//                    break;
+//            }
+//            
+//            complation(model.apiModel.errorCode.integerValue, errInfo, data, nil, model.localErrorCode, model.success);
+//        }
+//    }];
+//}
 
 @end

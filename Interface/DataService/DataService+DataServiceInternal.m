@@ -22,7 +22,7 @@
 - (void)sendWithIP:(nonnull NSString *)ip
      mainDirectory:(nullable NSString *)mainDirectory
            apiName:(nonnull NSString *)apiName
-            params:(nonnull NSDictionary *)params
+            params:(nonnull id)params
               data:(NSArray * __nullable )fileData
         completion:(void (^ __nullable)(DataServiceCompletionModel * __nullable model))completion {
     
@@ -52,13 +52,55 @@
     
     // 对请求参数进行组合
     NSDictionary *newParams = [self combinePostParamBodyWithAPIName:apiName params:params];
-    NSLog(@"\n%@\n%@", urlString, newParams);
+    
+    if (newParams) {
+        NSLog(@"\n%@\n%@", urlString, newParams);
+    } else {
+        NSLog(@"\n%@\n%@", urlString, params);
+    }
+   
 
     HSHttpSessionManager *manager = [HSHttpSessionManager sharedSessionManager];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/plain", nil];
     
+    if ([self needJsonBodyForAPIName:apiName])
+    {
+        if ([apiName isEqualToString:@"personalcontact/addcontacterinfo.do"])
+        {
+            // 添加联系人
+            params = [params objectForKey:@"contactFinal"];
+
+        }
+        
+        NSMutableURLRequest *req = [[AFJSONRequestSerializer serializer] requestWithMethod:@"POST" URLString:urlString parameters:nil error:nil];
+        [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [req setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        req.timeoutInterval = timeoutInterval;
+
+        NSError *jsonError = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params options:0 error:&jsonError];
+
+        if (jsonError) {
+            NSLog(@"json转data时出错: %@", jsonError.userInfo);
+            return;
+        }
+        [req setHTTPBody:jsonData];
+        [[manager dataTaskWithRequest:req completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+            [self apiCompletionWithIP:ip mainDirectory:mainDirectory apiName:apiName params:params responseObject:responseObject error:error completion:^(DataServiceCompletionModel * _Nullable model) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completion(model);
+                });
+            }];
+        }] resume];
+        return;
+    }
+    else {
+        [manager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
+    }
+    
     // 设置网络访问超时时间
     manager.requestSerializer.timeoutInterval = timeoutInterval;
+    
     if ([self excludeSignInHttpHeaderForAPIName:apiName] == YES) {
         NSString *sign = [HSLoginInfo savedLoginInfo].sign;
         if (![NSString isBlankString:sign]) {
@@ -67,21 +109,45 @@
     }
     
     NSURLSessionDataTask *dataTask = [manager POST:urlString parameters:newParams progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        NSError *err = nil;
+        [self apiCompletionWithIP:ip mainDirectory:mainDirectory apiName:apiName params:params responseObject:responseObject error:nil completion:^(DataServiceCompletionModel * _Nullable model) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion(model);
+            });
+        }];
         
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        DataServiceCompletionModel *compModel = [self errorHandleWithApiName:apiName error:error];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion(compModel);
+        });
+    }];
+    
+    [dataTask resume];
+}
+
+
+- (void)apiCompletionWithIP:(nonnull NSString *)ip
+              mainDirectory:(nullable NSString *)mainDirectory
+                    apiName:(nonnull NSString *)apiName
+                     params:(nonnull id)params
+             responseObject:(id  _Nullable)responseObject
+                      error:(NSError * _Nullable)error
+                 completion:(void (^ __nullable)(DataServiceCompletionModel * __nullable model))completion {
+    NSError *err = nil;
+    if (!error) {
         id json = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&err];
         
 #ifdef DEBUG
         NSLog(@"\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>> api return >>>>>>>>>>>>>>>>>>>>>>>>>>>\n\
 %@/\n%@\n%@\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\
-_", mainDirectory, apiName, json);
-//        NSLog(@"apiName：%@", apiName);
-//        NSLog(@"json: %@", json);
+              _", mainDirectory, apiName, json);
+        //        NSLog(@"apiName：%@", apiName);
+        //        NSLog(@"json: %@", json);
         if (err) {
             NSLog(@"err：%@", err);
         }
 #endif
-
+        
         DataServiceCompletionModel *compModel = [[DataServiceCompletionModel alloc] init];
         compModel.apiName = apiName;
         if (!err) {
@@ -120,344 +186,17 @@ _", mainDirectory, apiName, json);
             [compModel.errorArray addObject:err];
         }
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completion(compModel);
-        });
-        
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        completion(compModel);
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            completion(compModel);
+//        });
+    } else {
         DataServiceCompletionModel *compModel = [self errorHandleWithApiName:apiName error:error];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completion(compModel);
-        });
-    }];
-    
-    [dataTask resume];
-}
-
-
-/**
- 上传文件(数组)
- 
- @param apiName 接口名称
- @param params 参数 没有参数传空字典
- @param fileData 文件Data
- @param completion 接口回调
- */
-- (void)uploadWithApiName:(nonnull NSString *)apiName
-               parameters:(nonnull NSDictionary *)params
-                     data:(NSArray * __nullable)fileData
-                 mimeType:(NSString * __nullable)mimeType
-                     completion:(void (^ __nullable)(DataServiceCompletionModel * __nullable model))completion {
-    
-    NSLog(@"%@", self.baseUrlString);
-    NSLog(@"%@", apiName);
-    NSLog(@"%@", params);
-    
-    /// 新方法
-    NSString *urlString = [NSString stringWithFormat:@"%@/%@", kAPIBaseURL, apiName];
-    urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    
-    manager.requestSerializer = [AFJSONRequestSerializer serializer];
-    manager.requestSerializer.timeoutInterval = 40.f;
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/plain", nil];
-    
-    [manager POST:urlString parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        // 上传 多张图片
-        if (fileData.count > 0) {
-            for (NSInteger i = 0; i < fileData.count; i++) {
-                NSData *data = [fileData objectAtIndex:i];
-                // 上传的参数名
-                NSString *Name = [NSString stringWithFormat:@"files%ld", (long)i];
-                
-                
-                if (mimeType == nil) {
-                    // 上传filename
-                    NSString *fileName = [NSString stringWithFormat:@"%@.jpg", Name];
-                    [formData appendPartWithFileData:data name:Name fileName:fileName mimeType:@"image/jpeg"];
-                } else {
-                    // 如果指定了mimeType
-                    NSString *fileName = [NSString stringWithFormat:@"%@.jpg", Name];
-                    [formData appendPartWithFileData:data name:Name fileName:fileName mimeType:mimeType];
-                }
-            }
-        }
-    } progress:^(NSProgress * _Nonnull uploadProgress) {
-        
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        NSError *err = nil;
-        id  json = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&err];
-        
-        
-#ifdef DEBUG
-        NSLog(@"api return:");
-        NSLog(@"%@", apiName);
-        NSLog(@"%@", json);
-        NSLog(@"%@", err);
-#endif
-        DataServiceCompletionModel *compModel = [[DataServiceCompletionModel alloc] init];
-        compModel.apiName = apiName;
-        if (!err) {
-            NSError *error = nil;
-            DataServiceResponseModel *respModel = [[DataServiceResponseModel alloc] initWithDictionary:json error:&error];
-            if (error) {
-                compModel.apiModel = nil;
-                compModel.localErrorCode = kDataServiceStatusUnknown;
-                compModel.localErrorDescription = error.localizedDescription;
-                [compModel.errorArray addObject:err];
-            } else {
-                compModel.apiModel = respModel;
-                compModel.localErrorCode = kDataServiceStatusOK;
-                
-                NSDictionary *resp = (NSDictionary *)json;
-                if ([resp isKindOfClass:[NSDictionary class]]) {
-                    id obj = resp[@"data"];
-                    if ([obj isKindOfClass:[NSArray class]]) {
-                        NSArray *arr = (NSArray *)obj;
-                        compModel.apiModel.dataArray = arr;
-                    } else if ([obj isKindOfClass:[NSDictionary class]]) {
-                        NSDictionary *dict = (NSDictionary *)obj;
-                        compModel.apiModel.dataDictionary = dict;
-                    }else{
-                        compModel.data = obj ;
-                    }
-                }
-            }
-        } else {
-            compModel.apiModel = nil;
-            compModel.localErrorCode = kDataServiceStatusUnknown;
-            compModel.localErrorDescription = err.localizedDescription;
-            [compModel.errorArray addObject:err];
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completion(compModel);
-        });
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        DataServiceCompletionModel *compModel = [self errorHandleWithApiName:apiName error:error];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completion(compModel);
-        });
-    }];
-}
-
-
-/**
- *  上传单个文件
- *
- *  @param apiName    接口名称
- *  @param params     参数 没有参数传空字典
- *  @param fileData   文件Data 不能为空
- *  @param mimeType   mimeType类型
- *  @param fileName   文件名
- *  @param completion 接口回调
- */
-- (void)uploadWithApiName:(nonnull NSString *)apiName
-               parameters:(nonnull NSDictionary *)params
-                 fileData:(nonnull NSData *)fileData
-                 fileName:(nonnull NSString *)fileName
-                 mimeType:(nonnull NSString *)mimeType
-               completion:(void (^ __nullable)(DataServiceCompletionModel * __nullable model))completion {
-    
-    NSLog(@"%@", self.baseUrlString);
-    NSLog(@"%@", apiName);
-    NSLog(@"%@", params);
-    
-    /// 新方法
-    NSString *urlString = [NSString stringWithFormat:@"%@/%@", kAPIBaseURL, apiName];
-    urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    HSHttpSessionManager *manager = [HSHttpSessionManager sharedSessionManager];
-//    manager.requestSerializer = [AFJSONRequestSerializer serializer];
-//    manager.requestSerializer.timeoutInterval = 40.f;
-//    [manager.requestSerializer setValue:@"application/x-www-form-urlencoded;charset=utf8" forHTTPHeaderField:@"Content-Type"];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/plain", nil];
-    
-    [manager POST:urlString parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData)
-    {
-        [formData appendPartWithFileData:fileData name:@"file" fileName:fileName mimeType:mimeType];
-        
-    } progress:^(NSProgress * _Nonnull uploadProgress) {
-        NSLog(@"%f",1.0 * uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
-        // 回到主队列刷新UI,用户自定义的进度条
-        //        dispatch_async(dispatch_get_main_queue(), ^{
-        //            //self.progressView.progress = 1.0 *
-        //            //uploadProgress.completedUnitCount / uploadProgress.totalUnitCount;
-        //        });
-        
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        NSError *err = nil;
-        id  json = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&err];
-        
-        
-#ifdef DEBUG
-        NSLog(@"api return:");
-        NSLog(@"%@", apiName);
-        NSLog(@"%@", json);
-        NSLog(@"%@", err);
-#endif
-        DataServiceCompletionModel *compModel = [[DataServiceCompletionModel alloc] init];
-        compModel.apiName = apiName;
-        if (!err) {
-            NSError *error = nil;
-            DataServiceResponseModel *respModel = [[DataServiceResponseModel alloc] initWithDictionary:json error:&error];
-            if (error) {
-                compModel.apiModel = nil;
-                compModel.localErrorCode = kDataServiceStatusUnknown;
-                compModel.localErrorDescription = error.localizedDescription;
-                [compModel.errorArray addObject:err];
-            } else {
-                compModel.apiModel = respModel;
-                compModel.localErrorCode = kDataServiceStatusOK;
-                
-                NSDictionary *resp = (NSDictionary *)json;
-                if ([resp isKindOfClass:[NSDictionary class]]) {
-                    id obj = resp[@"data"];
-                    if ([obj isKindOfClass:[NSArray class]]) {
-                        NSArray *arr = (NSArray *)obj;
-                        compModel.apiModel.dataArray = arr;
-                    } else if ([obj isKindOfClass:[NSDictionary class]]) {
-                        NSDictionary *dict = (NSDictionary *)obj;
-                        compModel.apiModel.dataDictionary = dict;
-                    }else{
-                        compModel.data = obj ;
-                    }
-                }
-            }
-        } else {
-            compModel.apiModel = nil;
-            compModel.localErrorCode = kDataServiceStatusUnknown;
-            compModel.localErrorDescription = err.localizedDescription;
-            [compModel.errorArray addObject:err];
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completion(compModel);
-        });
-        
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        DataServiceCompletionModel *compModel = [self errorHandleWithApiName:apiName error:error];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completion(compModel);
-        });
-    }];
-}
-
-
-
-/**
- *  上传单个文件，通过文件路径
- *
- *  @param apiName    接口名称
- *  @param params     参数 没有参数传空字典
- *  @param filePath   文件路径 不可以为空
- *  @param mimeType   mimeType类型 可空
- *  @param completion 接口回调
- */
-- (void)uploadWithApiName:(nonnull NSString *)apiName
-               parameters:(nullable NSDictionary *)params
-                 filePath:(nonnull NSString *)filePath
-                 mimeType:(nullable NSString *)mimeType
-               completion:(void (^ __nullable)(DataServiceCompletionModel * __nullable model))completion {
-    NSLog(@"%@", self.baseUrlString);
-    NSLog(@"%@", apiName);
-    NSLog(@"%@", params);
-    
-    /// 新方法
-    NSString *urlString = [NSString stringWithFormat:@"%@/%@", kAPIBaseURL, apiName];
-    
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    
-//    manager.requestSerializer = [AFJSONRequestSerializer serializer];
-    manager.requestSerializer.timeoutInterval = 40.f;
-    //    [manager.requestSerializer setValue:@"application/x-www-form-urlencoded;charset=utf8" forHTTPHeaderField:@"Content-Type"];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/plain", nil];
-    
-    NSURLSessionDataTask *task = [manager POST:urlString parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        // 上传 文件
-        NSFileManager *fileManage = [NSFileManager defaultManager];
-        BOOL fileExist = [fileManage fileExistsAtPath:filePath];
-        if (!fileExist) {
-            NSLog(@"保存在沙盒的通讯录文件不存在");
-            return;
-        }
-        
-        NSURL *fileUrl = [NSURL fileURLWithPath:filePath];
-        NSError *error = nil;
-//        NSString *fileName = [filePath]
-        [formData appendPartWithFileURL:fileUrl name:@"contact.json" error:&error];
-        if (error) {
-            NSLog(@"%@", error.userInfo);
-            return;
-        }
-        
-        
-        //        NSInputStream *inputStream = [NSInputStream inputStreamWithData:fileData];
-        //        [formData appendPartWithInputStream:inputStream name:@"contact" fileName:@"contact" length:fileData.length mimeType:@"application/octet-stream"];
-        
-        //        [formData appendPartWithFormData:fileData name:Name];
-        //        [formData appen]
-    } progress:^(NSProgress * _Nonnull uploadProgress) {
-        
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        NSError *err = nil;
-        id  json = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&err];
-        
-#ifdef DEBUG
-        NSLog(@"api return:");
-        NSLog(@"%@", apiName);
-        NSLog(@"%@", json);
-        NSLog(@"%@", err);
-#endif
-        
-        DataServiceCompletionModel *compModel = [[DataServiceCompletionModel alloc] init];
-        compModel.apiName = apiName;
-        if (!err) {
-            NSError *error = nil;
-            DataServiceResponseModel *respModel = [[DataServiceResponseModel alloc] initWithDictionary:json error:&error];
-            if (error) {
-                compModel.apiModel = nil;
-                compModel.localErrorCode = kDataServiceStatusUnknown;
-                compModel.localErrorDescription = error.localizedDescription;
-                [compModel.errorArray addObject:err];
-            } else {
-                compModel.apiModel = respModel;
-                compModel.localErrorCode = kDataServiceStatusOK;
-                
-                NSDictionary *resp = (NSDictionary *)json;
-                if ([resp isKindOfClass:[NSDictionary class]]) {
-                    id obj = resp[@"data"];
-                    if ([obj isKindOfClass:[NSArray class]]) {
-                        NSArray *arr = (NSArray *)obj;
-                        compModel.apiModel.dataArray = arr;
-                    } else if ([obj isKindOfClass:[NSDictionary class]]) {
-                        NSDictionary *dict = (NSDictionary *)obj;
-                        compModel.apiModel.dataDictionary = dict;
-                    }else{
-                        compModel.data = obj ;
-                    }
-                }
-            }
-        } else {
-            compModel.apiModel = nil;
-            compModel.localErrorCode = kDataServiceStatusUnknown;
-            compModel.localErrorDescription = err.localizedDescription;
-            [compModel.errorArray addObject:err];
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completion(compModel);
-        });
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        DataServiceCompletionModel *compModel = [self errorHandleWithApiName:apiName error:error];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completion(compModel);
-        });
-    }];
-    [task resume];
+        completion(compModel);
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            completion(compModel);
+//        });
+    }
 }
 
 
@@ -465,8 +204,11 @@ _", mainDirectory, apiName, json);
 #pragma mark - Func
 
 /// 将请求参数组合起来
-- (NSDictionary *)combinePostParamBodyWithAPIName:(NSString *)apiName params:(NSDictionary *)params
+- (NSDictionary *)combinePostParamBodyWithAPIName:(NSString *)apiName params:(id)params
 {
+    if (![params isKindOfClass:[NSDictionary class]]) {
+        return nil;
+    }
     
     NSMutableDictionary *body = [[NSMutableDictionary alloc] initWithDictionary:params];
     
@@ -510,6 +252,15 @@ _", mainDirectory, apiName, json);
         return NO;
     }
     return YES;
+}
+
+/// 接口是否需要传json而不是字典
+- (BOOL)needJsonBodyForAPIName:(NSString *)apiName {
+    NSArray *includeItmes = @[@"borrower/addborrowerinfo.do",@"carrear/addcarrearinfo.do",@"personalcontact/addcontacterinfo.do"];
+    if ([includeItmes containsObject:apiName]) {
+        return YES;
+    }
+    return NO;
 }
 
 

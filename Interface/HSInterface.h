@@ -19,25 +19,25 @@ static CGFloat const timeoutInterval = 120.0;
 + (void)HS_POSTWithIP:(NSString *)ip
           mainApiName:(NSString *)mainApiName
                  name:(NSString *)apiName
-               params:(NSDictionary *)params
+               params:(id)params
            complation:(void (^)(NSInteger errorCode, NSString *errorInfo, id data, NSError *error, NSInteger localErrorStatus, BOOL allSuccess))complation;
 
-///上传文件接口
-+ (void)HS_UploadWithName:(NSString *)apiName
-                   params:(NSDictionary *)params
-                     data:(NSArray *)data
-                 mimeType:(NSString *)mimeType
-               complation:(void (^)(NSInteger errorCode, NSString *errorInfo, id data, NSError *error, NSInteger localErrorStatus, BOOL allSuccess))complation;
-
-/**
- *  上传单个文件接口
- */
-+ (void)HS_UploadWithName:(NSString *)apiName
-                   params:(NSDictionary *)params
-                 fileData:(NSData *)fileData
-                 fileName:(NSString *)fileName
-                 mimeType:(NSString *)mimeType
-               complation:(void (^)(NSInteger errorCode, NSString *errorInfo, id data, NSError *error, NSInteger localErrorStatus, BOOL allSuccess))complation;
+/////上传文件接口
+//+ (void)HS_UploadWithName:(NSString *)apiName
+//                   params:(NSDictionary *)params
+//                     data:(NSArray *)data
+//                 mimeType:(NSString *)mimeType
+//               complation:(void (^)(NSInteger errorCode, NSString *errorInfo, id data, NSError *error, NSInteger localErrorStatus, BOOL allSuccess))complation;
+//
+///**
+// *  上传单个文件接口
+// */
+//+ (void)HS_UploadWithName:(NSString *)apiName
+//                   params:(NSDictionary *)params
+//                 fileData:(NSData *)fileData
+//                 fileName:(NSString *)fileName
+//                 mimeType:(NSString *)mimeType
+//               complation:(void (^)(NSInteger errorCode, NSString *errorInfo, id data, NSError *error, NSInteger localErrorStatus, BOOL allSuccess))complation;
 
 
 @end
