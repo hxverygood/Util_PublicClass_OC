@@ -156,6 +156,25 @@
     return result;
 }
 
+/// 截取银行卡号后4位
+- (NSString * _Nullable)bankCardNumberLast4Digits {
+    if (!self) {
+        return nil;
+    }
+    
+    if ([NSString isBlankString:self]) {
+        return nil;
+    }
+    
+    if (self.length < 4) {
+        return self;
+    }
+    
+    NSString *result = [self substringFromIndex:self.length - 4];
+    return result;
+}
+
+
 /// 使用SVProgressHUD时，根据文字多少计算HUD要显示的时间。计算方法来自SVProgressHUD
 - (CGFloat)hudShowDuration {
     if (!self) {
@@ -382,6 +401,14 @@
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
     [numberFormatter setPositiveFormat:@",###;"];
     return [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[digitString doubleValue]]];
+}
+
+
+/// 获取沙盒Documents路径
++ (NSString * _Nullable)sandboxDocumentDirectoryPath {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docDir = [paths objectAtIndex:0];
+    return docDir;
 }
 
 

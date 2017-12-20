@@ -139,8 +139,7 @@
         
 #ifdef DEBUG
         NSLog(@"\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>> api return >>>>>>>>>>>>>>>>>>>>>>>>>>>\n\
-%@/\n%@\n%@\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n\
-              _", mainDirectory, apiName, json);
+%@/\n%@\n%@\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n_", mainDirectory, apiName, json);
         //        NSLog(@"apiName：%@", apiName);
         //        NSLog(@"json: %@", json);
         if (err) {

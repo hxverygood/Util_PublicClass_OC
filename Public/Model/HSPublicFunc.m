@@ -301,6 +301,36 @@
 //    }];
 }
 
+/// 提示框 - 打开定位
++ (void)showAlertRequiredToLocate
+{
+
+    [ConfirmAlertController actionSheetWithTitle:@"提示" message:@"请打开您的定位功能,否则无法确认您附近的门店信息" confirmTitle:nil cancelTitle:nil actionStyle:UIAlertActionStyleDestructive viewController:[UIViewController currentViewController] actionBlock:^(NSInteger confirmIndex, UIAlertAction * _Nullable cancelAction) {
+        if (confirmIndex == 0) {
+            NSURL *url = nil;
+            if ([[UIDevice currentDevice] systemVersion].floatValue < 10.0) {
+                url = [NSURL URLWithString:@"prefs:root=LocationDemo"];
+                if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                    [[UIApplication sharedApplication] openURL:url];
+                }
+            }else
+            {
+                url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+                if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                    [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+                    }];
+                }
+            }
+            //发起通知
+            [[NSNotificationCenter defaultCenter]postNotificationName:EnterForeground object:nil];
+            
+            //注册通知（name是通知的名称，这里使用的是UIApplicationDidBecomeActiveNotification，意思是应用程序为当前有效的，就是显示在用户面前时触发）
+            UIApplication *application = [UIApplication sharedApplication];
+            [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(applicationDidBecomeActive:) name:EnterForeground object:application];
+        }
+    }];
+}
+
 
 
 #pragma mark - 流程走到第几步

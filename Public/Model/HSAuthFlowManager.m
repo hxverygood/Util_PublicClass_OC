@@ -914,7 +914,7 @@ static HSAuthFlowManager * _instance = nil;
         return @"淘宝认证";
     }
     else if ([authName isEqualToString:@"bankBillFlow"]) {
-        return @"信用卡账单认证";
+        return @"信用卡账单";
     }
     else if ([authName isEqualToString:@"income"]) {
         return @"收入认证";
@@ -929,7 +929,7 @@ static HSAuthFlowManager * _instance = nil;
 /// 查找没有进行认证的index
 - (NSInteger)findUnAuthedIndexWithArray:(NSArray *)authArray {
     NSInteger authIndex = -1;
-    
+
     for (int i = 0; i < authArray.count; i++) {
         NSString *string = authArray[i];
         if (![string isEqualToString:@"0"]) {
@@ -986,6 +986,13 @@ static HSAuthFlowManager * _instance = nil;
         }
         else if ([authName isEqualToString:@"callLog"]) {
             isCert = user.auth.callLog;
+            if (!isCert) {
+                isCert = @"1";
+            }
+            [authArray addObject:[isCert copy]];
+        }
+        else if ([authName isEqualToString:@"basicInfo"]) {
+            isCert = user.auth.BorrowerCode;
             if (!isCert) {
                 isCert = @"1";
             }
@@ -1322,7 +1329,7 @@ static HSAuthFlowManager * _instance = nil;
         NSNumber *minNum = [self.loanListModel.mixCreditAmt convertToNumber];
         if (!minNum) {
             UIViewController *currentVC = [UIViewController currentViewController];
-            [currentVC jumpToViewControllerWith:[HSProductSchemaViewController class]];
+            [currentVC jumpToViewControllerWith:[HSProductAuthViewController class]];
             [currentVC jumpToViewControllerWith:[HSDataManagementViewController class]];
             [currentVC jumpToViewControllerWith:[HSLimitPromotionViewController class]];
             return;
@@ -1337,7 +1344,7 @@ static HSAuthFlowManager * _instance = nil;
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 UIViewController *currentVC = [UIViewController currentViewController];
                 if ([currentVC jumpToViewControllerWith:[HSLimitPromotionViewController class]] == NO) {
-                    if ([currentVC jumpToViewControllerWith:[HSProductSchemaViewController class]] == NO) {
+                    if ([currentVC jumpToViewControllerWith:[HSProductAuthViewController class]] == NO) {
                         [currentVC jumpToViewControllerWith:[HSDataManagementViewController class]];
                     }
                 }
@@ -1473,7 +1480,7 @@ static HSAuthFlowManager * _instance = nil;
                     if ([self requriedAuthIsFinished] == -100) {
                         if (_isOfflineProduct) {
                             UIViewController *currentVC = [UIViewController currentViewController];
-                            [currentVC jumpToViewControllerWith:[HSProductSchemaViewController class]];
+                            [currentVC jumpToViewControllerWith:[HSProductAuthViewController class]];
                         } else {
                             /// 跳转至产品概要界面
                             [self jumpToLimitActivationVC];
@@ -1610,34 +1617,37 @@ static HSAuthFlowManager * _instance = nil;
 
 // 跳转至通话详单认证VC
 - (void)jumpToMobileAuthVC {
-    [HSInterface judjeFethOperatorWithPhoneCompletion:^(BOOL success, NSString *message, __autoreleasing id model) {
-        if (success) {
-            if ([model isKindOfClass:[NSNumber class]]) {
-                NSNumber *num = (NSNumber *)model;
-                NSInteger result = num.integerValue;
-                if (result == 1) {
-                    HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
-                    vc.needPop = YES;
-                    vc.hidesBottomBarWhenPushed = YES;
-                    UIViewController *currentVC = [UIViewController currentViewController];
-                    [currentVC.navigationController pushViewController:vc animated:YES];
-                } else {
-                    [self jumpToOriginOperator];
-                }
-            }
-            else if ([model isEqualToString:@"1"]) {
-                HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
-                vc.needPop = YES;
-                vc.hidesBottomBarWhenPushed = YES;
-                UIViewController *currentVC = [UIViewController currentViewController];
-                [currentVC.navigationController pushViewController:vc animated:YES];
-            }else {
-                [self jumpToOriginOperator];
-            }
-        }else {
-            [SVProgressHUD showInfoWithStatus:message];
-        }
-    }];
+#warning fix: jump to originOperator
+    [self jumpToOriginOperator];
+    
+//    [HSInterface judjeFethOperatorWithPhoneCompletion:^(BOOL success, NSString *message, __autoreleasing id model) {
+//        if (success) {
+//            if ([model isKindOfClass:[NSNumber class]]) {
+//                NSNumber *num = (NSNumber *)model;
+//                NSInteger result = num.integerValue;
+//                if (result == 1) {
+//                    HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
+//                    vc.needPop = YES;
+//                    vc.hidesBottomBarWhenPushed = YES;
+//                    UIViewController *currentVC = [UIViewController currentViewController];
+//                    [currentVC.navigationController pushViewController:vc animated:YES];
+//                } else {
+//                    [self jumpToOriginOperator];
+//                }
+//            }
+//            else if ([model isEqualToString:@"1"]) {
+//                HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
+//                vc.needPop = YES;
+//                vc.hidesBottomBarWhenPushed = YES;
+//                UIViewController *currentVC = [UIViewController currentViewController];
+//                [currentVC.navigationController pushViewController:vc animated:YES];
+//            }else {
+//                [self jumpToOriginOperator];
+//            }
+//        }else {
+//            [SVProgressHUD showInfoWithStatus:message];
+//        }
+//    }];
 }
 
 - (void)jumpToOriginOperator {

@@ -49,6 +49,8 @@
 - (NSString * _Nullable)hidePhoneNumber;
 /// 隐藏部分Email
 - (NSString * _Nullable)hideEmail;
+/// 截取银行卡号后4位
+- (NSString * _Nullable)bankCardNumberLast4Digits;
 
 /// 隐藏部分字符串
 - (NSString * _Nullable)hideStringWithFrontPartialCount:(NSInteger)frontPartialCount
@@ -80,5 +82,8 @@
 /// 保留小数点后指定的位数
 - (NSString * _Nullable)reserveDecimalPartWithDigitCount:(NSInteger)count
                                             roundingMode:(NSRoundingMode)roundMode;
+
+/// 获取沙盒Documents路径
++ (NSString * _Nullable)sandboxDocumentDirectoryPath;
 
 @end

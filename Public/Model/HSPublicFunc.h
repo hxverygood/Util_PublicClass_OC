@@ -23,6 +23,9 @@
 /// 上传通讯录
 + (void)uploadContacts;
 
+/// 提示框 - 打开定位
++ (void)showAlertRequiredToLocate;
+
 /// 判断INS_CURRENTSTATUS表示在流程的第几步
 - (NSInteger)workflowPositionWithCurrentStatus:(NSString *)currentStatus;
 

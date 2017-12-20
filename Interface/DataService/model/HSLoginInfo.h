@@ -11,6 +11,7 @@
 
 //@class BLWStoreLoginDataModel;
 @class HSUser;
+@class HSLimitAlertModel;
 
 // 登录信息
 @interface HSLoginInfo : NSObject
@@ -40,6 +41,22 @@
 + (nullable NSString *)savedRegistrationID;
 /// 删除保存的推送ID
 + (void)removeRegistrationID;
+
+
+#pragma mark - 弹出是否显示的数据存储
+
++ (void)limitAlertStateWithTitle:(NSString *_Nullable)title
+                      limitValid:(BOOL)limitValid
+                      completion:(void (^_Nullable)(NSInteger state))completion;
+
++ (void)updateLimitAlertDataWith:(NSString *_Nullable)title
+                      limitValid:(BOOL)limitValid
+                      completion:(void (^_Nullable)(BOOL insertSuccess))completion;
+
++ (void)readSavedLimitAlertDataWithTitle:(NSString *_Nullable)title
+                              completion:(void (^_Nullable)(NSArray * _Nullable results))completion;
+
++ (void)deleteLimitAlertDataWithCompletion:(void (^_Nullable)(BOOL deleteSuccess))completion;
 
 /// 设置和获取session id
 /// 仅供BLWDataService类内部使用

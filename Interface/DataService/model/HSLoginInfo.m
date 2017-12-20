@@ -8,9 +8,19 @@
 
 #import "HSLoginInfo.h"
 #import "HSUser.h"
+#import "HSLimitAlertModel.h"
 
 static NSString *const HSLoginInfoFileName = @"info";
 static NSString *const kRegistrationID = @"registrationID";
+
+
+@interface HSLoginInfo ()
+
+//@property (nonatomic, strong) NSArray *productNames;
+
+@end
+
+
 
 @implementation HSLoginInfo
 
@@ -126,6 +136,93 @@ static NSString *const kRegistrationID = @"registrationID";
     [userDefaults removeObjectForKey:kRegistrationID];
     [userDefaults synchronize];
 }
+
+
+
+#pragma mark - 弹出是否显示的数据存储
+
++ (void)limitAlertStateWithTitle:(NSString *)title
+                      limitValid:(BOOL)limitValid
+                      completion:(void (^)(NSInteger state))completion {
+    
+    if ([NSString isBlankString:title]) {
+        NSLog(@"要查询的title字段为空");
+        return;
+    }
+    
+    [HSLoginInfo readSavedLimitAlertDataWithTitle:title completion:^(NSArray *results) {
+        if (results.count > 0) {
+            HSLimitAlertModel *alertModel = (HSLimitAlertModel *)results.firstObject;
+            if (completion) {
+                BOOL state = limitValid ? alertModel.neverShowLimitValid : alertModel.neverShowLimitInvalid;
+                completion(state ? 1 : 0);
+            }
+            return;
+        }
+        if (completion) {
+            completion(2);
+        }
+    }];
+}
+
++ (void)updateLimitAlertDataWith:(NSString *)title
+                      limitValid:(BOOL)limitValid
+                      completion:(void (^)(BOOL insertSuccess))completion {
+    
+    if ([NSString isBlankString:title]) {
+        NSLog(@"要查询的title字段为空");
+        return;
+    }
+    
+    [HSLoginInfo readSavedLimitAlertDataWithTitle:title completion:^(NSArray *results) {
+        HSLimitAlertModel *alertModel = [[HSLimitAlertModel alloc] init];
+        if (results && results.count > 0) {
+            alertModel = (HSLimitAlertModel *)results.firstObject;
+        }
+        
+        alertModel.productName = title;
+        if (limitValid) {
+            alertModel.neverShowLimitValid = YES;
+        }
+        else {
+            alertModel.neverShowLimitInvalid = YES;
+        }
+        
+        [HSLimitAlertModel save:alertModel resBlock:^(BOOL res) {
+            if (completion) {
+                completion(res);
+            }
+        }];
+    }];
+}
+
++ (void)readSavedLimitAlertDataWithTitle:(NSString *)title
+                              completion:(void (^)(NSArray *results))completion {
+    if ([NSString isBlankString:title]) {
+        NSLog(@"要查询的title字段为空");
+        return;
+    }
+    
+    NSLog(@"沙盒Document路径：%@", [NSString sandboxDocumentDirectoryPath]);
+    
+    NSString *where = [NSString stringWithFormat:@"productName = \"%@\"", title];
+    [HSLimitAlertModel selectWhere:where groupBy:nil orderBy:nil limit:nil selectResultsBlock:^(NSArray *selectResults) {
+        if (completion) {
+            completion(selectResults);
+        }
+    }];
+}
+
++ (void)deleteLimitAlertDataWithCompletion:(void (^)(BOOL deleteSuccess))completion {
+    [HSLimitAlertModel truncateTable:^(BOOL res) {
+        if (completion) {
+            completion(res);
+        }
+    }];
+}
+
+
+
 
 
 #pragma mark - SessionID
