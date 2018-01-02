@@ -17,6 +17,10 @@
 
 - (void)showWithConfirmButtonPressed:(void (^)(NSString *inputContent))confirmButtonPressed;
 
+- (void)setTitle:(NSString *)title;
+- (void)setContent:(NSString *)content;
+- (void)setTextfieldPlaceholder:(NSString *)placeholder;
+
 - (void)dismissWithCompletion:(void (^)(void))completion;
 
 - (void)clear;

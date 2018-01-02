@@ -91,7 +91,7 @@
     }
     
     __weak typeof(self) weakSelf = self;
-     _alertView = [[JCAlertView alloc] initWithCustomView:weakSelf dismissWhenTouchedBackground:YES];
+     _alertView = [[JCAlertView alloc] initWithCustomView:weakSelf dismissWhenTouchedBackground:NO];
     [_alertView show];
 }
 
@@ -105,6 +105,21 @@
 
 - (void)clear {
     _textfield.text = @"";
+}
+
+/// 设置标题
+- (void)setTitle:(NSString *)title {
+    self.titleLabel.text = [NSString isBlankString:title] ? @"" : title;
+}
+
+/// 设置提示内容
+- (void)setContent:(NSString *)content {
+    self.contentLabel.text = [NSString isBlankString:content] ? @"请输入邀请码" : content;
+}
+
+/// 设置输入框placeholder内容
+- (void)setTextfieldPlaceholder:(NSString *)placeholder {
+    self.textfield.placeholder = [NSString isBlankString:placeholder] ? @"" : placeholder;
 }
 
 
