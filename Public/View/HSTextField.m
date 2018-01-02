@@ -84,6 +84,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.tintColor = YELLOW;
+        self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     }
     return self;
 }
@@ -92,6 +93,7 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.tintColor = YELLOW;
+        self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     }
     return self;
 }
@@ -100,6 +102,7 @@
     [super awakeFromNib];
     
     self.tintColor = YELLOW;
+    self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
 }
 
 
@@ -172,5 +175,6 @@
 - (CGRect)editingRectForBounds:(CGRect)bounds {
     return CGRectInset(bounds, 0.0, 0.0);
 }
+
 
 @end

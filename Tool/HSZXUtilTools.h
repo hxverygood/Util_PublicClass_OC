@@ -105,6 +105,22 @@
 -(NSString*)getCurrentDateWithFormatterStr:(NSString*)formatterStr;
 
 /**
+ // 时间戳转换为字符串
+ 
+ @param timeString <#timeString description#>
+ @return <#return value description#>
+ */
+- (NSString *)timeWithTimeIntervalString:(NSString *)timeString;
+
+/**
+ 时间转化为字符串
+ 
+ @param date <#date description#>
+ @return <#return value description#>
+ */
+- (NSString *)timeWithTimeString:(NSDate *)date;
+
+/**
  字典转json
  
  @param dic <#dic description#>

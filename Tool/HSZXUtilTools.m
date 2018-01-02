@@ -259,6 +259,52 @@
 
 
 /**
+ // 时间戳转换为字符串
+
+ @param timeString <#timeString description#>
+ @return <#return value description#>
+ */
+- (NSString *)timeWithTimeIntervalString:(NSString *)timeString
+{
+    // 格式化时间
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    formatter.timeZone = [NSTimeZone timeZoneWithName:@"beijing"];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    //    [formatter setDateFormat:@"yyyy年MM月dd日 HH:mm"];
+    [formatter setDateFormat:@"yyyy年MM月dd日"];
+    
+    // 毫秒值转化为秒
+    NSDate* date = [NSDate dateWithTimeIntervalSince1970:[timeString doubleValue]/ 1000.0];
+    NSString* dateString = [formatter stringFromDate:date];
+    return dateString;
+}
+
+
+
+/**
+ 时间转化为字符串
+
+ @param date <#date description#>
+ @return <#return value description#>
+ */
+- (NSString *)timeWithTimeString:(NSDate *)date
+{
+    // 格式化时间
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    formatter.timeZone = [NSTimeZone timeZoneWithName:@"beijing"];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    //    [formatter setDateFormat:@"yyyy年MM月dd日 HH:mm"];
+    [formatter setDateFormat:@"yyyy年MM月dd日"];
+    
+    // 毫秒值转化为秒
+    NSString* dateString = [formatter stringFromDate:date];
+    return dateString;
+}
+
+
+/**
  字典转json
  
  @param dic <#dic description#>

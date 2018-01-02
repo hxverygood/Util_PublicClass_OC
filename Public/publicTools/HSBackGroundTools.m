@@ -39,7 +39,7 @@
     self = [super init];
     if (self)
     {
-        bgTimer = [[HSGCDTimerManager alloc] initWithgcdTimerManagerWithTimerCount:expectSecond];
+        bgTimer = [[HSGCDTimerManager alloc] initWithgcdTimerManagerWithTimerCount:expectSecond withTimeInterval:1.0];
         _lcMaager = [LocationManager sharedManager];
     }
     return self;

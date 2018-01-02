@@ -114,9 +114,11 @@
         return nil;
     }
     
+    // 先保留小数点后2位
+    NSString *convertStr = [self reserveDecimalPartWithDigitCount:2 roundingMode:NSRoundUp];
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
     [numberFormatter setPositiveFormat:@",###.00;"];
-    NSString *resultStr = [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[self doubleValue]]];
+    NSString *resultStr = [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[convertStr doubleValue]]];
     return [resultStr copy];
 }
 
@@ -303,10 +305,6 @@
 
 /// 保留金额小数点后2位
 - (NSString * _Nullable)reserveMoneyWithTwoDigit {
-    if (self == nil) {
-        return nil;
-    }
-    
     return [self reserveDecimalPartWithDigitCount:2 roundingMode:NSRoundUp];
 }
 

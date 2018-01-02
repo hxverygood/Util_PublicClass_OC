@@ -35,9 +35,8 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
-    [self changeNavigationBar];
     [self adapterForIOSVersion];
+    [self changeNavigationBar];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

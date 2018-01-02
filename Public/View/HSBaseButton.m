@@ -35,7 +35,7 @@
 
 - (UIColor *)defaultBackgrouodColor {
     if (!_defaultBackgrouodColor) {
-        _defaultBackgrouodColor = YELLOW;
+        _defaultBackgrouodColor = YELLOW_BUTTON;
     }
     return _defaultBackgrouodColor;
 }
@@ -198,7 +198,7 @@
     if (self) {
 //        [self gradientBackgroudWithCornerRadius:5.0];
         self.titleLabel.font = [UIFont systemFontOfSize:18.0];
-        self.backgroundColor = YELLOW;
+        self.backgroundColor = YELLOW_BUTTON;
         [self setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         self.layer.cornerRadius = 3.0;
         self.layer.masksToBounds = YES;
@@ -211,7 +211,7 @@
     
 //    [self gradientBackgroudWithCornerRadius:5.0];
     self.titleLabel.font = [UIFont systemFontOfSize:18.0];
-    self.backgroundColor = YELLOW;
+    self.backgroundColor = YELLOW_BUTTON;
     [self setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.layer.cornerRadius = 3.0;
     self.layer.masksToBounds = YES;

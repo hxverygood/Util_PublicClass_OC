@@ -15,7 +15,6 @@
 
 #import "HSInterface+Main.h"                                // 首页API
 #import "HSHomeDataModel.h"                                 // 首页数据模型
-#import "HSHomeDetailViewController.h"                      // 申请借款VC
 
 #import "HSCertificateViewController.h"                     // 实名认证VC
 #import "HSUserBasicInfoViewController.h"                   // 个人基础信息VC

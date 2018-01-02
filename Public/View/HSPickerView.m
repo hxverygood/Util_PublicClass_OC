@@ -45,7 +45,7 @@ static CGFloat height = 220.0;
         _confirmButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_confirmButton setTitle:@"确定" forState:UIControlStateNormal];
         [_confirmButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-        _confirmButton.titleLabel.font = [UIFont systemFontOfSize:14.0];
+        _confirmButton.titleLabel.font = [UIFont systemFontOfSize:17.0];
         [_confirmButton addTarget:self action:@selector(confirmButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [_toolbar addSubview:_confirmButton];
     
@@ -53,7 +53,7 @@ static CGFloat height = 220.0;
         _cancelButton.frame = CGRectMake(10.0, 0.0, 60.0, 40.0);
         [_cancelButton setTitle:@"取消" forState:UIControlStateNormal];
         [_cancelButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-        _cancelButton.titleLabel.font = [UIFont systemFontOfSize:14.0];
+        _cancelButton.titleLabel.font = [UIFont systemFontOfSize:17.0];
         [_cancelButton addTarget:self action:@selector(cancelButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [_toolbar addSubview:_cancelButton];
         

@@ -11,7 +11,10 @@
 
 @interface HSNewXBTextCellTableViewCell : UITableViewCell
 
+/**
+ 数据模型
+ */
+@property(nonatomic,strong)HSNewHomeNoticModel * noticModel;
 
-
--(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier withModel:(HSNewHomeNoticModel*)model;
+-(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
 @end

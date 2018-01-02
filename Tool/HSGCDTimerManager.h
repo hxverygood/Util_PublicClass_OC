@@ -15,7 +15,7 @@ typedef void(^HSTimerBLock) (NSInteger count);
 // 时间间隔
 @property(nonatomic,assign)NSTimeInterval  timeInterval;
 
--(instancetype)initWithgcdTimerManagerWithTimerCount:(NSInteger)timercOunt;
+-(instancetype)initWithgcdTimerManagerWithTimerCount:(NSInteger)timercOunt withTimeInterval:(NSTimeInterval)timeInterval;
 
 // 开始计时
 -(void)startTimerCompletion:(HSTimerBLock)block;

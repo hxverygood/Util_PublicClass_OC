@@ -33,12 +33,15 @@
 
 - (void)addHeaderRefresh:(void (^)(void))complete
 {
-    self.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+    MJRefreshNormalHeader *header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         // 进入刷新状态就会回调这个Block
         if (complete) {
             complete();
         }
     }];
+    header.stateLabel.textColor = Gray180;
+    header.lastUpdatedTimeLabel.textColor = Gray180;
+    self.mj_header = header;
 }
 
 - (void)addFooterRefresh:(void (^)(void))complete

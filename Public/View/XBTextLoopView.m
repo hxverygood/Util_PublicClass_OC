@@ -11,8 +11,13 @@
 #import "HSNoticeModel.h"
 #import "HSNewHomeNoticModel.h"
 #import "HSNewXBTextCellTableViewCell.h"
+#import "HSGCDTimerManager.h"
 
+    static NSString *ID = @"HSNewXBTextCellTableViewCell";
 @interface XBTextLoopView () <UITableViewDataSource, UITableViewDelegate>
+{
+    HSGCDTimerManager * gcdTimer;
+}
 
 @property (nonatomic, weak) UITableView *tableView;
 @property (nonatomic, assign) NSTimeInterval interval;
@@ -29,6 +34,12 @@
 - (void)setDataSource:(NSArray *)dataSource
 {
     _dataSource = dataSource;
+
+    _currentRowIndex = 0;
+    [_tableView setContentOffset:CGPointZero];
+    [gcdTimer suspenTimer];
+
+    
     NSInteger logIndex = 0;
     NSMutableArray <HSNoticeModel*>* tesarray;
     NSMutableArray  * finalArray = [[NSMutableArray alloc] init];
@@ -47,6 +58,13 @@
             if ((i+1)%2 != 0)
             {
                 [finalArray addObject:tesarray];
+            }else
+            {
+                if (logIndex == 2)
+                {
+                    logIndex = 0;
+                    [finalArray addObject:tesarray];
+                }
             }
         }else
         {
@@ -77,18 +95,17 @@
         {
             if (idx == 0)
             {
-                newNoticModel.topTipStr = @"新闻";
+                newNoticModel.topTipStr = obj.type;
                 newNoticModel.topContentStr = obj.headline;
 
             }else if (idx ==1)
             {
-                newNoticModel.bottomTipStr = @"资讯";
+                newNoticModel.bottomTipStr = obj.type ;
                 newNoticModel.bottomContentStr = obj.headline;
                 newNoticModel.showCount = 2;
             }
         }];
         [modelsCacheArray addObject:newNoticModel];
-        self.modelsArray = modelsCacheArray;
     }];
     
 //    HSNewHomeNoticModel * newNoticModel1 = [[HSNewHomeNoticModel alloc] init];
@@ -114,6 +131,7 @@
 {
     _modelsArray = modelsArray;
     [self.tableView reloadData];
+    [gcdTimer resumeTimer];
 }
 
 
@@ -127,8 +145,6 @@
 }
 
 
-
-
 #pragma mark - tableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 2;
@@ -139,14 +155,15 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *ID = @"HSNewXBTextCellTableViewCell";
+
     
     HSNewHomeNoticModel * model = [_modelsArray objectAtIndex:indexPath.row];
     HSNewXBTextCellTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ID];
     if (!cell)
     {
-        cell = [[HSNewXBTextCellTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID withModel:model];
+        cell = [[HSNewXBTextCellTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
     }
+    cell.noticModel = model;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.backgroundColor = [UIColor clearColor];
     return cell;
@@ -175,9 +192,15 @@
 - (void)setInterval:(NSTimeInterval)interval {
     _interval = interval;
     
-    // 定时器
-    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(timer) userInfo:nil repeats:YES];
-    _myTimer = timer;
+//    // 定时器
+//    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(timer) userInfo:nil repeats:YES];
+//    _myTimer = timer;
+    gcdTimer = [[HSGCDTimerManager alloc] initWithgcdTimerManagerWithTimerCount:NSIntegerMax withTimeInterval:_interval];
+    [gcdTimer startTimerCompletion:^(NSInteger count)
+     {
+         [self timer];
+     }];
+    
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -190,6 +213,9 @@
         tableView.rowHeight = frame.size.height;
         tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         tableView.showsVerticalScrollIndicator = NO;
+        tableView.pagingEnabled = YES;
+        tableView.bounces = NO;
+        tableView.scrollEnabled = NO;
 
         _tableView = tableView;
 //        [self.tableView registerNib:[UINib nibWithNibName:@"HSNewXBTextCellTableViewCell" bundle:nil] forCellReuseIdentifier:@"HSNewXBTextCellTableViewCell"];

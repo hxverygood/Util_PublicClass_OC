@@ -14,17 +14,22 @@
     UILabel * topTiplabel;
     // 上文本
     UILabel * topContentLabel;
+    
+    // 上标签
+    UILabel * alltopTiplabel;
+    // 上文本
+    UILabel * alltopContentLabel;
     // 下标签
-    UILabel * bottomTiplabe;
+    UILabel * allbottomTiplabe;
     // 下文本
-    UILabel * bottomContentLabel;
+    UILabel * allbottomContentLabel;
+    
+    UIView  *  topBgView;
+    UIView  *  allbgView;
 }
 
 
-/**
-  数据模型
- */
-@property(nonatomic,strong)HSNewHomeNoticModel * noticModel;
+
 
 @end;
 
@@ -36,67 +41,69 @@
 }
 
 
--(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier withModel:(HSNewHomeNoticModel*)model
+-(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self)
     {
-        _noticModel = model;
-        if (_noticModel.showCount == 1)
-        {
-            topTiplabel = [[UILabel alloc] initWithFrame:CGRectZero];
-            [self.contentView addSubview:topTiplabel];
-            topTiplabel.font = [UIFont systemFontOfSize:15];
-            topTiplabel.textColor = [UIColor colorWithHexString:@"f45d67"];
-            topTiplabel.textAlignment = NSTextAlignmentLeft;
-            topTiplabel.text = _noticModel.topTipStr;
-            
-            topContentLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-            [self.contentView addSubview:topContentLabel];
-            topContentLabel.font = [UIFont systemFontOfSize:15];
-            topContentLabel.textColor = [UIColor colorWithHexString:@"333333"];
-            topContentLabel.textAlignment = NSTextAlignmentLeft;
-            topContentLabel.text = _noticModel.topContentStr;
+        
+        // 第一种样式
+        topBgView = [[UIView alloc] initWithFrame:CGRectZero];
+        [self.contentView addSubview:topBgView];
 
-            
-            
-        }else if (_noticModel.showCount == 2)
-        {
-            topTiplabel = [[UILabel alloc] initWithFrame:CGRectZero];
-            [self.contentView addSubview:topTiplabel];
-            topTiplabel.font = [UIFont systemFontOfSize:15];
-            topTiplabel.textColor = [UIColor colorWithHexString:@"f45d67"];
-            topTiplabel.textAlignment = NSTextAlignmentLeft;
-            topTiplabel.text = _noticModel.topTipStr;
+        
+        topTiplabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        [topBgView addSubview:topTiplabel];
+        topTiplabel.font = [UIFont systemFontOfSize:13];
+        topTiplabel.textColor = [UIColor colorWithHexString:@"f45d67"];
+        topTiplabel.backgroundColor  = [UIColor colorWithHexString:@"fdf8f5"];
+        topTiplabel.textAlignment = NSTextAlignmentCenter;
+        
+        
+        
+        
+        topContentLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        [topBgView addSubview:topContentLabel];
+        topContentLabel.font = [UIFont systemFontOfSize:15];
+        topContentLabel.textColor = [UIColor colorWithHexString:@"333333"];
+        topContentLabel.textAlignment = NSTextAlignmentLeft;
+        
+        
+        
+        
+        // 第二种样式
+        allbgView = [[UIView alloc] initWithFrame:CGRectZero];
+        [self.contentView addSubview:allbgView];
 
-            
-            
-            topContentLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-            [self.contentView addSubview:topContentLabel];
-            topContentLabel.font = [UIFont systemFontOfSize:15];
-            topContentLabel.textColor = [UIColor colorWithHexString:@"333333"];
-            topContentLabel.textAlignment = NSTextAlignmentLeft;
-            topContentLabel.text = _noticModel.topContentStr;
+        alltopTiplabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        [allbgView addSubview:alltopTiplabel];
+        alltopTiplabel.font = [UIFont systemFontOfSize:13];
+        alltopTiplabel.textColor = [UIColor colorWithHexString:@"f45d67"];
+        alltopTiplabel.textAlignment = NSTextAlignmentCenter;
+        alltopTiplabel.backgroundColor  = [UIColor colorWithHexString:@"fdf8f5"];
 
-            
-            
-            bottomTiplabe = [[UILabel alloc] initWithFrame:CGRectZero];
-            [self.contentView addSubview:bottomTiplabe];
-            bottomTiplabe.font = [UIFont systemFontOfSize:15];
-            bottomTiplabe.textColor = [UIColor colorWithHexString:@"f45d67"];
-            bottomTiplabe.textAlignment = NSTextAlignmentLeft;
-            bottomTiplabe.text = _noticModel.bottomTipStr;
 
-            
-            
-            bottomContentLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-            [self.contentView addSubview:bottomContentLabel];
-            bottomContentLabel.font = [UIFont systemFontOfSize:15];
-            bottomContentLabel.textColor = [UIColor colorWithHexString:@"333333"];
-            bottomContentLabel.textAlignment = NSTextAlignmentLeft;
-            bottomContentLabel.text = _noticModel.bottomContentStr;
-            
-        }
+        alltopContentLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        [allbgView addSubview:alltopContentLabel];
+        alltopContentLabel.font = [UIFont systemFontOfSize:15];
+        alltopContentLabel.textColor = [UIColor colorWithHexString:@"333333"];
+        alltopContentLabel.textAlignment = NSTextAlignmentLeft;
+        
+        
+        allbottomTiplabe = [[UILabel alloc] initWithFrame:CGRectZero];
+        [allbgView addSubview:allbottomTiplabe];
+        allbottomTiplabe.font = [UIFont systemFontOfSize:13];
+        allbottomTiplabe.textColor = [UIColor colorWithHexString:@"f45d67"];
+        allbottomTiplabe.textAlignment = NSTextAlignmentCenter;
+        allbottomTiplabe.backgroundColor  = [UIColor colorWithHexString:@"fdf8f5"];
+
+        
+        allbottomContentLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        [allbgView addSubview:allbottomContentLabel];
+        allbottomContentLabel.font = [UIFont systemFontOfSize:15];
+        allbottomContentLabel.textColor = [UIColor colorWithHexString:@"333333"];
+        allbottomContentLabel.textAlignment = NSTextAlignmentLeft;
+
     }
     return self;
 }
@@ -106,87 +113,104 @@
 {
     [super layoutSubviews];
     
-    CGFloat itemHeight = self.frame.size.height/2.0f;
+    CGFloat allbgViewItemHeight = (self.contentView.frame.size.height/2.0f)-15;
+
+         // 第一种样式
+    [topBgView mas_makeConstraints:^(MASConstraintMaker *make)
+     {
+         make.left.right.equalTo(self.contentView);
+         make.centerY.equalTo(self.contentView);
+         make.height.equalTo(@(allbgViewItemHeight));
+     }];
+
+    [topTiplabel mas_makeConstraints:^(MASConstraintMaker *make)
+     {
+         make.left.equalTo(topBgView).offset(5);
+         make.width.equalTo(@(40));
+         make.centerY.equalTo(topBgView);
+         make.height.equalTo(@(allbgViewItemHeight));
+     }];
+    [topTiplabel layoutIfNeeded];
+    
+    
+    [topContentLabel mas_makeConstraints:^(MASConstraintMaker *make)
+     {
+         make.right.equalTo(topBgView).offset(-5);
+         make.left.equalTo(topTiplabel.mas_right).offset(5);
+         make.top.equalTo(topTiplabel);
+         make.height.equalTo(@(allbgViewItemHeight));
+     }];
+    [topContentLabel layoutIfNeeded];
+    
+    // 第二种样式
+    
+    
+    [allbgView mas_makeConstraints:^(MASConstraintMaker *make)
+     {
+         make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 0, 0));
+     }];
+    
+    
+    [alltopTiplabel mas_makeConstraints:^(MASConstraintMaker *make)
+     {
+         make.left.equalTo(allbgView).offset(5);
+         make.top.equalTo(allbgView).offset(10);
+         make.width.equalTo(@(40));
+         make.height.equalTo(@(allbgViewItemHeight));
+     }];
+    [alltopTiplabel layoutIfNeeded];
+    
+    [alltopContentLabel mas_makeConstraints:^(MASConstraintMaker *make)
+     {
+         make.right.equalTo(allbgView).offset(-5);
+         make.left.equalTo(alltopTiplabel.mas_right).offset(5);
+         make.top.equalTo(alltopTiplabel);
+         make.height.equalTo(@(allbgViewItemHeight));
+     }];
+    [alltopContentLabel layoutIfNeeded];
+    
+    [allbottomTiplabe mas_makeConstraints:^(MASConstraintMaker *make)
+     {
+         make.left.equalTo(allbgView).offset(5);
+         make.top.equalTo(alltopTiplabel.mas_bottom).offset(10);
+         make.width.equalTo(@(40));
+         make.height.equalTo(@(allbgViewItemHeight));
+     }];
+    [allbottomTiplabe layoutIfNeeded];
+    
+    [allbottomContentLabel mas_makeConstraints:^(MASConstraintMaker *make)
+     {
+         make.right.equalTo(self.contentView).offset(-5);
+         make.left.equalTo(allbottomTiplabe.mas_right).offset(5);
+         make.top.equalTo(allbottomTiplabe);
+         make.height.equalTo(@(allbgViewItemHeight));
+     }];
+    [allbottomContentLabel layoutIfNeeded];
+    
+}
+
+
+-(void)setNoticModel:(HSNewHomeNoticModel *)noticModel
+{
+    _noticModel = noticModel;
     if (_noticModel.showCount == 1)
     {
-
-        [topTiplabel mas_makeConstraints:^(MASConstraintMaker *make)
-         {
-             make.left.equalTo(self.contentView).offset(5);
-             make.width.equalTo(@(50));
-             make.centerY.equalTo(self.contentView);
-             make.height.equalTo(@(itemHeight));
-         }];
-        [topTiplabel layoutIfNeeded];
-
-        
-
-        [topContentLabel mas_makeConstraints:^(MASConstraintMaker *make)
-         {
-             make.right.equalTo(self.contentView).offset(-5);
-             make.left.equalTo(topTiplabel.mas_right).offset(5);
-             make.top.equalTo(topTiplabel);
-             make.height.equalTo(@(itemHeight));
-         }];
-        [topContentLabel layoutIfNeeded];
-;
-        
-        
+        topTiplabel.text = _noticModel.topTipStr;
+        topContentLabel.text = _noticModel.topContentStr;
+        topBgView.hidden = NO;
+        allbgView.hidden = YES;
         
     }else if (_noticModel.showCount == 2)
     {
 
-        [topTiplabel mas_makeConstraints:^(MASConstraintMaker *make)
-         {
-             make.left.equalTo(self.contentView).offset(5);
-             make.top.equalTo(self.contentView);
-             make.width.equalTo(@(50));
-             make.height.equalTo(@(itemHeight));
-         }];
-        [topTiplabel layoutIfNeeded];
-
-        
-        
-        
-
-        [topContentLabel mas_makeConstraints:^(MASConstraintMaker *make)
-         {
-             make.right.equalTo(self.contentView).offset(-5);
-             make.left.equalTo(topTiplabel.mas_right).offset(5);
-             make.top.equalTo(topTiplabel);
-             make.height.equalTo(@(itemHeight));
-         }];
-        [topContentLabel layoutIfNeeded];
-
-        
-        
-        
-
-        [bottomTiplabe mas_makeConstraints:^(MASConstraintMaker *make)
-         {
-             make.left.equalTo(self.contentView).offset(5);
-             make.top.equalTo(topTiplabel.mas_bottom);
-             make.width.equalTo(@(50));
-             make.height.equalTo(@(itemHeight));
-         }];
-        [bottomTiplabe layoutIfNeeded];
-
-        
-        
-
-        [bottomContentLabel mas_makeConstraints:^(MASConstraintMaker *make)
-         {
-             make.right.equalTo(self.contentView).offset(-5);
-             make.left.equalTo(bottomTiplabe.mas_right).offset(5);
-             make.top.equalTo(bottomTiplabe);
-             make.height.equalTo(@(itemHeight));
-         }];
-        [bottomContentLabel layoutIfNeeded];
-
-        
+        alltopTiplabel.text = _noticModel.topTipStr;
+        alltopContentLabel.text = _noticModel.topContentStr;
+        allbottomTiplabe.text = _noticModel.bottomTipStr;
+        allbottomContentLabel.text = _noticModel.bottomContentStr;
+        topBgView.hidden = YES;
+        allbgView.hidden = NO;
     }
 }
-
 
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

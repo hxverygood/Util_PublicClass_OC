@@ -34,6 +34,7 @@
 @property (nonatomic, assign, readonly) NSInteger totalCount;
 @property (nonatomic, assign, readonly) AuthTipOption authOption;
 @property (nonatomic, assign, readonly) ProductOption currentProductType;
+@property (nonatomic, assign) BOOL requiredAuthIsOfflineProduct;
 
 /// 线下产品认证项数组
 @property (nonatomic, strong) NSArray<NSArray *> *offlineProductNames;
