@@ -383,6 +383,17 @@
 }
 
 
+#pragma mark 拨打电话
+
++ (void)callWithPhoneNumber:(NSString *)phone {
+    NSString *phoneUrlStr = [NSString stringWithFormat:@"tel://%@", phone];
+    NSURL *phoneUrl = [NSURL URLWithString:phoneUrlStr];
+    if ([[UIApplication sharedApplication] canOpenURL:phoneUrl]) {
+        [[UIApplication sharedApplication] openURL:phoneUrl];
+    }
+}
+
+
 //#pragma mark - 倒计时
 
 //- (void)startCountDown {

@@ -40,4 +40,9 @@
 
 + (BOOL)isRealName;
 
+
+#pragma mark 拨打电话
+
++ (void)callWithPhoneNumber:(NSString *)phone;
+
 @end
