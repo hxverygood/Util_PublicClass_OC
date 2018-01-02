@@ -7,9 +7,19 @@
 //
 
 #import "HSBaseViewController.h"
+#import <WebKit/WebKit.h>
+
+@protocol HSWebVCContentProtocol <NSObject>
+
+- (void)wk_userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message;
+
+@end
+
+
 
 @interface HSWebViewController : HSBaseViewController
 
+@property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, strong) NSString *titleStr;
 @property (nonatomic, strong) NSString *urlStr;
 @property (nonatomic, assign) UIEdgeInsets webViewInsets;
@@ -21,5 +31,10 @@
 
 // 完成某项工作后是否pop回上一个VC
 @property (nonatomic, assign) BOOL needPop;
+
+@property (nonatomic, weak) id<HSWebVCContentProtocol> delegate;
+
+
+- (void)sendJSDataWithUserContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message;
 
 @end

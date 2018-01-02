@@ -7,12 +7,10 @@
 //
 
 #import "HSWebViewController.h"
-#import <WebKit/WebKit.h>
 #import "WKWebView+Utils.h"
 
-@interface HSWebViewController () <WKNavigationDelegate>
+@interface HSWebViewController () <WKNavigationDelegate, WKScriptMessageHandler>
 //@property (weak, nonatomic) IBOutlet WKWebView *webView;
-@property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, strong) UIProgressView *progressView;
 @property (nonatomic, strong) UILabel *waterMarkLabel;
 @property (nonatomic, strong) UIImageView *waterMarkImageView;
@@ -27,9 +25,9 @@
         _progressView = [[UIProgressView alloc] init];
         _progressView.frame = CGRectZero;
         //设置进度条的高度，进度条的宽度变为原来的1倍，高度变为原来的1.5倍.
-        _progressView.transform = CGAffineTransformMakeScale(1.0, 1.5);
+        _progressView.transform = CGAffineTransformMakeScale(1.0, 3.0);
         _progressView.trackTintColor = [UIColor clearColor];
-        _progressView.progressTintColor = _progressViewColor;
+        _progressView.progressTintColor = _progressViewColor ? : YELLOW;
         [self.view addSubview:self.progressView];
     }
     return _progressView;
@@ -41,6 +39,9 @@
         _webView.backgroundColor = [[UIColor alloc] initWithRed:251/255.0 green:251/255.0 blue:251/255.0f alpha:1];
         
         WKWebViewConfiguration *wkWebConfig = [[WKWebViewConfiguration alloc] init];
+        WKUserContentController *userCC = wkWebConfig.userContentController;
+        [userCC addScriptMessageHandler:self name:@"submitResult"];
+        wkWebConfig.userContentController = userCC;
         
 //        // 自适应屏幕宽度js
 //        NSString *jsString = @" var meta = document.createElement('meta');\
@@ -127,6 +128,9 @@
     [self.webView addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:nil];
     
     [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.urlStr]]];
+    
+    [self.webView addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:NULL];
+    
 }
 
 - (void)viewDidLayoutSubviews {
@@ -166,11 +170,10 @@
 // 开始加载
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation {
     NSLog(@"开始加载网页");
-    [SVProgressHUD showWithStatus:@"正在加载……"];
     //开始加载网页时展示出progressView
     self.progressView.hidden = NO;
     //开始加载网页的时候将progressView的Height恢复为1.5倍
-    self.progressView.transform = CGAffineTransformMakeScale(1.0f, 1.5f);
+    self.progressView.transform = CGAffineTransformMakeScale(1.0f, 3.0f);
     //防止progressView被网页挡住
     [self.view bringSubviewToFront:self.progressView];
 }
@@ -187,7 +190,7 @@
     __weak typeof (self)weakSelf = self;
     [UIView animateWithDuration:0.25f delay:0.3f options:UIViewAnimationOptionCurveEaseOut animations:^{
         weakSelf.progressView.progress = 1.0;
-        weakSelf.progressView.transform = CGAffineTransformMakeScale(1.0f, 1.4f);
+        weakSelf.progressView.transform = CGAffineTransformMakeScale(1.0, 2.0);
     } completion:^(BOOL finished) {
         weakSelf.progressView.hidden = YES;
         [SVProgressHUD dismiss];
@@ -244,19 +247,66 @@
 
 
 
+#pragma mark - WKScriptMessageHandler
+
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
+    [self sendJSDataWithUserContentController:userContentController didReceiveScriptMessage:message];
+}
+
+
+- (void)sendJSDataWithUserContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
+    
+}
+
 #pragma mark - Func
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary<NSString *,id> *)change
                        context:(void *)context {
+//    if ([keyPath isEqualToString:@"estimatedProgress"]) {
+//        if (self.progressView.progress < 1.0) {
+//            self.progressView.progress = self.webView.estimatedProgress;
+//        }
+//    }else{
+//        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+//    }
+    
+    
+    
     if ([keyPath isEqualToString:@"estimatedProgress"]) {
-        if (self.progressView.progress < 1.0) {
-            self.progressView.progress = self.webView.estimatedProgress;
+        
+        if (object == _webView)
+        {
+            if (self.progressView.progress < 1.0)
+            {
+                self.progressView.progress = self.webView.estimatedProgress;
+            }
         }
-    }else{
+        else
+        {
+            [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+        }
+        
+    }
+    else if ([keyPath isEqualToString:@"title"])
+    {
+        if (object == self.webView)
+        {
+            self.title = self.webView.title;
+            
+        }
+        else
+        {
+            [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+            
+        }
+    }
+    else {
+        
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
+    
 }
 
 /**
