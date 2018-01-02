@@ -51,6 +51,8 @@
 
 /// 跳转至某个UIViewController，如果找不到该Controller则什么也不做
 - (BOOL)jumpToViewControllerWith:(Class)viewControllerClass;
+/// 跳转至某个UIViewController，从数组中查找，找到第1个就跳转，如果找不到该则什么也不做
+- (BOOL)jumpToViewControllerWithClasses:(NSArray<Class> *)viewControllerClasses;
 
 /// 从导航栈中移除fromViewControllerClasses 到[self class]之间的VC
 - (void)removeViewControllerFromNavigationStackWithStartControllerClasses:(NSArray *)startClasses;

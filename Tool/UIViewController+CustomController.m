@@ -216,6 +216,31 @@
     return flag;
 }
 
+/// 跳转至某个UIViewController，从数组中查找，找到第1个就跳转，如果找不到该则什么也不做
+- (BOOL)jumpToViewControllerWithClasses:(NSArray<Class> *)viewControllerClasses {
+    if (!self) {
+        return NO;
+    }
+    
+    BOOL flag = NO;
+    UIViewController *destController = nil;
+    NSArray *childControllers = self.navigationController.childViewControllers;
+    for (UIViewController *vc in childControllers) {
+        for (Class cls in viewControllerClasses) {
+            if ([vc isKindOfClass: cls]) {
+                flag = YES;
+                destController = vc;
+                break;
+            }
+        }
+    }
+    
+    if (flag == YES) {
+        [self.navigationController popToViewController:destController animated:YES];
+    }
+    return flag;
+}
+
 /// 跳转至某之前的第一个相同的UIViewController（返回YES），如果找不到该Controller则什么也不做，返回NO
 - (BOOL)popToFirstSameViewControllerWith:(Class)viewControllerClass {
     if (!self) {
