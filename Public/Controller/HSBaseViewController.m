@@ -33,6 +33,11 @@
     return [HSLoginInfo savedLoginInfo];
 }
 
+-(LocationManager*)locationManager
+{
+   return [LocationManager sharedManager];
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self adapterForIOSVersion];
@@ -41,7 +46,7 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    
+
     self.navigationController.navigationBar.shadowImage = nil;
 }
 

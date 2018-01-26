@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "LocationManager.h"
 
 typedef NS_ENUM(NSInteger, BaseViewControllerStyle) {
     BaseViewControllerStyleDark
@@ -28,6 +29,9 @@ typedef NS_ENUM(NSInteger, BaseViewControllerStyle) {
 
 // 用户信息
 @property(nonatomic,strong)HSUser * userInfo;
+
+//定位管理
+@property(nonatomic,strong)LocationManager * locationManager;
 
 
 - (void)changeNavigationBar ;
