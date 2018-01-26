@@ -141,6 +141,14 @@ static NSString *const kRegistrationID = @"registrationID";
 
 #pragma mark - 弹出是否显示的数据存储
 
+
+/**
+ <#Description#>
+
+ @param title <#title description#>
+ @param limitValid YES  额度展界面使用 NO 提升额度界面使用
+ @param completion <#completion description#>
+ */
 + (void)limitAlertStateWithTitle:(NSString *)title
                       limitValid:(BOOL)limitValid
                       completion:(void (^)(NSInteger state))completion {
