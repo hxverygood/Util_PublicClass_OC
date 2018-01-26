@@ -117,7 +117,7 @@
     // 先保留小数点后2位
     NSString *convertStr = [self reserveDecimalPartWithDigitCount:2 roundingMode:NSRoundUp];
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    [numberFormatter setPositiveFormat:@",###.00;"];
+    [numberFormatter setPositiveFormat:@"###,##0.00;"];
     NSString *resultStr = [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[convertStr doubleValue]]];
     return [resultStr copy];
 }

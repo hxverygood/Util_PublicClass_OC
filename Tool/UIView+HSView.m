@@ -28,8 +28,11 @@
     BOOL navIsTranlucent = [UINavigationBar appearance].translucent;
     BOOL isIPhoneX = ([[UIScreen mainScreen] bounds].size.width == 375.f && [[UIScreen mainScreen] bounds].size.height == 812.f) ? YES : NO;
     
+    UIViewController *currentVC = [UIViewController currentViewController];
+    BOOL naviBarIsHidden = currentVC.navigationController.isNavigationBarHidden;
+    
     CGFloat navHeight = isIPhoneX ? 88.0 : 64.0;
-    CGFloat naviHeightDiff = navIsTranlucent ? 0.0 : navHeight;
+    CGFloat naviHeightDiff = (navIsTranlucent || naviBarIsHidden) ? 0.0 : navHeight;
     CGFloat bottomDiff = isIPhoneX ? 34.0 : 0.0;
     
     CGFloat viewHeight = CGRectGetHeight([UIScreen mainScreen].bounds) - naviHeightDiff - bottomDiff;

@@ -64,6 +64,9 @@
  */
 - (CGFloat)viewHeightWithNibName:(NSString *)nibName {
     UINib *nib = [UINib nibWithNibName:nibName bundle:nil];
+    if (nib == nil) {
+        return 0.0;
+    }
     UIView *view = [[nib instantiateWithOwner:nil options:nil] lastObject];
     return view.frame.size.height;
 }

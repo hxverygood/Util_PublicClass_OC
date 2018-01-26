@@ -35,7 +35,7 @@
         [self changeSeparatorLeftInset:15.0];
     }
     else {
-        [self changeSeparatorLeftInset:CGFLOAT_MAX];
+        [self changeSeparatorLeftInset:[UIScreen mainScreen].bounds.size.width];
     }
 }
 
