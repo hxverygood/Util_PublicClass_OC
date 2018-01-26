@@ -50,16 +50,24 @@
         urlString = [NSString stringWithFormat:@"%@/%@", mainDirectory, apiName];
     }
     
-    // 对请求参数进行组合
-    NSDictionary *newParams = [self combinePostParamBodyWithAPIName:apiName params:params];
-    
-    if (newParams) {
+    NSDictionary *newParams;
+    // 这一步操作是过滤掉不必要的uuid
+    NSMutableDictionary *body = [[NSMutableDictionary alloc] initWithDictionary:params];
+    if (![body.allKeys containsObject:@"UUID"])
+    {
+        // 对请求参数进行组合
+        newParams = [self combinePostParamBodyWithAPIName:apiName params:params];
+        if (newParams) {
+            NSLog(@"\n%@\n%@", urlString, newParams);
+        } else {
+            NSLog(@"\n%@\n%@", urlString, params);
+        }
+    }else
+    {
+        newParams = body;
         NSLog(@"\n%@\n%@", urlString, newParams);
-    } else {
-        NSLog(@"\n%@\n%@", urlString, params);
     }
-   
-
+    
     HSHttpSessionManager *manager = [HSHttpSessionManager sharedSessionManager];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/plain", nil];
     
@@ -138,8 +146,7 @@
         id json = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&err];
         
 #ifdef DEBUG
-        NSLog(@"\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>> api return >>>>>>>>>>>>>>>>>>>>>>>>>>>\n\
-%@/\n%@\n%@\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n_", mainDirectory, apiName, json);
+        NSLog(@"\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>> api return >>>>>>>>>>>>>>>>>>>>>>>>>>>\n%@/\n%@\n%@\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n_", mainDirectory, apiName, json);
         //        NSLog(@"apiName：%@", apiName);
         //        NSLog(@"json: %@", json);
         if (err) {
@@ -209,15 +216,22 @@
         return nil;
     }
     
-    NSMutableDictionary *body = [[NSMutableDictionary alloc] initWithDictionary:params];
-    
-    // 参数拼接
-    if ([self shouldIncludeLoginInfoForAPIName:apiName]) {
+     NSMutableDictionary *body = [[NSMutableDictionary alloc] initWithDictionary:params];
+    if ([self shouldExcludeUUIDForAPIName:apiName] == NO) {
+       
         NSString *UUID = [HSLoginInfo fetchUUID];
-//        body[@"idCard"] = user.PAPERID;
-        body[@"UUID"] = UUID;
-//        body[@"loginInfo"] = [HSLoginInfo loginInfo];
+        if ([NSString isBlankString:UUID] == NO) {
+            body[@"UUID"] = UUID;
+        }
     }
+    
+//    // 参数拼接
+//    if ([self shouldIncludeLoginInfoForAPIName:apiName]) {
+//        NSString *UUID = [HSLoginInfo fetchUUID];
+////        body[@"idCard"] = user.PAPERID;
+//        body[@"UUID"] = UUID;
+////        body[@"loginInfo"] = [HSLoginInfo loginInfo];
+//    }
     
 //    NSLog(@"%@", self.baseUrlString);
 //    NSLog(@"%@", apiName);
@@ -230,6 +244,14 @@
     //    NSString *body = [NSString stringWithFormat:@"data=%@", dataValue];
     
     return [body copy];
+}
+
+- (BOOL)shouldExcludeUUIDForAPIName:(NSString *)apiName {
+    NSArray *excludeItems = @[@"registerandlogin/isregister.do", @"version/update.do", @"person/AddressBook"];
+    if ([excludeItems containsObject:apiName]) {
+        return YES;
+    }
+    return NO;
 }
 
 /// 请求参数是否包含loginfo

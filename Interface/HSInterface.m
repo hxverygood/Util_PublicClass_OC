@@ -15,6 +15,9 @@
 @end
 
 @implementation HSInterface
+
+
+
 ///请求数据接口
 + (void)HS_POSTWithIP:(NSString *)ip
           mainApiName:(NSString *)mainApiName
