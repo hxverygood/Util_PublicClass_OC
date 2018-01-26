@@ -8,9 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSInteger, TextAlignmentOption) {
+    TextAlignmentOptionCenter,
+    TextAlignmentOptionLeft,
+    TextAlignmentOptionRight,
+    TextAlignmentOptionJustified
+};
+
 @interface ConfirmAlertController : UIAlertController
 
 @property (nonatomic, strong) NSMutableAttributedString * _Nullable attrMessage;
+@property (nonatomic, assign) TextAlignmentOption textAlignment;
 
 /**
  显示界面中间弹出的提示框(1个按钮)，message是attributedString
@@ -50,13 +58,14 @@
  @param viewController 要显示弹框的viewController
  @param actionBlock 按钮回调
  */
-+ (void)showAlertWithTitle:(NSString * __nullable)title
-                   message:(NSString * __nullable)message
-              confirmTitle:(NSString * __nullable)confirmTitle
-               cancelTitle:(NSString * __nullable)cancelTitle
-               actionStyle:(UIAlertActionStyle)actionStyle
-            viewController:(UIViewController * __nonnull)viewController
-               actionBlock:(void(^ __nullable)(NSInteger confirmIndex, UIAlertAction * __nullable cancelAction))actionBlock;
++ (instancetype _Nullable)showAlertWithTitle:(NSString * __nullable)title
+                                     message:(NSString * __nullable)message
+                                confirmTitle:(NSString * __nullable)confirmTitle
+                                 cancelTitle:(NSString * __nullable)cancelTitle
+                                 actionStyle:(UIAlertActionStyle)actionStyle
+                              viewController:(UIViewController * __nonnull)viewController
+                                 actionBlock:(void(^ __nullable)(NSInteger confirmIndex, UIAlertAction * __nullable cancelAction))actionBlock;
+
 
 
 /**

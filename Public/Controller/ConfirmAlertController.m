@@ -27,6 +27,42 @@
     [self setValue:attrMessage forKey:@"attributedMessage"];
 }
 
+- (void)setTextAlignment:(TextAlignmentOption)textAlignment {
+    _textAlignment = textAlignment;
+    
+    if ([NSString isBlankString:self.message]) {
+        return;
+    }
+    
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setLineSpacing:3.0];
+    switch (textAlignment) {
+        case TextAlignmentOptionCenter:
+            paragraphStyle.alignment = NSTextAlignmentCenter;
+            break;
+            
+        case TextAlignmentOptionLeft:
+            paragraphStyle.alignment = NSTextAlignmentLeft;
+            break;
+            
+        case TextAlignmentOptionRight:
+            paragraphStyle.alignment = NSTextAlignmentRight;
+            break;
+            
+        case TextAlignmentOptionJustified:
+            paragraphStyle.alignment = NSTextAlignmentJustified;
+            break;
+            
+        default:
+            break;
+    }
+    
+    NSMutableAttributedString *mutStr = [[NSMutableAttributedString alloc] initWithString:self.message];
+    NSRange range = NSMakeRange(0, self.message.length);
+    [mutStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:range];
+    self.attrMessage = mutStr;
+}
+
 
 
 #pragma mark - Initializer
@@ -63,17 +99,19 @@
 /**
  显示界面中间弹出的提示框
  */
-+ (void)showAlertWithTitle:(NSString * __nullable)title
-                   message:(NSString * __nullable)message
-              confirmTitle:(NSString * __nullable)confirmTitle
-               cancelTitle:(NSString * __nullable)cancelTitle
-               actionStyle:(UIAlertActionStyle)actionStyle
-            viewController:(UIViewController * __nonnull)viewController
-               actionBlock:(void(^ __nullable)(NSInteger confirmIndexn, UIAlertAction * __nullable cancelAction))actionBlock {
++ (instancetype _Nullable)showAlertWithTitle:(NSString * __nullable)title
+                                     message:(NSString * __nullable)message
+                                confirmTitle:(NSString * __nullable)confirmTitle
+                                 cancelTitle:(NSString * __nullable)cancelTitle
+                                 actionStyle:(UIAlertActionStyle)actionStyle
+                              viewController:(UIViewController * __nonnull)viewController
+                                 actionBlock:(void(^ __nullable)(NSInteger confirmIndexn, UIAlertAction * __nullable cancelAction))actionBlock {
     
     __weak typeof(viewController) weakVC = viewController;
     ConfirmAlertController *alertViewController = [[ConfirmAlertController alloc] initWithTitle:title message:message buttonCount:2 confirmTitles:confirmTitle ? @[confirmTitle] : @[@"确定"] cancelTitle:cancelTitle style:UIAlertControllerStyleAlert actionStyle:actionStyle  viewController:viewController actionBlock:actionBlock];
     [weakVC presentViewController:alertViewController animated:YES completion:nil];
+ 
+    return alertViewController;
 }
 
 /**
