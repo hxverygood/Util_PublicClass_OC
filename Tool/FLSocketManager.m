@@ -50,7 +50,8 @@
 }
 
 // Send a UTF8 String or Data.
-- (void)fl_send:(id)data seq_id:(id)seq_id;{
+- (void)fl_send:(id)data seq_id:(id)seq_id  Flag:(NSString*)flag ActionType:(NSString*)actionType 
+{
 //    switch ([FLSocketManager shareManager].fl_socketStatus) {
 //        case FLSocketStatusConnected:
 //        case FLSocketStatusReceived:{
@@ -79,7 +80,7 @@
         {
             NSLog(@"发送中。。。");
             NSError *error;
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:@{@"req":data,@"seq_id":seq_id} options:NSJSONWritingPrettyPrinted error:&error];
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:@{@"req":data,@"seq_id":seq_id,@"flag":flag,@"actionType":actionType} options:NSJSONWritingPrettyPrinted error:&error];
             NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
             [self.webSocket send:jsonString];
             break;

@@ -131,6 +131,6 @@ typedef void(^FLSocketDidReceiveBlock)(id message ,FLSocketReceiveType type);
  *
  *  @param data Send a UTF8 String or Data.
  */
-- (void)fl_send:(id)data seq_id:(id)seq_id;
+- (void)fl_send:(id)data seq_id:(id)seq_id  Flag:(NSString*)flag ActionType:(NSString*)actionType;
 
 @end

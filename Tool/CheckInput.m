@@ -226,7 +226,7 @@
 
 //固定电话
 + (BOOL)validateTelNumber:(NSString *)telNumber {
-    NSString *telNumberRegex = @"([^0a-zA-Z][0-9]{6,})";
+    NSString *telNumberRegex = @"([^0a-zA-Z][0-9]{7,})";
     NSPredicate *telNumberTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",telNumberRegex];
     return [telNumberTest evaluateWithObject:telNumber];
 }

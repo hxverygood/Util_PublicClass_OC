@@ -24,6 +24,7 @@
     _textField.text = @"";
     _textField.enabled = NO;
     [_button setTitle:@"" forState:UIControlStateNormal];
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
 }
 
 - (void)setTitle:(NSString *)title {

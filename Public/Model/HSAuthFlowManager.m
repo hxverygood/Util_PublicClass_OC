@@ -29,7 +29,6 @@
 
 #import "HSContactInfoViewController.h"                     // 联系人信息认证VC
 #import "HSCreditInvestigationViewController.h"             // 征信认证VC
-#import "HSInfoAuthViewController.h"                        // 认证VC
 #import "HSTaobaoWebViewController.h"                       // 淘宝VC
 
 #import "HSAccumulationFundAndSocialSecurityTableVC.h"      // 社保、公积金VC
@@ -172,7 +171,8 @@ static HSAuthFlowManager *man;
 }
 
 - (NSArray *)offlineProduct1PromotionAuthNames {
-    return @[@"accumulationFundAndSocialSecurity", @"income"];
+//    return @[@"accumulationFundAndSocialSecurity", @"income"];
+    return @[@"accumulationFund", @"socialSecurity",@"income"];
 }
 
 /// 薪居贷
@@ -1369,6 +1369,11 @@ static HSAuthFlowManager * _instance = nil;
     HSUser *user = [HSLoginInfo savedLoginInfo];
 //    NSString *PHONE = user.phone;
     NSString *ID = user.ID;
+    if ([NSString isBlankString:ID]) {
+        [SVProgressHUD showInfoWithStatus:@"用户ID未获取到"];
+        return;
+    }
+    
 //    NSString *UUID = user.UUID;
     NSString *PRODID = _loanListModel.applyApprovAll;
     if ([NSString isBlankString:PRODID]) {
@@ -1616,42 +1621,45 @@ static HSAuthFlowManager * _instance = nil;
 
 // 跳转至通话详单认证VC
 - (void)jumpToMobileAuthVC {
-#warning fix: jump to originOperator
-    [self jumpToOriginOperator];
+//#warning fix: jump to originOperator
+//    [self jumpToOriginOperator];
     
-//    [HSInterface judjeFethOperatorWithPhoneCompletion:^(BOOL success, NSString *message, __autoreleasing id model) {
-//        if (success) {
-//            if ([model isKindOfClass:[NSNumber class]]) {
-//                NSNumber *num = (NSNumber *)model;
-//                NSInteger result = num.integerValue;
-//                if (result == 1) {
-//                    HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
-//                    vc.needPop = YES;
-//                    vc.hidesBottomBarWhenPushed = YES;
-//                    UIViewController *currentVC = [UIViewController currentViewController];
-//                    [currentVC.navigationController pushViewController:vc animated:YES];
-//                } else {
-//                    [self jumpToOriginOperator];
-//                }
-//            }
-//            else if ([model isEqualToString:@"1"]) {
-//                HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
-//                vc.needPop = YES;
-//                vc.hidesBottomBarWhenPushed = YES;
-//                UIViewController *currentVC = [UIViewController currentViewController];
-//                [currentVC.navigationController pushViewController:vc animated:YES];
-//            }else {
-//                [self jumpToOriginOperator];
-//            }
-//        }else {
-//            [SVProgressHUD showInfoWithStatus:message];
-//        }
-//    }];
+    [HSInterface judjeFethOperatorWithPhoneCompletion:^(BOOL success, NSString *message, id model, NSInteger errorCode) {
+        if (success) {
+            if ([model isKindOfClass:[NSNumber class]]) {
+                NSNumber *num = (NSNumber *)model;
+                NSInteger result = num.integerValue;
+                if (result == 1) {
+                    HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
+                    vc.needPop = YES;
+                    vc.hidesBottomBarWhenPushed = YES;
+                    UIViewController *currentVC = [UIViewController currentViewController];
+                    [currentVC.navigationController pushViewController:vc animated:YES];
+                } else {
+                    [self jumpToOriginOperator];
+                }
+            }
+            else if ([model isEqualToString:@"1"])
+            {
+                HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
+                vc.needPop = YES;
+                vc.hidesBottomBarWhenPushed = YES;
+                UIViewController *currentVC = [UIViewController currentViewController];
+                [currentVC.navigationController pushViewController:vc animated:YES];
+            }else
+            {
+                [self jumpToOriginOperator];
+            }
+        }else {
+            [SVProgressHUD showInfoWithStatus:message];
+        }
+    }];
 }
 
 - (void)jumpToOriginOperator {
     if ([_mobileBelong.MobileBelong containsString:@"移动"]) {
         HSCallRecordsChinaMobileFirstViewController *vc = [[HSCallRecordsChinaMobileFirstViewController alloc] init];
+        vc.mobileBelongModel = _mobileBelong;
         vc.hidesBottomBarWhenPushed = YES;
         vc.needPop = YES;
         UIViewController *currentVC = [UIViewController currentViewController];
@@ -1660,6 +1668,7 @@ static HSAuthFlowManager * _instance = nil;
     else if ([_mobileBelong.MobileBelong containsString:@"联通"])
     {
         HSCallRecordsChinaUnicornFirstViewController *vc = [[HSCallRecordsChinaUnicornFirstViewController alloc] init];
+        vc.mobileBelongModel = _mobileBelong;
         vc.needPop = YES;
         vc.hidesBottomBarWhenPushed = YES;
         UIViewController *currentVC = [UIViewController currentViewController];
@@ -1668,6 +1677,7 @@ static HSAuthFlowManager * _instance = nil;
     else if ([_mobileBelong.MobileBelong containsString:@"电信"])
     {
         HSCallRecordsChinaTelecomVC *vc = [[HSCallRecordsChinaTelecomVC alloc] init];
+        vc.mobileBelongModel = _mobileBelong;
         vc.needPop = YES;
         vc.hidesBottomBarWhenPushed = YES;
         UIViewController *currentVC = [UIViewController currentViewController];
