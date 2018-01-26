@@ -99,7 +99,7 @@
  *  @param otherSize  不需要改变的字符大小
  *  @param color      需要改变的字符颜色
  *  @param otherColor 不需要改变的字符颜色
- *
+ *  @param lineHeight 行高
  *  @return NSMutableAttributedString
  */
 + (instancetype)attributedWithString:(NSString *)string
@@ -108,19 +108,22 @@
                             withSize:(CGFloat)size
                         andOtherSize:(CGFloat)otherSize
                            withColor:(UIColor *)color
-                       andOtherColor:(UIColor *)otherColor {
-    return [[NSMutableAttributedString alloc] initWithString:string fromIndex:startIndex toIndex:toIndex withSize:size andOtherSize:otherSize withColor:color andOtherColor:otherColor];
+                       andOtherColor:(UIColor *)otherColor
+                          lineHeight:(CGFloat)lineHeight {
+    return [[NSMutableAttributedString alloc] initWithString:string fromIndex:startIndex toIndex:toIndex withSize:size andOtherSize:otherSize withColor:color andOtherColor:otherColor lineHeight:lineHeight];
 }
 
 - (instancetype)initWithString:(NSString *)string
-                           fromIndex:(NSInteger)startIndex
-                             toIndex:(NSInteger)toIndex
-                            withSize:(CGFloat)size
-                        andOtherSize:(CGFloat)otherSize
-                           withColor:(UIColor *)color
-                 andOtherColor:(UIColor *)otherColor {
+                     fromIndex:(NSInteger)startIndex
+                       toIndex:(NSInteger)toIndex
+                      withSize:(CGFloat)size
+                  andOtherSize:(CGFloat)otherSize
+                     withColor:(UIColor *)color
+                 andOtherColor:(UIColor *)otherColor
+                    lineHeight:(CGFloat)lineHeight
+{
     NSInteger length = string.length;
-    NSMutableAttributedString *mutStr = [[NSMutableAttributedString alloc]initWithString:string];
+    NSMutableAttributedString *mutStr = [[NSMutableAttributedString alloc] initWithString:string];
     NSRange range;
     if (startIndex != 0) {
         range = NSMakeRange(0, startIndex);
@@ -138,6 +141,10 @@
         [mutStr addAttribute:NSForegroundColorAttributeName value:otherColor range:range];
     }
     
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineSpacing = lineHeight > 0 ? lineHeight : paragraphStyle.minimumLineHeight;
+    NSRange paragraphRange = NSMakeRange(0, string.length);
+    [mutStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:paragraphRange];
     
     return mutStr;
 }

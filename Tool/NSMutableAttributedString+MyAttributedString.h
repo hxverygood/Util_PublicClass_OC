@@ -95,6 +95,7 @@
  *  @param otherSize  不需要改变的字符大小
  *  @param color      需要改变的字符颜色
  *  @param otherColor 不需要改变的字符颜色
+ *  @param lineHeight 行高
  *
  *  @return NSMutableAttributedString
  */
@@ -104,7 +105,8 @@
                             withSize:(CGFloat)size
                         andOtherSize:(CGFloat)otherSize
                            withColor:(UIColor *)color
-                       andOtherColor:(UIColor *)otherColor;
+                       andOtherColor:(UIColor *)otherColor
+                          lineHeight:(CGFloat)lineHeight;
 
 
 /// 添加下划线
