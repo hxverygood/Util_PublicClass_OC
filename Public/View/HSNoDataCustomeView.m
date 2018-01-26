@@ -8,8 +8,8 @@
 
 #import "HSNoDataCustomeView.h"
 
-float const custome_width_view  = 64.0;
-float const custome_height_view = 70.0;
+float const custome_width_view  = 135.0;
+float const custome_height_view = 107.0;
 
 @interface HSNoDataCustomeView ()
 

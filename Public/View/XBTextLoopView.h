@@ -13,6 +13,12 @@ typedef void(^selectTextBlock)(NSString *selectString, NSInteger index);
 
 @property (nonatomic, strong) NSArray *dataSource;
 
+// 计时器
+@property (nonatomic,strong)HSGCDTimerManager * gcdTimer;
+
+// 表
+@property (nonatomic, weak) UITableView *tableView;
+
 /**
  直接调用这个方法
 

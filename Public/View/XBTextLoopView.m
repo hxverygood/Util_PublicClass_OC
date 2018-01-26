@@ -16,10 +16,10 @@
     static NSString *ID = @"HSNewXBTextCellTableViewCell";
 @interface XBTextLoopView () <UITableViewDataSource, UITableViewDelegate>
 {
-    HSGCDTimerManager * gcdTimer;
+    
 }
 
-@property (nonatomic, weak) UITableView *tableView;
+
 @property (nonatomic, assign) NSTimeInterval interval;
 @property (nonatomic, strong) NSTimer *myTimer;
 @property (nonatomic, assign) NSInteger currentRowIndex;
@@ -35,11 +35,7 @@
 {
     _dataSource = dataSource;
 
-    _currentRowIndex = 0;
-    [_tableView setContentOffset:CGPointZero];
-    [gcdTimer suspenTimer];
-
-    
+    _currentRowIndex = 0;    
     NSInteger logIndex = 0;
     NSMutableArray <HSNoticeModel*>* tesarray;
     NSMutableArray  * finalArray = [[NSMutableArray alloc] init];
@@ -131,7 +127,7 @@
 {
     _modelsArray = modelsArray;
     [self.tableView reloadData];
-    [gcdTimer resumeTimer];
+    [_gcdTimer resumeTimer];
 }
 
 
@@ -195,8 +191,8 @@
 //    // 定时器
 //    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(timer) userInfo:nil repeats:YES];
 //    _myTimer = timer;
-    gcdTimer = [[HSGCDTimerManager alloc] initWithgcdTimerManagerWithTimerCount:NSIntegerMax withTimeInterval:_interval];
-    [gcdTimer startTimerCompletion:^(NSInteger count)
+    _gcdTimer = [[HSGCDTimerManager alloc] initWithgcdTimerManagerWithTimerCount:NSIntegerMax withTimeInterval:_interval];
+    [_gcdTimer startTimerCompletion:^(NSInteger count)
      {
          [self timer];
      }];
