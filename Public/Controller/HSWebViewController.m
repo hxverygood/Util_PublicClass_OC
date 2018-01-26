@@ -9,8 +9,11 @@
 #import "HSWebViewController.h"
 #import "WKWebView+Utils.h"
 
+static NSString *const scriptMessageHandlerName = @"submitResult";
+
 @interface HSWebViewController () <WKNavigationDelegate, WKScriptMessageHandler>
 //@property (weak, nonatomic) IBOutlet WKWebView *webView;
+@property (nonatomic, strong) WKWebViewConfiguration *wkWebConfig;
 @property (nonatomic, strong) UIProgressView *progressView;
 @property (nonatomic, strong) UILabel *waterMarkLabel;
 @property (nonatomic, strong) UIImageView *waterMarkImageView;
@@ -38,10 +41,10 @@
         
         _webView.backgroundColor = [[UIColor alloc] initWithRed:251/255.0 green:251/255.0 blue:251/255.0f alpha:1];
         
-        WKWebViewConfiguration *wkWebConfig = [[WKWebViewConfiguration alloc] init];
-        WKUserContentController *userCC = wkWebConfig.userContentController;
-        [userCC addScriptMessageHandler:self name:@"submitResult"];
-        wkWebConfig.userContentController = userCC;
+        self.wkWebConfig = [[WKWebViewConfiguration alloc] init];
+        WKUserContentController *userCC = self.wkWebConfig.userContentController;
+        [userCC addScriptMessageHandler:self name:scriptMessageHandlerName];
+        self.wkWebConfig.userContentController = userCC;
         
 //        // 自适应屏幕宽度js
 //        NSString *jsString = @" var meta = document.createElement('meta');\
@@ -54,7 +57,7 @@
 //        // 添加自适应屏幕宽度js调用的方法
 //        [wkWebConfig.userContentController addUserScript:wkUserScript];
         
-        _webView = [[WKWebView alloc] initWithFrame:[UIView fullScreenFrame] configuration:wkWebConfig];
+        _webView = [[WKWebView alloc] initWithFrame:[UIView fullScreenFrame] configuration:self.wkWebConfig];
         [self.view addSubview:_webView];
     }
     return _webView;
@@ -99,17 +102,16 @@
 //    }
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-//    [self backBarButtonItemWithImageName:@"button_back"];
-}
-
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 //    if (_allowRotation) {
 //        AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
 //        delegate.allowRotation = NO;
 //    }
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [_wkWebConfig.userContentController removeScriptMessageHandlerForName:scriptMessageHandlerName];
 }
 
 - (void)viewDidLoad {
@@ -126,11 +128,8 @@
     
     // 添加“加载进度”的监听
     [self.webView addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:nil];
-    
+
     [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.urlStr]]];
-    
-    [self.webView addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:NULL];
-    
 }
 
 - (void)viewDidLayoutSubviews {
@@ -197,9 +196,18 @@
     }];
     
     // 如果VC的标题为空，并且网页的标题不为空，则把网页标题赋值给VC标题
+    NSString *webViewTitle = [webView.title copy];
     if ([NSString isBlankString:self.title] &&
-        ![NSString isBlankString:webView.title]) {
-        self.navigationItem.title = webView.title;
+        ![NSString isBlankString:webViewTitle]) {
+        self.navigationItem.title = webViewTitle;
+    }
+    
+    if ([webView.URL.description isEqualToString:self.urlStr] && self.webView.canGoBack)
+    {
+        self.webView.allowsBackForwardNavigationGestures = NO;
+    }else
+    {
+        self.webView.allowsBackForwardNavigationGestures = YES;
     }
 }
 
@@ -263,17 +271,7 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary<NSString *,id> *)change
-                       context:(void *)context {
-//    if ([keyPath isEqualToString:@"estimatedProgress"]) {
-//        if (self.progressView.progress < 1.0) {
-//            self.progressView.progress = self.webView.estimatedProgress;
-//        }
-//    }else{
-//        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-//    }
-    
-    
-    
+                       context:(void *)context {    
     if ([keyPath isEqualToString:@"estimatedProgress"]) {
         
         if (object == _webView)
@@ -288,19 +286,6 @@
             [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
         }
         
-    }
-    else if ([keyPath isEqualToString:@"title"])
-    {
-        if (object == self.webView)
-        {
-            self.title = self.webView.title;
-            
-        }
-        else
-        {
-            [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-            
-        }
     }
     else {
         
@@ -362,9 +347,10 @@
 #pragma mark - Dealloc
 
 - (void)dealloc {
-    [self.webView removeObserver:self forKeyPath:@"estimatedProgress"];
-    [self.webView deleteWebCache];
-    self.webView.scrollView.delegate = nil;
+    _webView.scrollView.delegate = nil;
+    _webView.navigationDelegate = nil;
+    [_webView removeObserver:self forKeyPath:@"estimatedProgress"];
+    [_webView deleteWebCache];
 }
 
 
