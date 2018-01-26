@@ -10,10 +10,8 @@
 #import <Contacts/Contacts.h>
 #import <AddressBook/AddressBook.h>
 #import "HSInterface+HSUploadFile.h"
-#import "HSHomeViewController.h"                // 首页VC
 #import "HSRepaymentViewController.h"           // 还款首页VC
 #import "HSPersonCenterViewController.h"        // 个人中心首页
-#import "HSIncreaseCreditLimitCollectionVC.h"   // 认证首页VC"
 #import "HSRepaymentViewController.h"           // 还款首页
 
 @interface HSPublicFunc ()
@@ -305,7 +303,7 @@
 + (void)showAlertRequiredToLocate
 {
 
-    [ConfirmAlertController actionSheetWithTitle:@"提示" message:@"请打开您的定位功能,否则无法确认您附近的门店信息" confirmTitle:nil cancelTitle:nil actionStyle:UIAlertActionStyleDestructive viewController:[UIViewController currentViewController] actionBlock:^(NSInteger confirmIndex, UIAlertAction * _Nullable cancelAction) {
+    [ConfirmAlertController actionSheetWithTitle:@"提示" message:@"请打开您的定位功能,否则无法确认您附近的服务网点信息" confirmTitle:nil cancelTitle:nil actionStyle:UIAlertActionStyleDestructive viewController:[UIViewController currentViewController] actionBlock:^(NSInteger confirmIndex, UIAlertAction * _Nullable cancelAction) {
         if (confirmIndex == 0) {
             NSURL *url = nil;
             if ([[UIDevice currentDevice] systemVersion].floatValue < 10.0) {
@@ -326,7 +324,9 @@
             
             //注册通知（name是通知的名称，这里使用的是UIApplicationDidBecomeActiveNotification，意思是应用程序为当前有效的，就是显示在用户面前时触发）
             UIApplication *application = [UIApplication sharedApplication];
-            [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(applicationDidBecomeActive:) name:EnterForeground object:application];
+            if ([application respondsToSelector:@selector(applicationDidBecomeActive:)]) {
+                 [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(applicationDidBecomeActive:) name:EnterForeground object:application];
+            }
         }
     }];
 }
@@ -357,16 +357,16 @@
 
 #pragma mark -
 /// 获取指定的ViewControllerClass数组
-+ (NSArray<Class> *)viewControllerClassArray {
-    NSArray *vcClassArray = @[[HSHomeViewController class], [HSRepaymentViewController class], [HSIncreaseCreditLimitCollectionVC class]];
-    return vcClassArray;
-}
-
-/// 获取指定的ViewControllerClass数组（首页、还款、个人中心首页）
-+ (NSArray<Class> *)mainViewControllerClassArray {
-    NSArray *vcClassArray = @[[HSHomeViewController class], [HSRepaymentViewController class], [HSPersonCenterViewController class]];
-    return vcClassArray;
-}
+//+ (NSArray<Class> *)viewControllerClassArray {
+//    NSArray *vcClassArray = @[[HSHomeViewController class], [HSRepaymentViewController class], [HSIncreaseCreditLimitCollectionVC class]];
+//    return vcClassArray;
+//}
+//
+///// 获取指定的ViewControllerClass数组（首页、还款、个人中心首页）
+//+ (NSArray<Class> *)mainViewControllerClassArray {
+//    NSArray *vcClassArray = @[[HSHomeViewController class], [HSRepaymentViewController class], [HSPersonCenterViewController class]];
+//    return vcClassArray;
+//}
 
 
 
@@ -391,6 +391,113 @@
     if ([[UIApplication sharedApplication] canOpenURL:phoneUrl]) {
         [[UIApplication sharedApplication] openURL:phoneUrl];
     }
+    else {
+        [SVProgressHUD showInfoWithStatus:@"该设备无法拨打电话"];
+    }
+}
+
+
+#pragma mark 根据银行名称查找app中的银行logo
+
+/// 根据银行名称查找app中的银行logo
++ (NSString *)findBankLogoNameWithBankName:(NSString *)bankName {
+    NSString *fullName = [HSPublicFunc bankNameFromString:bankName];
+    if ([NSString isBlankString:fullName]) {
+        return nil;
+    }
+    fullName = [NSString stringWithFormat:@"%@_logo", fullName];
+    return fullName;
+}
+
+/// 根据银行名称查找app中收款账户对应的银行logo
++ (NSString *)findPaymentAccountNameWith:(NSString *)bankName {
+    NSString *fullName = [HSPublicFunc bankNameFromString:bankName];
+    if ([NSString isBlankString:fullName]) {
+        return nil;
+    }
+    fullName = [NSString stringWithFormat:@"%@_收款账户", fullName];
+    return fullName;
+}
+
+/// 根据银行名称查找app中认证银行卡对应的银行logo
++ (NSString *)findBankAuthNameWith:(NSString *)bankName {
+    NSString *fullName = [HSPublicFunc bankNameFromString:bankName];
+    if ([NSString isBlankString:fullName]) {
+        return nil;
+    }
+    fullName = [NSString stringWithFormat:@"%@_认证", fullName];
+    return fullName;
+}
+
+
+
+#pragma mark - Private Func
+
++ (NSString *)bankNameFromString:(NSString *)bankName {
+    if ([bankName containsString:@"招商"]) {
+        return @"招商银行";
+    }
+    else if ([bankName containsString:@"农业"])
+    {
+        return @"农业银行";
+    }
+    else if ([bankName containsString:@"中国银行"])
+    {
+        return @"中国银行";
+    }
+    else if ([bankName containsString:@"工商"])
+    {
+        return @"工商银行";
+    }
+    else if ([bankName containsString:@"交通"])
+    {
+        return @"交通银行";
+    }
+    else if ([bankName containsString:@"建设"])
+    {
+        return @"建设银行";
+    }
+    else if ([bankName containsString:@"邮政"] || [bankName containsString:@"邮政储蓄"] || [bankName containsString:@"邮储"])
+    {
+        return @"邮政银行";
+    }
+    else if ([bankName containsString:@"兴业"])
+    {
+        return @"兴业银行";
+    }
+    else if ([bankName containsString:@"中信"])
+    {
+        return @"中信银行";
+    }
+    else if ([bankName containsString:@"民生"])
+    {
+        return @"民生银行";
+    }
+    else if ([bankName containsString:@"平安"])
+    {
+        return @"平安银行";
+    }
+    else if ([bankName containsString:@"浦发"] || [bankName containsString:@"浦东发展"])
+    {
+        return @"浦发银行";
+    }
+    else if ([bankName containsString:@"上海"])
+    {
+        return @"上海银行";
+    }
+    else if ([bankName containsString:@"华夏"])
+    {
+        return @"华夏银行";
+    }
+    else if ([bankName containsString:@"广发"])
+    {
+        return @"广发银行";
+    }
+    else if ([bankName containsString:@"光大"])
+    {
+        return @"光大银行";
+    }
+    return nil;
 }
 
 

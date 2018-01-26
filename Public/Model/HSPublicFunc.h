@@ -29,20 +29,26 @@
 /// 判断INS_CURRENTSTATUS表示在流程的第几步
 - (NSInteger)workflowPositionWithCurrentStatus:(NSString *)currentStatus;
 
-/// 获取指定的ViewControllerClass数组
-+ (NSArray<Class> *)viewControllerClassArray;
-
-/// 获取指定的ViewControllerClass数组（首页、个人中心首页）
-+ (NSArray<Class> *)mainViewControllerClassArray;
+///// 获取指定的ViewControllerClass数组
+//+ (NSArray<Class> *)viewControllerClassArray;
+//
+///// 获取指定的ViewControllerClass数组（首页、个人中心首页）
+//+ (NSArray<Class> *)mainViewControllerClassArray;
 
 
 #pragma mark 是否实名认证
-
 + (BOOL)isRealName;
 
 
 #pragma mark 拨打电话
-
 + (void)callWithPhoneNumber:(NSString *)phone;
+
+#pragma mark 根据银行名称查找app中的银行logo
+/// 根据银行名称查找app中的银行logo
++ (NSString *)findBankLogoNameWithBankName:(NSString *)bankName;
+/// 根据银行名称查找app中收款账户对应的银行logo
++ (NSString *)findPaymentAccountNameWith:(NSString *)bankName;
+/// 根据银行名称查找app中认证银行卡对应的银行logo
++ (NSString *)findBankAuthNameWith:(NSString *)bankName;
 
 @end
