@@ -81,10 +81,14 @@
                 NSLog(@"停止定位");
             }
             // 定位城市失败
-            else if ([placemarks count] == 0) {
+            else if ([placemarks count] == 0)
+            {
+                [SVProgressHUD showInfoWithStatus:@"定位失败"];
             }
         }//网络出故障
-        else {
+        else
+        {
+            [SVProgressHUD showInfoWithStatus:@"网络原因无法进行定位，请退出后重试"];
         }
     }];
 }

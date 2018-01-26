@@ -165,6 +165,7 @@
     if (self) {
         HSBaseButton *button = [HSBaseButton buttonWithType:UIButtonTypeCustom];
         button.frame= frame;
+        button.backgroundColor = YELLOW_BUTTON;
         
         if (title) {
             [button setTitle:title forState:UIControlStateNormal];

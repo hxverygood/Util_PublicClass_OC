@@ -21,7 +21,8 @@ static inline NSString * kFilterString(NSString * handleString, HSStringFilter s
             [modifyString deleteCharactersInRange: NSMakeRange(idx, 1)];
         }
     }
-    return modifyString;
+//    NSLog(@"%@", modifyString);
+    return [modifyString copy];
 }
 
 static inline BOOL kMatchStringFormat(NSString * aString, NSString * matchFormat)
