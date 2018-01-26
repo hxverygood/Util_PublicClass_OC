@@ -182,6 +182,10 @@ static CGFloat height = 220.0;
 
 - (void)cancelButtonPressed:(id)sender {
     [self dismiss];
+    if (self.cancelButtonAction)
+    {
+        self.cancelButtonAction();
+    }
 }
 
 - (void)confirmButtonPressed:(id)sender {

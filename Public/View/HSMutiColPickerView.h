@@ -17,6 +17,8 @@
 
 @property (nonatomic, copy) void (^selectRowBlock)(NSInteger component, NSInteger row);
 @property (nonatomic, copy) void (^confirmButtonAction)(NSInteger componentCount, NSArray *rowArray);
+@property (nonatomic, copy) void (^cancelButtonAction) (void);
+
 
 - (instancetype)initWithDataArrays:(NSArray<NSArray *> *)dataArrays;
 
