@@ -31,6 +31,7 @@
 
 @implementation XBTextLoopView
 
+#pragma mark - Setter
 - (void)setDataSource:(NSArray *)dataSource
 {
     _dataSource = dataSource;
@@ -78,7 +79,7 @@
 
 /**
  排序dataSource数组
- @param dataArray <#dataArray description#>
+ @param dataArray 数组
  */
 -(void)enumdataSourceArray:(NSMutableArray<NSMutableArray<HSNoticeModel*>*>*)dataArray
 {
@@ -89,15 +90,18 @@
         HSNewHomeNoticModel * newNoticModel = [[HSNewHomeNoticModel alloc] init];
         [sectionObj enumerateObjectsUsingBlock:^(HSNoticeModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop)
         {
+            NSString *distanceTimeStr = [obj.noticeData distanceTimeBeforeNowWithShowDetail:NO];
+            NSString *message = [NSString isBlankString:obj.message] ? @"" : [NSString stringWithFormat:@"・%@", obj.message];
+            
             if (idx == 0)
             {
-                newNoticModel.topTipStr = obj.type;
-                newNoticModel.topContentStr = obj.headline;
+                newNoticModel.topTipStr = [NSString isBlankString:distanceTimeStr] ? @"" : distanceTimeStr;
+                newNoticModel.topContentStr = message;
 
             }else if (idx ==1)
             {
-                newNoticModel.bottomTipStr = obj.type ;
-                newNoticModel.bottomContentStr = obj.headline;
+                newNoticModel.bottomTipStr = [NSString isBlankString:distanceTimeStr] ? @"" : distanceTimeStr;
+                newNoticModel.bottomContentStr = message;
                 newNoticModel.showCount = 2;
             }
         }];
@@ -127,23 +131,71 @@
 {
     _modelsArray = modelsArray;
     [self.tableView reloadData];
-    [_gcdTimer resumeTimer];
+    
+    if (_interval != 0.0) {
+        [_gcdTimer resumeTimer];
+    }
+}
+
+- (void)setInterval:(NSTimeInterval)interval {
+    _interval = interval;
+    
+    if (interval == 0.0) {
+        return;
+    }
+    
+    //    // 定时器
+    //    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(timer) userInfo:nil repeats:YES];
+    //    _myTimer = timer;
+    _gcdTimer = [[HSGCDTimerManager alloc] initWithgcdTimerManagerWithTimerCount:NSIntegerMax withTimeInterval:_interval];
+    [_gcdTimer startTimerCompletion:^(NSInteger count)
+     {
+         [self timer];
+     }];
+    
 }
 
 
 #pragma mark - 初始化方法
-+ (instancetype)textLoopViewWith:(NSArray *)dataSource loopInterval:(NSTimeInterval)timeInterval initWithFrame:(CGRect)frame selectBlock:(selectTextBlock)selectBlock {
++ (instancetype)textLoopViewWith:(NSArray *)dataSource
+                    loopInterval:(NSTimeInterval)timeInterval
+                   initWithFrame:(CGRect)frame
+                     selectBlock:(selectTextBlock)selectBlock {
     XBTextLoopView *loopView = [[XBTextLoopView alloc] initWithFrame:frame];
     loopView.dataSource = dataSource;
     loopView.selectBlock = selectBlock;
-    loopView.interval = timeInterval ? timeInterval : 1.0;
+    loopView.interval = timeInterval;
     return loopView;
 }
 
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self == [super initWithFrame:frame]) {
+        // tableView
+        UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+        tableView.backgroundColor = [UIColor clearColor];
+        tableView.dataSource = self;
+        tableView.delegate = self;
+        tableView.rowHeight = frame.size.height;
+        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        tableView.showsHorizontalScrollIndicator = NO;
+        tableView.showsVerticalScrollIndicator = NO;
+        tableView.pagingEnabled = YES;
+        tableView.bounces = NO;
+        tableView.scrollEnabled = NO;
+        
+        _tableView = tableView;
+        //        [self.tableView registerNib:[UINib nibWithNibName:@"HSNewXBTextCellTableViewCell" bundle:nil] forCellReuseIdentifier:@"HSNewXBTextCellTableViewCell"];
+        [self addSubview:tableView];
+    }
+    return self;
+}
+
+
 
 #pragma mark - tableViewDataSource
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return _interval == 0 ? 1 : 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -151,8 +203,6 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-
-    
     HSNewHomeNoticModel * model = [_modelsArray objectAtIndex:indexPath.row];
     HSNewXBTextCellTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ID];
     if (!cell)
@@ -165,7 +215,9 @@
     return cell;
 }
 
+
 #pragma mark - tableViewDelegate
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (_selectBlock) 
@@ -175,7 +227,9 @@
     }
 }
 
+
 #pragma mark - scrollViewDelegate
+
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
     // 以无动画的形式跳到第1组的第0行
     if (_currentRowIndex == _modelsArray.count) {
@@ -185,53 +239,11 @@
 }
 
 #pragma mark - priviate method
-- (void)setInterval:(NSTimeInterval)interval {
-    _interval = interval;
-    
-//    // 定时器
-//    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(timer) userInfo:nil repeats:YES];
-//    _myTimer = timer;
-    _gcdTimer = [[HSGCDTimerManager alloc] initWithgcdTimerManagerWithTimerCount:NSIntegerMax withTimeInterval:_interval];
-    [_gcdTimer startTimerCompletion:^(NSInteger count)
-     {
-         [self timer];
-     }];
-    
-}
-
-- (instancetype)initWithFrame:(CGRect)frame {
-    if (self == [super initWithFrame:frame]) {
-        // tableView
-        UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-        tableView.backgroundColor = [UIColor clearColor];
-        tableView.dataSource = self;
-        tableView.delegate = self;
-        tableView.rowHeight = frame.size.height;
-        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        tableView.showsVerticalScrollIndicator = NO;
-        tableView.pagingEnabled = YES;
-        tableView.bounces = NO;
-        tableView.scrollEnabled = NO;
-
-        _tableView = tableView;
-//        [self.tableView registerNib:[UINib nibWithNibName:@"HSNewXBTextCellTableViewCell" bundle:nil] forCellReuseIdentifier:@"HSNewXBTextCellTableViewCell"];
-        [self addSubview:tableView];
-    }
-    return self;
-}
 
 - (void)timer
 {
     self.currentRowIndex++;
     [self.tableView setContentOffset:CGPointMake(0, _currentRowIndex * self.frame.size.height) animated:YES];
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
 
 @end
