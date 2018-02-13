@@ -65,7 +65,13 @@
     return func.contactAuthoried;
 }
 
-/// 判断通讯录权限，如果没有授权则弹出alertView提示用户跳转至授权界面
+
+/**
+ 判断通讯录权限，如果没有授权则弹出alertView提示用户跳转至授权界面
+
+ @return 通讯录没有授权: NO
+         通讯录已授权: YES
+ */
 + (BOOL)contactAuthoriedAndShowAlert {
     BOOL contactAuthoried = [HSPublicFunc contactAuthoried];
     if (!contactAuthoried) {
