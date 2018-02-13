@@ -46,7 +46,7 @@
                         <constraints>
                             <constraint firstAttribute="width" constant="85" id="DdB-yi-vMg"/>
                         </constraints>
-                        <nil key="textColor"/>
+                        <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <textInputTraits key="textInputTraits"/>
                     </textField>
@@ -63,7 +63,7 @@
                         <constraints>
                             <constraint firstAttribute="width" constant="70.5" id="qiE-o8-tGg"/>
                         </constraints>
-                        <nil key="textColor"/>
+                        <color key="textColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                         <textInputTraits key="textInputTraits"/>
                     </textField>

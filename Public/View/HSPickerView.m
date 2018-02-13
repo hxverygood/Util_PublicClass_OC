@@ -216,8 +216,8 @@ static CGFloat height = 220.0;
     UIView *currentView = self.superview;
     if (currentView) {
         CGRect f = currentView.frame;
-        self.frameForHidden = CGRectMake(0.0, f.size.height, _frameForShow.size.width, _frameForShow.size.height);
-        self.frame = self.frameForHidden;
+        _frameForHidden = CGRectMake(0.0, f.size.height, _frameForShow.size.width, _frameForShow.size.height);
+        self.frame = _frameForHidden;
 //        self.hidden = NO;
         
         _bgView = [[UIView alloc] initWithFrame:currentView.bounds];
@@ -236,7 +236,7 @@ static CGFloat height = 220.0;
 
 - (void)dismiss {
     [UIView animateWithDuration:0.3 animations:^{
-        self.frame = self.frameForHidden;
+        self.frame = _frameForHidden;
         self.bgView.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.0];
     } completion:^(BOOL complete){
         [self.bgView removeFromSuperview];
@@ -244,5 +244,14 @@ static CGFloat height = 220.0;
         [self.pickerView selectRow:0 inComponent:0 animated:YES];
     }];
 }
+
+
+#pragma mark - Private Func
+
+- (BOOL)isIPhoneX {
+    BOOL isIPhoneX = ([[UIScreen mainScreen] bounds].size.width == 375.f && [[UIScreen mainScreen] bounds].size.height == 812.f) ? YES : NO;
+    return isIPhoneX;
+}
+
 
 @end
