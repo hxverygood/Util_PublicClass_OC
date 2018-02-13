@@ -83,6 +83,16 @@
 - (NSString * _Nullable)reserveDecimalPartWithDigitCount:(NSInteger)count
                                             roundingMode:(NSRoundingMode)roundMode;
 
+/// 将时间戳转换为刚刚、x分钟前、今天、昨天等字段
+- (NSString * _Nullable)distanceTimeBeforeNowWithShowDetail:(BOOL)showDetail;
+
+/**
+ 整数部分有多少位数字
+
+ @return 正常情况:>=0；如果不是数字则返回-1
+ */
+- (NSInteger)integerLength;
+
 /// 获取沙盒Documents路径
 + (NSString * _Nullable)sandboxDocumentDirectoryPath;
 

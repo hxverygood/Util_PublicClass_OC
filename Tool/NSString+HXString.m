@@ -342,6 +342,112 @@
     return resultStr;
 }
 
+/**
+ 金额转换为千分位金额
+ 
+ @param digitString  未转换的金额
+ @return 转换后的金额
+ */
++(NSString * _Nullable)separatedDigitStringWithStr:(NSString * _Nullable)digitString
+{
+    if(!digitString || [digitString floatValue] == 0)
+    {
+        return @"0.00";
+    }
+    if (digitString.floatValue < 1000)
+    {
+        return [NSString stringWithFormat:@"%.2f",digitString.floatValue];
+    };
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setPositiveFormat:@",###;"];
+    return [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[digitString doubleValue]]];
+}
+
+
+/// 获取沙盒Documents路径
++ (NSString * _Nullable)sandboxDocumentDirectoryPath {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docDir = [paths objectAtIndex:0];
+    return docDir;
+}
+
+/// 将时间戳转换为刚刚、x分钟前、今天、昨天等字段
+- (NSString * _Nullable)distanceTimeBeforeNowWithShowDetail:(BOOL)showDetail {
+    NSString *beforeTimeStr = [self copy];
+    
+    // 判断是否是数字
+    NSNumber *beforeTimeNum = [beforeTimeStr convertToNumber];
+    if (beforeTimeNum == nil) {
+        return nil;
+    }
+    
+    // 判断整数位数，如果大于9则进行截取
+    NSInteger integerLength = [beforeTimeStr integerLength];
+    if (integerLength > 10) {
+        beforeTimeStr = [beforeTimeStr substringToIndex:10];
+    }
+    else if (integerLength < 10) {
+        return nil;
+    }
+    
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    double distanceTime = now - [beforeTimeStr doubleValue];
+    // 要显示的时间：刚刚、xx分钟前、
+    NSString *distanceStr;
+    
+    
+    NSDate *beforeDate = [NSDate dateWithTimeIntervalSince1970:[beforeTimeStr doubleValue]];
+    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc]init];
+    [dateFormatter setDateFormat:@"HH:mm"];
+    NSString *beforeTimeStr2 = [dateFormatter stringFromDate:beforeDate];
+    
+    [dateFormatter setDateFormat:@"dd"];
+    NSString *nowDayStr = [dateFormatter stringFromDate:[NSDate date]];
+    NSString *lastDayStr = [dateFormatter stringFromDate:beforeDate];
+    
+    if (distanceTime < 60) {  // 小于一分钟
+        distanceStr = @"刚刚";
+    }
+    else if (distanceTime < 60*60) {  // 时间小于一个小时
+        distanceStr = [NSString stringWithFormat:@"%ld分钟前",(long)distanceTime/60];
+    }
+    else if(distanceTime < 24*60*60 && ([nowDayStr integerValue] == [lastDayStr integerValue])){  // 时间小于一天，xx时xx分
+        distanceStr = [NSString stringWithFormat:@"%@", beforeTimeStr2];
+    }
+    else if(distanceTime < 24*60*60*2 && [nowDayStr integerValue] != [lastDayStr integerValue]){
+        distanceStr = (showDetail == YES ? [NSString stringWithFormat:@"昨天 %@", beforeTimeStr2] : @"昨天");
+    }
+    else {
+        [dateFormatter setDateFormat:(showDetail == YES ? @"YYYY/MM/dd HH:mm" : @"YYYY/MM/dd")];
+        distanceStr = [dateFormatter stringFromDate:beforeDate];
+    }
+    
+    return distanceStr;
+}
+
+/**
+ 整数部分有多少位数字
+ 
+ @return 正常情况:>=0；如果不是数字则返回-1
+ */
+- (NSInteger)integerLength {
+    NSNumber *num = [self convertToNumber];
+    if (num == nil) {
+        return -1;
+    }
+    
+    NSInteger x = [self doubleValue];
+    NSInteger sum=0,j=1;
+    
+    while( x >= 1 ) {
+        x=x/10;
+        sum++;
+        j=j*10;
+    }
+    
+    return sum;
+}
+
 
 
 
@@ -376,37 +482,6 @@
     NSString *result = [NSString stringWithFormat:@"%@%@%@", frontStr, replacedStr, endStr];
     
     return result;
-}
-
-
-
-/**
- 金额转换为千分位金额
- 
- @param digitString  未转换的金额
- @return 转换后的金额
- */
-+(NSString * _Nullable)separatedDigitStringWithStr:(NSString * _Nullable)digitString
-{
-    if(!digitString || [digitString floatValue] == 0)
-    {
-        return @"0.00";
-    }
-    if (digitString.floatValue < 1000)
-    {
-        return [NSString stringWithFormat:@"%.2f",digitString.floatValue];
-    };
-    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    [numberFormatter setPositiveFormat:@",###;"];
-    return [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[digitString doubleValue]]];
-}
-
-
-/// 获取沙盒Documents路径
-+ (NSString * _Nullable)sandboxDocumentDirectoryPath {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *docDir = [paths objectAtIndex:0];
-    return docDir;
 }
 
 
