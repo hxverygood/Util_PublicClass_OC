@@ -36,6 +36,11 @@
     return [[HSAlertViewWithTextField alloc] initWithTitle:title content:content];
 }
 
++ (instancetype)alertViewWithTitle:(NSString *)title
+                     titleFontSize:(CGFloat)titleFontSize {
+    return [[HSAlertViewWithTextField alloc] initWithTitle:title titleFontSize:titleFontSize];
+}
+
 - (instancetype)initWithTitle:(NSString *)title
                       content:(NSString *)content {
     self = [super init];
@@ -51,8 +56,51 @@
         self.titleLabel.text = [NSString isBlankString:title] ? @"" : title;
         self.contentLabel.text = [NSString isBlankString:content] ? @"" : content;
         
-        self.textfield.maxTextLength = 16;
-        self.textfield.restrictType = HSRestrictTypeOnlyNumber;
+        [self.confirmButton setCornerRadius:ButtonCorner];
+        
+        
+        if ([title containsString:@"验证码"]) {
+            self.textfield.maxTextLength = 10;
+            self.textfield.restrictType = HSRestrictTypeCharacterAndNumber;
+            self.textfield.placeholder = @"请输入验证码";
+        }
+        else {
+            self.textfield.maxTextLength = 16;
+            self.textfield.restrictType = HSRestrictTypeOnlyNumber;
+            self.textfield.placeholder = @"";
+        }
+    }
+    return self;
+}
+
+- (instancetype)initWithTitle:(NSString *)title
+                titleFontSize:(CGFloat)titleFontSize {
+    self = [super init];
+    if (self) {
+        self = [[[NSBundle mainBundle] loadNibNamed:@"HSAlertViewWithTextField" owner:nil options:nil] lastObject];
+        self.layer.cornerRadius = 6.0;
+        self.layer.masksToBounds = YES;
+        
+        
+        self.title = title;
+        self.content = nil;
+        
+        self.titleLabel.text = [NSString isBlankString:title] ? @"" : title;
+        self.titleLabel.font = [UIFont systemFontOfSize:titleFontSize];
+        self.contentLabel.text = @"";
+        
+        [self.confirmButton setCornerRadius:ButtonCorner];
+
+        if ([title containsString:@"验证码"]) {
+            self.textfield.maxTextLength = 10;
+            self.textfield.restrictType = HSRestrictTypeCharacterAndNumber;
+            self.textfield.placeholder = @"请输入验证码";
+        }
+        else {
+            self.textfield.maxTextLength = 16;
+            self.textfield.restrictType = HSRestrictTypeOnlyNumber;
+            self.textfield.placeholder = @"";
+        }
     }
     return self;
 }
@@ -63,13 +111,17 @@
 
 - (IBAction)confirmButtonPressed:(id)sender {
     if ([NSString isBlankString:self.textfield.text]) {
-        [SVProgressHUD showInfoWithStatus:@"输入内容为空，请检查"];
+        if (self.confirmButtonPressedBlock) {
+            self.confirmButtonPressedBlock(self.textfield.text);
+        }
         return;
     }
     
-    if (self.confirmButtonPressedBlock) {
-        self.confirmButtonPressedBlock(self.textfield.text);
-    }
+    [_alertView dismissWithCompletion:^{
+        if (self.confirmButtonPressedBlock) {
+            self.confirmButtonPressedBlock(self.textfield.text);
+        }
+    }];
 }
 
 - (IBAction)cancelButtonPressed:(id)sender {
@@ -79,7 +131,6 @@
 - (IBAction)closeButtonPressed:(id)sender {
     [_alertView dismissWithCompletion:nil];
 }
-
 
 
 
@@ -93,9 +144,12 @@
     __weak typeof(self) weakSelf = self;
      _alertView = [[JCAlertView alloc] initWithCustomView:weakSelf dismissWhenTouchedBackground:NO];
     [_alertView show];
+    
+    [_textfield becomeFirstResponder];
 }
 
 - (void)dismissWithCompletion:(void (^)(void))completion {
+    [_textfield resignFirstResponder];
     [_alertView dismissWithCompletion:^{
         if (completion) {
             completion();

@@ -15,6 +15,9 @@
 + (instancetype)alertViewWithTitle:(NSString *)title
                            content:(NSString *)content;
 
++ (instancetype)alertViewWithTitle:(NSString *)title
+                     titleFontSize:(CGFloat)titleFontSize;
+
 - (void)showWithConfirmButtonPressed:(void (^)(NSString *inputContent))confirmButtonPressed;
 
 - (void)setTitle:(NSString *)title;
