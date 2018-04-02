@@ -128,117 +128,51 @@
         return;
     }
     
+//#warning fix: test contacts
+//    NSMutableArray *contatcsMutArray = [NSMutableArray new];
+//
+//    NSInteger phone = 18000000000;
+//    for (int i = 0; i < 1000; i++, phone++) {
+//        NSString *name = [NSString stringWithFormat:@"韩测试%d", i];
+//        NSDictionary *dict = @{@"name" : name,
+//                               @"phoneNumbers": [[NSString stringWithFormat:@"%ld", phone] copy]};
+//        BOOL isYes = [NSJSONSerialization isValidJSONObject:dict];
+//        if (isYes) {
+//            [contatcsMutArray addObject:[dict copy]];
+//        } else {
+//            NSLog(@"通讯录单条JSON数据生成失败，请检查数据格式");
+//        }
+//    }
+//
+//    NSDictionary *idCardDict = @{@"idCard": idCard};
+//    NSDictionary *contactsDict = @{@"contacts": contatcsMutArray};
+//    NSDictionary *rootDic = @{@"data": @[idCardDict, contactsDict]};
+//    NSString *paramStr = [rootDic modelToJSONString];
+//    [self uploadContactWithParams:paramStr];
+    
     //获取按联系人姓名首字拼音A~Z排序(已经对姓名的第二个字做了处理)
     [PPGetAddressBook getOriginalAddressBook:^(NSArray<PPPersonModel *> *addressBookArray) {
         for (PPPersonModel *model in addressBookArray) {
             NSString *phoneNum = model.mobileArray.count>0 ? model.mobileArray.firstObject : @"0";
             NSDictionary *dict = @{@"name" : model.name,@"phoneNumbers":[phoneNum copy]};
-            
+
             BOOL isYes = [NSJSONSerialization isValidJSONObject:dict];
             if (isYes) {
                 [self.dataMuArray addObject:[dict copy]];
             } else {
-                NSLog(@"通讯录JSON数据生成失败，请检查数据格式");
+                NSLog(@"通讯录单条JSON数据生成失败，请检查数据格式");
             }
         }
-        
+
         NSDictionary *idCardDict = @{@"idCard": idCard};
         NSDictionary *contactsDict = @{@"contacts": self.dataMuArray};
         NSDictionary *rootDic = @{@"data": @[idCardDict, contactsDict]};
-//        NSLog(@"通讯录信息：%@", rootDic);
-        
-        NSError *jsonError = nil;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:rootDic options:0 error:&jsonError];
-////        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:contactsDict options:0 error:&jsonError];
-
-        if (jsonError) {
-            NSLog(@"json转data时出错: %@", jsonError.userInfo);
-            return;
-        }
-        NSString *paramStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        NSString *paramStr = [rootDic modelToJSONString];
         [self uploadContactWithParams:paramStr];
-        
+
     } authorizationFailure:^{
         NSLog(@"通讯录没有授权!");
     }];
-    
-    
-//    // 获取指定的字段,并不是要获取所有字段，需要指定具体的字段
-//    NSArray *keysToFetch = @[CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey];
-//    CNContactFetchRequest *fetchRequest = [[CNContactFetchRequest alloc] initWithKeysToFetch:keysToFetch];
-//    CNContactStore *contactStore = [[CNContactStore alloc] init];
-//    NSError *contactError = nil;
-//    
-//    // 判断是否登录，如果未登录则不上传通讯录
-//    NSString *idCard = [HSLoginInfo savedLoginInfo].PAPERID;
-//    if ([NSString isBlankString:idCard]) {
-//        return nil;
-//    }
-//    
-//    [contactStore enumerateContactsWithFetchRequest:fetchRequest error:&contactError usingBlock:^(CNContact * _Nonnull contact, BOOL * _Nonnull stop) {
-//        NSLog(@"-------------------------------------------------------");
-//        self.phoneNumber = nil;
-//        NSString *givenName = contact.givenName;
-//        NSString *familyName = contact.familyName;
-//        NSLog(@"givenName=%@, familyName=%@", givenName, familyName);
-//        
-//        
-//        NSArray *phoneNumbers = contact.phoneNumbers;
-//        //NSLog(@"%@%@",phoneNumbers[0],phoneNumbers[1]);
-//        for (CNLabeledValue *labelValue in phoneNumbers) {
-//            NSString *label = labelValue.label;
-//            CNPhoneNumber *phoneNumber = labelValue.value;
-//            self.phoneNumber = phoneNumber;
-//            NSLog(@"label=%@, phone=%@", label, phoneNumber.stringValue);
-//        }
-//        if (givenName.length == 0) {
-//            givenName = @"无";
-//        }
-//        
-//        if (familyName.length == 0) {
-//            familyName = @"无";
-//        }
-//        
-//        if (self.phoneNumber == nil) {
-//            CNPhoneNumber *phone = [[CNPhoneNumber alloc] initWithStringValue:@"0"];
-//            self.phoneNumber = phone;
-//        }
-//        
-//        NSDictionary *dict = @{@"givenName" : givenName, @"familyName" : familyName,@"phoneNumbers":[self.phoneNumber.stringValue copy]};
-//        
-//        BOOL isYes = [NSJSONSerialization isValidJSONObject:dict];
-//        if (isYes) {
-//            [self.dataMuArray addObject:[dict copy]];
-//        } else {
-//            NSLog(@"通讯录JSON数据生成失败，请检查数据格式");
-//        }
-//    }];
-//    
-//    if (contactError) {
-//        NSLog(@"获取通讯录失败");
-//        return nil;
-//    }
-//    
-//    NSDictionary *idCardDict = @{@"idCard": idCard};
-//    NSDictionary *contactsDict = @{@"contacts": self.dataMuArray};
-//    NSDictionary *rootDic = @{@"data": @[idCardDict, contactsDict]};
-//    
-//    NSError *jsonError = nil;
-//    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:rootDic options:0 error:&jsonError];
-//    self.jsonData = jsonData;
-//    
-//    if (jsonError) {
-//        NSLog(@"json转data时出错: %@", jsonError.userInfo);
-//        return nil;
-//    } else {
-//        // 沙盒路径
-//        NSArray *sandBoxPathArray =  NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-//        NSString *filePath = [NSString stringWithFormat:@"%@/contact.json", sandBoxPathArray.lastObject];
-//        
-//        [jsonData writeToFile:filePath atomically:YES];
-//        
-//        return filePath;
-//    }
 }
 
 

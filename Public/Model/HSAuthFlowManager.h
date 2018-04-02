@@ -28,6 +28,7 @@
 @property (nonatomic, strong, readonly) NSArray *offlineProduct2AuthNameArray;
 @property (nonatomic, strong, readonly) NSArray *offlineProduct3AuthNameArray;
 @property (nonatomic, strong, readonly) NSArray *offlineProduct4AuthNameArray;
+@property (nonatomic, strong, readonly) NSArray *offlineProduct5AuthNameArray;
 
 @property (nonatomic, assign, readonly) CGFloat currentPercentInFlow;
 @property (nonatomic, assign, readonly) CGFloat percentAfterCurrentFlowComplete;
@@ -46,8 +47,17 @@
 
 /// 必须认证的4项是否完成
 - (NSInteger)requriedAuthIsFinished;
+- (NSInteger)authIndexWithAuthNames:(NSArray *)authNames;
 /// 必须认证的4项是否完成，如果没完成则跳转进行认证
 - (BOOL)requriedAuthIsNotFinishedAndJump;
+
+/**
+ 是否完成了指定的认证
+
+ @param authNames 认证项名字集合
+ @return YES: 完成了相关认证, NO: 没有完成
+ */
+- (BOOL)authIsNotFinishedAndJumpWithAuthNames:(NSArray *)authNames;
 
 ///是否进行了必要认证1，没有完成认证则跳转，下同
 - (BOOL)requriedAuth1IsNotFinishedAndJump;
@@ -103,6 +113,9 @@
 /// 线下产品 安居贷
 - (NSInteger)authIsFinishedForOfflineProduct4;
 - (BOOL)offlineProduct4AuthIsNotFinishedAndJump;
+
+///
+- (NSInteger)authIsFinishedForOfflineProduct5;
 
 /// 线上产品的标题数组
 - (NSArray<NSArray *> *)product1AuthTitles;

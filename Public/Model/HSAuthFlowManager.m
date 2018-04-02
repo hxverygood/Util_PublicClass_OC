@@ -10,6 +10,7 @@
 #import "HSUser.h"
 
 #import "HSInterface+HSUserInfo.h"
+#import "HSInterface+Credit.h"
 #import "HSUserInfoModel.h"
 #import "HSMobileBelongModel.h"
 
@@ -67,7 +68,7 @@ static HSAuthFlowManager *man;
 @property (nonatomic, strong) NSArray *offlineProduct2AuthNames;
 @property (nonatomic, strong) NSArray *offlineProduct3AuthNames;
 @property (nonatomic, strong) NSArray *offlineProduct4AuthNames;
-
+@property (nonatomic, strong) NSArray *offlineProduct5AuthNames;
 
 // 当前的认证模式
 @property (nonatomic, assign) AuthTipOption currentAuthOption;
@@ -206,10 +207,22 @@ static HSAuthFlowManager *man;
     return _offlineProduct4AuthNames ;
 }
 
+/// （征信认证）
+- (NSArray *)offlineProduct5AuthNames {
+    if (!_offlineProduct5AuthNames) {
+        NSMutableArray *tmpArray = [NSMutableArray array];
+        [tmpArray addObjectsFromArray:@[@"credit"]];
+        _offlineProduct5AuthNames = [tmpArray copy];
+    }
+    return _offlineProduct5AuthNames ;
+}
+
+
+
 /// 线下产品认证项数组
 - (NSArray<NSArray *> *)offlineProductNames {
     if (!_offlineProductNames) {
-        _offlineProductNames = @[self.offlineProduct1AuthNames, self.offlineProduct2AuthNames, self.offlineProduct3AuthNames, self.offlineProduct4AuthNames];
+        _offlineProductNames = @[self.offlineProduct1AuthNames, self.offlineProduct2AuthNames, self.offlineProduct3AuthNames, self.offlineProduct4AuthNames, self.offlineProduct5AuthNames];
     }
     return _offlineProductNames;
 }
@@ -254,6 +267,9 @@ static HSAuthFlowManager *man;
     return [self.offlineProduct4AuthNames copy];
 }
 
+- (NSArray *)offlineProduct5AuthNameArray {
+    return [self.offlineProduct5AuthNames copy];
+}
 
 
 
@@ -289,21 +305,33 @@ static HSAuthFlowManager * _instance = nil;
     NSArray *authArray = [self authedResultWithAuthNameArray:self.requiredAuthNames];
     NSInteger authIndex = [self findUnAuthedIndexWithArray:authArray];
     
-    // 如果authIndex没有标记，说明通过了所有必填认证，需弹出认证完成弹出框
+    // 如果authIndex没有标记，说明通过了所有必填认证
     if (authIndex == -1) {
         return -100;
     }
+    return authIndex;
+}
+
+- (NSInteger)authIndexWithAuthNames:(NSArray *)authNames {
+    NSArray *authArray = [self authedResultWithAuthNameArray:authNames];
+    NSInteger authIndex = [self findUnAuthedIndexWithArray:authArray];
     
-    // 如果是部分认证
-    //BOOL partialIsAuthed = NO;
-    //for (int i = 0; i < authArray.count; i++) {
-     //   if ([authArray[i] isEqualToString:@"0"]) {
-     //       partialIsAuthed = YES;
-     //   }
-    //}
+    // 如果authIndex没有标记，说明通过了所有必填认证
+    if (authIndex == -1) {
+        return -100;
+    }
+    return authIndex;
+}
+
+- (NSInteger)requriedAuthIsFinishedWithAuthNames:(NSArray *)authNames {
+    NSArray *authArray = [self authedResultWithAuthNameArray:authNames];
+    NSInteger authIndex = [self findUnAuthedIndexWithArray:authArray];
     
-    //NSInteger result = (partialIsAuthed ? 1000 : 0) + authIndex;
-    //return result;
+    // 如果authIndex没有标记，说明通过了所有必填认证
+    if (authIndex == -1) {
+        return -100;
+    }
+
     return authIndex;
 }
 
@@ -347,6 +375,21 @@ static HSAuthFlowManager * _instance = nil;
         [self jumpWithAuthName:@"contact"];
     }
     
+    return YES;
+}
+
+- (BOOL)authIsNotFinishedAndJumpWithAuthNames:(NSArray *)authNames {
+    self.currentAuthOption = AuthTipOptionRequired;
+    NSInteger authIndex = [[HSAuthFlowManager manager] requriedAuthIsFinishedWithAuthNames:authNames];
+    
+    // 指定的认证都已完成
+    if (authIndex == -100) {
+        return NO;
+    }
+    
+     [self jumpWithAuthName:authNames[authIndex]];
+    
+    // 指定的认证没有完成
     return YES;
 }
 
@@ -743,7 +786,7 @@ static HSAuthFlowManager * _instance = nil;
 - (BOOL)offlineProduct1AuthIsNotFinishedAndJump {
     self.currentAuthOption = AuthTipOptionProductOffline1;
     
-    NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForFourthProduct];
+    NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForOfflineProduct1];
     
     if (authIndex == -100) {
         return NO;
@@ -775,7 +818,7 @@ static HSAuthFlowManager * _instance = nil;
 - (BOOL)offlineProduct2AuthIsNotFinishedAndJump {
     self.currentAuthOption = AuthTipOptionProductOffline2;
     
-    NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForFourthProduct];
+    NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForOfflineProduct2];
     
     if (authIndex == -100) {
         return NO;
@@ -807,7 +850,7 @@ static HSAuthFlowManager * _instance = nil;
 - (BOOL)offlineProduct3AuthIsNotFinishedAndJump {
     self.currentAuthOption = AuthTipOptionProductOffline3;
     
-    NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForFourthProduct];
+    NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForOfflineProduct3];
     
     if (authIndex == -100) {
         return NO;
@@ -839,7 +882,7 @@ static HSAuthFlowManager * _instance = nil;
 - (BOOL)offlineProduct4AuthIsNotFinishedAndJump {
     self.currentAuthOption = AuthTipOptionProductOffline4;
     
-    NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForFourthProduct];
+    NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForOfflineProduct4];
     
     if (authIndex == -100) {
         return NO;
@@ -853,6 +896,38 @@ static HSAuthFlowManager * _instance = nil;
     [self jumpWithAuthName:self.offlineProduct4AuthNames[authIndex]];
     return YES;
 }
+
+#pragma mark
+
+- (NSInteger)authIsFinishedForOfflineProduct5 {
+    NSArray *authArray = [self authedResultWithAuthNameArray:self.offlineProduct5AuthNames];
+    NSInteger authIndex = [self findUnAuthedIndexWithArray:authArray];
+    
+    // 如果authIndex没有标记，说明通过了所有必填认证，需弹出认证完成弹出框
+    if (authIndex == -1) {
+        return -100;
+    } else {
+        return authIndex;
+    }
+}
+
+//- (BOOL)offlineProduct5AuthIsNotFinishedAndJump {
+//    self.currentAuthOption = AuthTipOptionProductOffline4;
+//    
+//    NSInteger authIndex = [[HSAuthFlowManager manager] authIsFinishedForOfflineProduct5];
+//    
+//    if (authIndex == -100) {
+//        return NO;
+//    }
+//    
+//    if (authIndex >=0 && authIndex < 4) {
+//        [self requriedAuthIsNotFinishedAndJump];
+//        return NO;
+//    }
+//    
+//    [self jumpWithAuthName:self.offlineProduct5AuthNames[authIndex]];
+//    return YES;
+//}
 
 
 
@@ -1399,6 +1474,43 @@ static HSAuthFlowManager * _instance = nil;
     }];
 }
 
+/// 获取征信可用的ip
+- (void)api_getCreditUsedIPWithCompletion:(void (^)(BOOL apiSuccess, NSString *ip))completion {
+    [SVProgressHUD show];
+    [HSInterface getCreditUsedIPWithCompletion:^(BOOL success, NSString *message, id data) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (success) {
+                [SVProgressHUD dismiss];
+                NSString *resultInfo = [data ac_stringForKey:@"ResultInfo"];
+                NSString *resultCode = [data ac_stringForKey:@"ResultCode"];
+                if (resultCode.integerValue != 0) {
+                    if (completion) {
+                        completion(NO, nil);
+                    }
+                    if (![NSString isBlankString:resultInfo]) {
+                        [SVProgressHUD showInfoWithStatus:resultInfo];
+                        return;
+                    }
+                } else {
+                    NSString *ip = [data ac_stringForKey:@"ip"];
+                    if (completion) {
+                        completion(YES, ip);
+                    }
+                }
+            } else {
+                if (completion) {
+                    completion(NO, nil);
+                }
+                if (![NSString isBlankString:message]) {
+                    [SVProgressHUD showInfoWithStatus:message];
+                    return;
+                }
+                [SVProgressHUD dismiss];
+            }
+        });
+    }];
+}
+
 
 
 
@@ -1589,7 +1701,31 @@ static HSAuthFlowManager * _instance = nil;
     //    [[HSLMZXManager manager] getLMsdkFunction:LMZXSDKFunctionMobileCarrie and:@"mobile"];
     
     
-    NSString *phone = [HSLoginInfo savedLoginInfo].phone;
+    NSString *phone = nil;
+    
+    if (HS_APPDELEGATE.mobileTest) {
+        // 西安电信
+//        phone = @"18189142075";
+        
+        // 河北电信
+//        phone = @"13303000000";
+//
+//        // 广西电信
+//        phone = @"13307700000";
+//
+//        // 湖北电信
+//        phone = @"13307100000";
+        
+//        HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
+//        vc.hidesBottomBarWhenPushed = YES;
+//        UIViewController *currentVC = [UIViewController currentViewController];
+//        [currentVC.navigationController pushViewController:vc animated:YES];
+//        return;
+    }
+    else {
+        phone = [HSLoginInfo savedLoginInfo].phone;
+    }
+    
     if ([NSString isBlankString:phone]) {
         [SVProgressHUD showInfoWithStatus:@"手机号为空，无法获取运营商信息"];
         return;
@@ -1603,17 +1739,21 @@ static HSAuthFlowManager * _instance = nil;
     [HSInterface fetchOperatorWithPhone:phone Completion:^(BOOL success, NSString *message, HSMobileBelongModel *model) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (success) {
-                [SVProgressHUD dismiss];
                 _mobileBelong = model;
                 [self jumpToMobileAuthVC];
             }
             else
             {
-                if (![NSString isBlankString:message]) {
-                    [SVProgressHUD showInfoWithStatus:message];
-                    return;
-                }
+//                if (![NSString isBlankString:message]) {
+//                    [SVProgressHUD showInfoWithStatus:message];
+//                    return;
+//                }
                 [SVProgressHUD dismiss];
+                
+                HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
+                vc.hidesBottomBarWhenPushed = YES;
+                UIViewController *currentVC = [UIViewController currentViewController];
+                [currentVC.navigationController pushViewController:vc animated:YES];
             }
         });
     }];
@@ -1624,8 +1764,12 @@ static HSAuthFlowManager * _instance = nil;
 //#warning fix: jump to originOperator
 //    [self jumpToOriginOperator];
     
+    if ([SVProgressHUD isVisible] == NO) {
+        [SVProgressHUD show];
+    }
     [HSInterface judjeFethOperatorWithPhoneCompletion:^(BOOL success, NSString *message, id model, NSInteger errorCode) {
         if (success) {
+            [SVProgressHUD dismiss];
             if ([model isKindOfClass:[NSNumber class]]) {
                 NSNumber *num = (NSNumber *)model;
                 NSInteger result = num.integerValue;
@@ -1650,8 +1794,15 @@ static HSAuthFlowManager * _instance = nil;
             {
                 [self jumpToOriginOperator];
             }
-        }else {
-            [SVProgressHUD showInfoWithStatus:message];
+        }
+        else {
+//            [SVProgressHUD showInfoWithStatus:message];
+            [SVProgressHUD dismiss];
+            
+            HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
+            vc.hidesBottomBarWhenPushed = YES;
+            UIViewController *currentVC = [UIViewController currentViewController];
+            [currentVC.navigationController pushViewController:vc animated:YES];
         }
     }];
 }
@@ -1683,7 +1834,11 @@ static HSAuthFlowManager * _instance = nil;
         UIViewController *currentVC = [UIViewController currentViewController];
         [currentVC.navigationController pushViewController:vc animated:YES];
     }else {
-        [SVProgressHUD showInfoWithStatus:@"暂时无法获取，请稍后重试"];
+//        [SVProgressHUD showInfoWithStatus:@"暂时无法获取，请稍后重试"];
+        HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
+        vc.hidesBottomBarWhenPushed = YES;
+        UIViewController *currentVC = [UIViewController currentViewController];
+        [currentVC.navigationController pushViewController:vc animated:YES];
     }
 }
 
@@ -1817,12 +1972,22 @@ static HSAuthFlowManager * _instance = nil;
 
 /// 跳转至征信VC
 - (void)jumpToCreditVC {
-    // 征信VC
-    HSCreditInvestigationViewController *vc = [[HSCreditInvestigationViewController alloc] init];
-//    vc.isInAuthFlow = YES;
-    vc.hidesBottomBarWhenPushed = YES;
-    UIViewController *currentVC = [UIViewController currentViewController];
-    [currentVC.navigationController pushViewController:vc animated:YES];
+    [self api_getCreditUsedIPWithCompletion:^(BOOL apiSuccess, NSString *ip) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (apiSuccess) {
+                NSString *IP = [ip copy];
+                if ([IP hasPrefix:@"http://"] == NO) {
+                    IP = [NSString stringWithFormat:@"http://%@", ip];
+                }
+                // 征信VC
+                HSCreditInvestigationViewController *vc = [[HSCreditInvestigationViewController alloc] init];
+                vc.ip = IP;
+                vc.hidesBottomBarWhenPushed = YES;
+                UIViewController *currentVC = [UIViewController currentViewController];
+                [currentVC.navigationController pushViewController:vc animated:YES];
+            }
+        });
+    }];
 }
 
 /// 跳转至信用卡详单

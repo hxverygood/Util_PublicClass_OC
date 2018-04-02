@@ -18,7 +18,7 @@
 
 #pragma mark - UI
 
--(instancetype)init{
+- (instancetype)init{
     
     self  =[super init];
     if (self)
@@ -28,12 +28,12 @@
     return self;
 }
 
--(HSUser*)userInfo
+- (HSUser*)userInfo
 {
     return [HSLoginInfo savedLoginInfo];
 }
 
--(LocationManager*)locationManager
+- (LocationManager*)locationManager
 {
    return [LocationManager sharedManager];
 }
@@ -55,6 +55,8 @@
     
     _navbarIsTrans = _navbarIsTranslucent;
 }
+
+
 
 #pragma mark - Private Func
 
