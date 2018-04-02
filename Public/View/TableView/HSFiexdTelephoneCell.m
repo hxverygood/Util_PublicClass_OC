@@ -32,7 +32,7 @@
     _telephoneTextField.restrictType = HSRestrictTypeOnlyNumber;
     _telephoneTextField.keyboardType = UIKeyboardTypePhonePad;
     
-    _extensionNumTextField.maxTextLength = 6;
+    _extensionNumTextField.maxTextLength = 10;
     _extensionNumTextField.restrictType = HSRestrictTypeOnlyNumber;
     _extensionNumTextField.keyboardType = UIKeyboardTypePhonePad;
     

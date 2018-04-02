@@ -42,7 +42,9 @@
                                                   dispatch_source_cancel(_timer);
                                                   dispatch_async(dispatch_get_main_queue(), ^
                                                                  {
-                                                                     
+                                                                     if (self.delegate && [self.delegate respondsToSelector:@selector(timerStop:)]) {
+                                                                         [self.delegate timerStop:self];
+                                                                     }
                                                                      self.currentBlock(timeout);
                                                                      
                                                                  });

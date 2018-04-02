@@ -168,6 +168,9 @@ static CGFloat height = 220.0;
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+    if (component >= self.selectedRowArray.count) {
+        return;
+    }
     
     [self.selectedRowArray replaceObjectAtIndex:component withObject:@(row)];
     
@@ -209,13 +212,14 @@ static CGFloat height = 220.0;
 #pragma - Animation
 
 - (void)show {
-    self.selectedRowArray = nil;
+    _selectedRowArray = nil;
     
     // 收起键盘
     [[[UIApplication sharedApplication] keyWindow] endEditing:YES];
     _selectedRow = 0;
     _selectedTitle = @"";
     [self.pickerView reloadAllComponents];
+    
     //    if (_selectedDataIndex != _currentDataIndex) {
     //        [self.pickerView reloadAllComponents];
     //        [self.pickerView selectRow:0 inComponent:0 animated:YES];

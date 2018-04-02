@@ -12,7 +12,7 @@
 
 @property (nonatomic, strong) UIPickerView *pickerView;
 @property (nonatomic, strong) UIColor *buttonColor;
-@property (nonatomic, strong) NSArray<NSArray<NSString *> *> *dataArrays;
+@property (nonatomic, copy) NSArray<NSArray<NSString *> *> *dataArrays;
 @property (nonatomic, assign, readonly) BOOL isVisable;
 
 @property (nonatomic, copy) void (^selectRowBlock)(NSInteger component, NSInteger row);

@@ -8,12 +8,22 @@
 
 #import <Foundation/Foundation.h>
 
+@class HSGCDTimerManager;
+
 typedef void(^HSTimerBLock) (NSInteger count);
+
+@protocol HSGCDTimerManagerDelegate <NSObject>
+
+- (void)timerStop:(HSGCDTimerManager *)timer;
+
+@end
 
 @interface HSGCDTimerManager : NSObject
 
 // 时间间隔
 @property(nonatomic,assign)NSTimeInterval  timeInterval;
+
+@property (nonatomic, assign) id<HSGCDTimerManagerDelegate> delegate;
 
 -(instancetype)initWithgcdTimerManagerWithTimerCount:(NSInteger)timercOunt withTimeInterval:(NSTimeInterval)timeInterval;
 
