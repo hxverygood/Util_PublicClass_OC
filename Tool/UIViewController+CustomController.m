@@ -137,6 +137,18 @@
 //    }
 }
 
+/// 从导航栈中移除fromViewControllerClasses 到[self class]之间的VC（使用ViewController的name进行查找）
+- (void)removeViewControllerFromNavigationStackWithStartControllerClassNames:(NSArray *)startClassNames {
+    for (int i = 0; i < startClassNames.count; i++) {
+        Class startClass = NSClassFromString(startClassNames[i]);
+        BOOL flag;
+        flag = [self canRemoveViewControllerFromNavigationStackFrom:startClass to:[self class]];
+        if (flag) {
+            break;
+        }
+    }
+}
+
 /// 从导航栈中移除fromViewControllerClasses 到[self class]之间的VC
 - (void)removeViewControllerFromNavigationStackWithStartControllerClasses:(NSArray *)startClasses {
     for (int i = 0; i < startClasses.count; i++) {
@@ -192,6 +204,24 @@
     self.navigationController.viewControllers = viewControllers;
     return YES;
 }
+
+
+/**
+ 跳转至某个UIViewController，如果找不到该Controller则什么也不做
+
+ @param classNames 类名集合
+ @return 是否跳转成功
+ */
+- (BOOL)popToViewControllerWithClassNames:(NSArray<NSString *> *)classNames {
+    for (NSString *className in classNames) {
+        Class cls = NSClassFromString(className);
+        if ([self jumpToViewControllerWith:cls] == YES) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 
 /// 跳转至某个UIViewController，如果找不到该Controller则什么也不做
 - (BOOL)jumpToViewControllerWith:(Class)viewControllerClass {

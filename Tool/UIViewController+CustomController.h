@@ -49,10 +49,21 @@
 /// 从导航栈中移除某个UIViewController
 - (void)removeViewControllerFromNavigationStackWith:(Class)viewControllerClass;
 
+/**
+ 跳转至某个UIViewController，如果找不到该Controller则什么也不做
+ 
+ @param classNames 类名集合
+ @return 是否跳转至类名集合中的Controller
+ */
+- (BOOL)popToViewControllerWithClassNames:(NSArray<NSString *> *)classNames;
+
 /// 跳转至某个UIViewController，如果找不到该Controller则什么也不做
 - (BOOL)jumpToViewControllerWith:(Class)viewControllerClass;
 /// 跳转至某个UIViewController，从数组中查找，找到第1个就跳转，如果找不到该则什么也不做
 - (BOOL)jumpToViewControllerWithClasses:(NSArray<Class> *)viewControllerClasses;
+
+/// 从导航栈中移除fromViewControllerClasses 到[self class]之间的VC（使用ViewController的name进行查找）
+- (void)removeViewControllerFromNavigationStackWithStartControllerClassNames:(NSArray *)startClassNames;
 
 /// 从导航栈中移除fromViewControllerClasses 到[self class]之间的VC
 - (void)removeViewControllerFromNavigationStackWithStartControllerClasses:(NSArray *)startClasses;
