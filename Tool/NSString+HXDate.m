@@ -23,6 +23,18 @@
 + (instancetype)stringFromDateWithTimeStamp:(NSTimeInterval)timeStamp
                               dateFormatter:(DateFormatterType)dateFormaterType
                                andSeparator:(NSString *)separator {
+    // 计算时间戳数字位数
+    NSInteger tmp = timeStamp / 1000000000;
+    if (tmp > 10) {
+        NSInteger count = 1;
+        double time = tmp;
+        while (time / 10 >= 1) {
+            time = time / 10;
+            count *= 10;
+        }
+        timeStamp /= count;
+    }
+    
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeStamp];
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
@@ -79,11 +91,11 @@
             break;
             
         case DateFormatterTypeYMdKKmm:
-            formatter.dateFormat = [NSString stringWithFormat:@"YYYY%@MM%@dd  HH:mm", separator, separator];
+            formatter.dateFormat = [NSString stringWithFormat:@"YYYY%@MM%@dd HH:mm", separator, separator];
             break;
             
         case DateFormatterTypeYMdKKmmss:
-            formatter.dateFormat = [NSString stringWithFormat:@"YYYY%@MM%@dd  HH:mm:ss", separator, separator];
+            formatter.dateFormat = [NSString stringWithFormat:@"YYYY%@MM%@dd HH:mm:ss", separator, separator];
             break;
             
         default:

@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@import UIKit;
+#import <UIKit/UIkit.h>
 
 @interface NSString (HXString)
 
@@ -16,6 +16,10 @@
 
 /// 过滤字符串（空格、换行）
 + (NSString * _Nullable)filterWithString:(NSString * _Nullable)string;
+
+/// 指定text高度，计算text显示需要的宽度
+- (CGFloat)texWidthWithFont:(UIFont * _Nullable)font
+                     height:(CGFloat)height;
 
 /// 计算text是否需要多行显示
 - (BOOL)textNeedMoreLineCountWithFont:(UIFont * _Nullable)font
@@ -44,7 +48,7 @@
 - (NSString * _Nullable)convertWithThousandSeparatorAndTwoDigits;
 
 /// 隐藏身份证部分数字
-- (NSString * _Nullable)hidePartalIdCard;
+- (NSString * _Nullable)hidePartialIdCardNumber;
 /// 隐藏手机号部分数字
 - (NSString * _Nullable)hidePhoneNumber;
 /// 隐藏部分Email

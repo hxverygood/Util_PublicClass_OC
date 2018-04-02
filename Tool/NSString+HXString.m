@@ -31,11 +31,23 @@
     return [newStr copy];
 }
 
+/// 指定text高度，计算text显示需要的宽度
+- (CGFloat)texWidthWithFont:(UIFont * _Nullable)font
+                     height:(CGFloat)height {
+    NSDictionary *attrsDictionary = @{@"NSFontAttributeName":font};
+    NSAttributedString *text = [[NSAttributedString alloc] initWithString:self attributes:attrsDictionary];
+    
+    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin |
+    NSStringDrawingUsesFontLeading;
+    
+    CGRect boundingRect = [text boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, height) options:options context:nil];
+    return boundingRect.size.width;
+}
 
 - (BOOL)textNeedMoreLineCountWithFont:(UIFont *)font
                                 width:(CGFloat)width
                                height:(CGFloat)height {
-    NSDictionary *attrsDictionary = @{@"NSFontAttributeName":[UIFont systemFontOfSize:14.0]};
+    NSDictionary *attrsDictionary = @{@"NSFontAttributeName":font};
     NSAttributedString *text = [[NSAttributedString alloc] initWithString:self attributes:attrsDictionary];
    
     NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin |
@@ -123,7 +135,7 @@
 }
 
 /// 隐藏身份证部分数字
-- (NSString * _Nullable)hidePartalIdCard {
+- (NSString * _Nullable)hidePartialIdCardNumber {
     if (!self) {
         return  nil;
     }
@@ -336,7 +348,7 @@
     
     // 显示2位小数
     NSString *format = [NSString stringWithFormat:@"%%.%ldf", (long)count];
-    float number = [resultDecimalStr floatValue];
+    double number = [resultDecimalStr doubleValue];
     NSString *resultStr = [NSString stringWithFormat:format, number];
     
     return resultStr;
