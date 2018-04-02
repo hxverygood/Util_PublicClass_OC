@@ -19,6 +19,9 @@
 }
 
 
+
+#pragma mark - API
+
 - (void)sendWithIP:(nonnull NSString *)ip
      mainDirectory:(nullable NSString *)mainDirectory
            apiName:(nonnull NSString *)apiName
@@ -60,7 +63,7 @@
         if (newParams) {
             NSLog(@"\n%@\n%@", urlString, newParams);
         } else {
-            NSLog(@"\n%@\n%@", urlString, params);
+            NSLog(@"\n%@\n%@", urlString, [self isBlankString:params] ? @"no prarams" : params);
         }
     }else
     {
@@ -133,6 +136,99 @@
     [dataTask resume];
 }
 
+/// 上传图片
+- (void)uploadImageWithIP:(nonnull NSString *)ip
+            mainDirectory:(nullable NSString *)mainDirectory
+                  apiName:(nonnull NSString *)apiName
+                   params:(nonnull id)params
+                fileDatas:(NSArray * __nullable)fileDatas
+                fileNames:(NSArray * __nullable)fileNames
+               completion:(void (^ __nullable)(DataServiceCompletionModel * __nullable model))completion {
+    
+    /// 新方法
+    NSString *urlString = nil;
+    if (mainDirectory) {
+        if (ip && mainDirectory) {
+            mainDirectory = [NSString stringWithFormat:@"%@/%@", ip, mainDirectory];
+        }
+        else
+        {
+            mainDirectory = @"";
+        }
+        
+    } else {
+        mainDirectory = @"";
+    }
+    self.baseUrlString = mainDirectory;
+    
+    if ([mainDirectory isEqualToString:@""]) {
+        urlString = [NSString stringWithFormat:@"%@", apiName];
+    }
+    else
+    {
+        urlString = [NSString stringWithFormat:@"%@/%@", mainDirectory, apiName];
+    }
+    
+    NSString * encodedString= [urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    
+    NSDictionary *newParams;
+    // 这一步操作是过滤掉不必要的uuid
+    NSMutableDictionary *body = [[NSMutableDictionary alloc] initWithDictionary:params];
+    if (![body.allKeys containsObject:@"UUID"])
+    {
+        // 对请求参数进行组合
+        newParams = [self combinePostParamBodyWithAPIName:apiName params:params];
+        if (newParams) {
+            NSLog(@"\n%@\n%@", urlString, newParams);
+        } else {
+            NSLog(@"\n%@\n%@", urlString, [self isBlankString:params] ? @"no prarams" : params);
+        }
+    }else
+    {
+        newParams = body;
+        NSLog(@"\n%@\n%@", urlString, newParams);
+    }
+    
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    // 设置网络访问超时时间
+    manager.requestSerializer.timeoutInterval = timeoutInterval;
+    
+    if ([self excludeSignInHttpHeaderForAPIName:apiName] == YES) {
+        NSString *sign = [HSLoginInfo savedLoginInfo].sign;
+        if (![NSString isBlankString:sign]) {
+            [manager.requestSerializer setValue:sign forHTTPHeaderField:@"sign"];
+        }
+    }
+    
+    NSURLSessionDataTask *dataTask = [manager POST:encodedString parameters:newParams constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        for (int i = 0; i < fileDatas.count; i++) {
+            NSData *imageData = fileDatas[i];
+            NSString *fileName = fileNames[i];
+//            NSData *data = UIImageJPEGRepresentation(image, 1);
+            if (imageData != nil)
+            {
+                [formData appendPartWithFileData:imageData name:@"file" fileName:fileName mimeType:@"image/jpeg"];
+            }
+        }
+    } progress:^(NSProgress * _Nonnull uploadProgress) {
+        
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        [self apiCompletionWithIP:ip mainDirectory:mainDirectory apiName:apiName params:params responseObject:responseObject error:nil completion:^(DataServiceCompletionModel * _Nullable model) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion(model);
+            });
+        }];
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        DataServiceCompletionModel *compModel = [self errorHandleWithApiName:apiName error:error];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion(compModel);
+        });
+    }];
+    
+    [dataTask resume];
+}
+
 
 - (void)apiCompletionWithIP:(nonnull NSString *)ip
               mainDirectory:(nullable NSString *)mainDirectory
@@ -143,15 +239,28 @@
                  completion:(void (^ __nullable)(DataServiceCompletionModel * __nullable model))completion {
     NSError *err = nil;
     if (!error) {
-        id json = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&err];
-        
-#ifdef DEBUG
-        NSLog(@"\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>> api return >>>>>>>>>>>>>>>>>>>>>>>>>>>\n%@/\n%@\n%@\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n_", mainDirectory, apiName, json);
-        //        NSLog(@"apiName：%@", apiName);
-        //        NSLog(@"json: %@", json);
-        if (err) {
-            NSLog(@"err：%@", err);
+        id json = nil;
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            json = responseObject;
         }
+        else {
+            json = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&err];
+        }
+        
+#if DEBUG
+    NSLog(@"\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>> api return >>>>>>>>>>>>>>>>>>>>>>>>>>>\n%@/\n%@\n%@\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n_", mainDirectory, apiName, json);
+    //        NSLog(@"apiName：%@", apiName);
+    //        NSLog(@"json: %@", json);
+    if (err) {
+        NSLog(@"err：%@", err);
+    }
+#elif PREPRODUCTION
+    NSLog(@"\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>> api return >>>>>>>>>>>>>>>>>>>>>>>>>>>\n%@/\n%@\n%@\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n_", mainDirectory, apiName, json);
+    //        NSLog(@"apiName：%@", apiName);
+    //        NSLog(@"json: %@", json);
+    if (err) {
+        NSLog(@"err：%@", err);
+    }
 #endif
         
         DataServiceCompletionModel *compModel = [[DataServiceCompletionModel alloc] init];
@@ -313,6 +422,20 @@
     
     NSLog(@"错误: %@", error.localizedDescription);
     return compModel;
+}
+
+/// 判断字符串是否为空
+- (BOOL)isBlankString:(NSString *)string {
+    if (string == nil || string == NULL) {
+        return YES;
+    }
+    if ([string isKindOfClass:[NSNull class]]) {
+        return YES;
+    }
+    if ([[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length]==0) {
+        return YES;
+    }
+    return NO;
 }
 
 @end

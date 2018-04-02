@@ -31,6 +31,14 @@
               data:(NSArray * __nullable )fileData
         completion:(void (^ __nullable)(DataServiceCompletionModel * __nullable model))completion;
 
+/// 上传图片
+- (void)uploadImageWithIP:(nonnull NSString *)ip
+            mainDirectory:(nullable NSString *)mainDirectory
+                  apiName:(nonnull NSString *)apiName
+                   params:(nonnull id)params
+                fileDatas:(NSArray * __nullable)fileDatas
+                fileNames:(NSArray * __nullable)fileNames
+               completion:(void (^ __nullable)(DataServiceCompletionModel * __nullable model))completion;
 
 ///**
 // 上传文件(数组)

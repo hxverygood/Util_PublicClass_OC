@@ -23,6 +23,15 @@ static CGFloat const timeoutInterval = 120.0;
                params:(id)params
            complation:(void (^)(NSInteger errorCode, NSString *errorInfo, id data, NSError *error, NSInteger localErrorStatus, BOOL allSuccess))complation;
 
+/// 上传图片数据接口
++ (void)HS_POSTWithIP:(NSString *)ip
+          mainApiName:(NSString *)mainApiName
+                 name:(NSString *)apiName
+               params:(id)params
+            fileDatas:(NSArray * )fileDatas
+            fileNames:(NSArray * )fileNames
+           complation:(void (^)(NSInteger errorCode, NSString *errorInfo, id data, NSError *error, NSInteger localErrorStatus, BOOL allSuccess))complation;
+
 /////上传文件接口
 //+ (void)HS_UploadWithName:(NSString *)apiName
 //                   params:(NSDictionary *)params
