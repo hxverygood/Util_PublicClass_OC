@@ -13,7 +13,7 @@
 //#pragma mark - Properties
 
 //@property (nonatomic, strong) NSArray * _Nullable gradientColors;
-
+@property (nonatomic, assign) BOOL isAvailable;
 
 
 #pragma mark - Initializer
@@ -48,12 +48,17 @@
 
 /// 两端为大圆角、底色为渐变的Button
 + (instancetype _Nullable)roundCornerGradientButtonWithFrame:(CGRect)frame
-                                                      title:(NSString * _Nullable)title;
+                                                       title:(NSString * _Nullable)title;
 
 
 //+ (instancetype _Nullable )initWithFrame:(CGRect)frame
 //                              titleColor:(UIColor *_Nullable)titleColor
 //                            cornerRadius:(CGFloat)cornerRadius;
+
+/// 对按钮置灰情况进行设置
+- (void)setUnableTitle:(NSString * _Nullable)unableTitle
+  unableBackgroudColor:(UIColor * _Nullable)unableBackgroudColor;
+
 
 - (void)setTitleColor:(UIColor *_Nullable)titleColor
          cornerRadius:(CGFloat)cornerRadius;

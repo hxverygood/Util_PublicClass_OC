@@ -10,6 +10,10 @@
 
 @interface HSBaseButton ()
 
+@property (nonatomic, strong) NSString *normalTitle;
+@property (nonatomic, strong) NSString *unableTitle;
+@property (nonatomic, strong) UIColor *unableBackgroundColor;
+
 @property (nonatomic, strong) NSArray *gradientColors;
 @property (nonatomic, strong) NSArray *gradientColors_selected;
 @property (nonatomic, strong) CAGradientLayer *gradientLayer;
@@ -65,6 +69,21 @@
     }
     return _gradientColors_selected;
 }
+
+
+
+#pragma mark - Setter
+
+- (void)setIsAvailable:(BOOL)isAvailable {
+    _isAvailable = isAvailable;
+    
+    self.enabled = isAvailable;
+    self.backgroundColor = isAvailable ? YELLOW_BUTTON : self.unableBackgroundColor;
+    [self setTitle:isAvailable ? self.normalTitle : self.unableTitle forState:UIControlStateNormal];
+}
+
+
+
 
 
 
@@ -163,9 +182,11 @@
     self = [super initWithFrame:frame];
     
     if (self) {
+        self.normalTitle = title ? : @"提交";
+        self.unableTitle = @"正在获取数据，请稍候";
+        
         HSBaseButton *button = [HSBaseButton buttonWithType:UIButtonTypeCustom];
         button.frame= frame;
-        button.backgroundColor = YELLOW_BUTTON;
         
         if (title) {
             [button setTitle:title forState:UIControlStateNormal];
@@ -181,12 +202,7 @@
             [button setTitleColor:titleColor cornerRadius:3.0];
         }
         
-        
-        if (backgroundColor) {
-            button.backgroundColor = backgroundColor;
-        } else {
-            button.backgroundColor = self.defaultBackgrouodColor;
-        }
+        button.backgroundColor = backgroundColor ? : self.defaultBackgrouodColor;
         
         self = button;
     }
@@ -198,8 +214,11 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
 //        [self gradientBackgroudWithCornerRadius:5.0];
+        self.normalTitle = self.titleLabel.text ? : @"提交";
+        self.unableTitle = @"正在获取数据，请稍候";
         self.titleLabel.font = [UIFont systemFontOfSize:18.0];
         self.backgroundColor = YELLOW_BUTTON;
+        self.unableBackgroundColor = [UIColor colorWithRed:220/255.0 green:220/255.0 blue:220/255.0 alpha:1.0];
         [self setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         self.layer.cornerRadius = 3.0;
         self.layer.masksToBounds = YES;
@@ -211,8 +230,11 @@
     [super awakeFromNib];
     
 //    [self gradientBackgroudWithCornerRadius:5.0];
+    self.normalTitle = self.titleLabel.text ? : @"提交";
+    self.unableTitle = @"正在获取数据，请稍候";
     self.titleLabel.font = [UIFont systemFontOfSize:18.0];
     self.backgroundColor = YELLOW_BUTTON;
+    self.unableBackgroundColor = [UIColor colorWithRed:220/255.0 green:220/255.0 blue:220/255.0 alpha:1.0];
     [self setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.layer.cornerRadius = 3.0;
     self.layer.masksToBounds = YES;
@@ -233,6 +255,13 @@
 
 
 #pragma mark - Func
+
+/// 对按钮置灰情况进行设置
+- (void)setUnableTitle:(NSString * _Nullable)unableTitle
+  unableBackgroudColor:(UIColor * _Nullable)unableBackgroudColor {
+    self.unableTitle = unableTitle ? : @"正在获取数据...";
+    self.unableBackgroundColor = unableBackgroudColor ? : [UIColor colorWithRed:220/255.0 green:220/255.0 blue:220/255.0 alpha:1.0];
+}
 
 - (void)setTitleColor:(UIColor *_Nullable)titleColor
          cornerRadius:(CGFloat)cornerRadius {

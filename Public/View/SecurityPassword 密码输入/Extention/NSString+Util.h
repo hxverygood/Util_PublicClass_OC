@@ -14,4 +14,12 @@
 /// 判断字符串是否为空
 + (BOOL)isBlankString:(NSString * _Nullable)string;
 
+
+- (NSString *)URLEncodedString;
+
+// 恒丰银行转码信息
+- (NSString *)URLEncoding;
+
+- (NSString *)URLDecoding;
+
 @end
