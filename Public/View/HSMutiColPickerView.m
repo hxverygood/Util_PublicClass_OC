@@ -173,6 +173,9 @@ static CGFloat height = 220.0;
     }
     
     [self.selectedRowArray replaceObjectAtIndex:component withObject:@(row)];
+    for (NSInteger i = component+1; i < _dataArrays.count; i++) {
+        [self.selectedRowArray replaceObjectAtIndex:i withObject:@(0)];
+    }
     
     if (self.selectRowBlock) {
         self.selectRowBlock(component, row);
@@ -193,7 +196,7 @@ static CGFloat height = 220.0;
 
 - (void)confirmButtonPressed:(id)sender {
     if (self.confirmButtonAction) {
-        self.confirmButtonAction(_dataArrays.count, self.selectedRowArray);
+        self.confirmButtonAction(_dataArrays.count, [self.selectedRowArray copy]);
     }
     [self dismiss];
 }
