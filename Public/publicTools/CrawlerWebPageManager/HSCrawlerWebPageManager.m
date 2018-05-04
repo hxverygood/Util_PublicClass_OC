@@ -12,7 +12,7 @@
 #import "HSInterface+Other.h"
 
 static NSString *const HSCrawlerWebPageManagerFileName = @"crawlerWebPage";
-static NSInteger timerCount = 60.0;
+//static NSInteger timerCount = 60.0;
 
 @interface HSCrawlerWebPageManager () <HSGCDTimerManagerDelegate>
 

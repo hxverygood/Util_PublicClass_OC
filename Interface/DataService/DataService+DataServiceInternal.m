@@ -193,6 +193,9 @@
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     // 设置网络访问超时时间
     manager.requestSerializer.timeoutInterval = timeoutInterval;
+    // 编码格式
+    manager.requestSerializer.stringEncoding = NSUTF8StringEncoding;
+    [manager.requestSerializer setValue:@"multipart/form-data;charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
     
     if ([self excludeSignInHttpHeaderForAPIName:apiName] == YES) {
         NSString *sign = [HSLoginInfo savedLoginInfo].sign;
@@ -408,12 +411,10 @@
         (error.code == -1009)) {
         compModel.localErrorCode = kDataServiceStatusNetworkError;
     }
-    
-    if (error.code == -1004) {
+    else if (error.code == -1004) {
         compModel.localErrorCode = kDataServiceStatusResponseServerError;
     }
-    
-    if (error.code == -1011) {
+    else if (error.code == -1011) {
         compModel.localErrorCode = kDataServiceStatusRequestFaild;
     }
     

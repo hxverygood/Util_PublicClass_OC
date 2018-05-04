@@ -11,7 +11,7 @@
 
 static NSString *const scriptMessageHandlerName = @"submitResult";
 
-@interface HSWebViewController () <WKNavigationDelegate, WKScriptMessageHandler>
+@interface HSWebViewController () <WKNavigationDelegate, WKScriptMessageHandler,NSURLSessionDelegate>
 //@property (weak, nonatomic) IBOutlet WKWebView *webView;
 @property (nonatomic, strong) WKWebViewConfiguration *wkWebConfig;
 @property (nonatomic, strong) UIProgressView *progressView;
@@ -85,7 +85,11 @@ static NSString *const scriptMessageHandlerName = @"submitResult";
     self.webView.scrollView.contentInset = webViewInsets;
 }
 
-
+- (void)setUrlStr:(NSString *)urlStr {
+    _urlStr = urlStr;
+    
+    [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]]];
+}
 
 #pragma mark - UI
 
@@ -95,20 +99,8 @@ static NSString *const scriptMessageHandlerName = @"submitResult";
     if (_statusBarStyle) {
         [[UIApplication sharedApplication] setStatusBarStyle:_statusBarStyle animated:YES];
     }
-    
-//    if (_allowRotation) {
-//        AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-//        delegate.allowRotation = YES;
-//    }
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-//    if (_allowRotation) {
-//        AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-//        delegate.allowRotation = NO;
-//    }
-}
 
 - (void)viewDidDisappear:(BOOL)animated {
     [_wkWebConfig.userContentController removeScriptMessageHandlerForName:scriptMessageHandlerName];
@@ -168,6 +160,10 @@ static NSString *const scriptMessageHandlerName = @"submitResult";
 
 // 开始加载
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation {
+    if (_showProgressHUD) {
+        [SVProgressHUD show];
+    }
+    
     NSLog(@"开始加载网页");
     //开始加载网页时展示出progressView
     self.progressView.hidden = NO;
@@ -179,6 +175,9 @@ static NSString *const scriptMessageHandlerName = @"submitResult";
 
 // 加载完成
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
+    if (_showProgressHUD) {
+        [SVProgressHUD dismiss];
+    }
     NSLog(@"网页加载完成");
     //加载完成后隐藏progressView
     /*
@@ -213,12 +212,31 @@ static NSString *const scriptMessageHandlerName = @"submitResult";
 
 // 加载失败
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
+    if (error.code == -1001) {
+        [SVProgressHUD showInfoWithStatus:@"页面加载时间过长，请稍后再试"];
+        return;
+    }
+    else if (error.code == -1003) {
+        [SVProgressHUD showInfoWithStatus:@"未能连接到服务器，请稍后再试"];
+        return;
+    }
+    else if (error.code == -1100) {
+        [SVProgressHUD showInfoWithStatus:@"页面链接问题，请稍后再试"];
+        return;
+    }
+    
+    NSString *errorInfo = [error.userInfo ac_stringForKey:@"localizedDescription"];
+    if (errorInfo) {
+        [SVProgressHUD showInfoWithStatus:errorInfo];
+    }
+    else if (_showProgressHUD) {
+        [SVProgressHUD dismiss];
+    }
+    
     //加载失败同样需要隐藏progressView
     self.progressView.progress = 0.0;
     self.progressView.hidden = YES;
     
-    NSLog(@"网页加载失败");
-    [SVProgressHUD showInfoWithStatus:@"网页加载失败"];
 }
 
 // 在发送请求之前，决定是否跳转
@@ -341,7 +359,6 @@ static NSString *const scriptMessageHandlerName = @"submitResult";
     
     return resultingImage;
 }
-
 
 
 #pragma mark - Dealloc

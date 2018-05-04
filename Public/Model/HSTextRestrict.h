@@ -15,7 +15,7 @@ typedef NS_ENUM(NSInteger, HSRestrictType)
     HSRestrictTypeOnlyDecimal,                  ///<  只允许输入实数，包括.
     HSRestrictTypeOnlyCharacter,                ///<  只允许输入非中文字符
     HSRestrictTypeOnlyChinese,                  /// 只允许输入中文
-    HSRestrictTypeCharacterCount,               ///< 判断字符数量，需配合maxLength属性使用
+    HSRestrictTypeCharacterCount,               ///< 只判断字符数量，需配合maxLength属性使用
     HSRestrictTypeCharacterAndNumber,           /// 判断字母和数字
     HSRestrictTypeChineseAndCharAndNumber,      /// 判断中文、字母和数字
     HSRestrictTypeIdCard,                       ///  判断身份证

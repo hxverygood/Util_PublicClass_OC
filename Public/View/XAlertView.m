@@ -77,8 +77,8 @@
         NSMutableAttributedString *attrStr = [NSMutableAttributedString attributedWithString:content fontSize:14.0 fontColor:[UIColor colorWithRed:108/255.0f green:108/255.0f blue:108/255.0f alpha:1] paragraphAlignment:NSTextAlignmentCenter lineSpacing:3.0f];
         lab1.attributedText = attrStr;
 
-        CGRect X = self.bigView.frame;
-        NSLog(@"%@",NSStringFromCGRect(X));
+//        CGRect X = self.bigView.frame;
+//        NSLog(@"%@",NSStringFromCGRect(X));
         UILabel * line = [[UILabel alloc]initWithFrame:CGRectMake(0, 0,  CGRectGetWidth(_bigView.frame), 0.4f)];
         line.center = CGPointMake(CGRectGetWidth(_bigView.bounds)/2, CGRectGetHeight(_bigView.bounds) - 44+2);
         line.backgroundColor =[UIColor lightGrayColor];
@@ -187,8 +187,8 @@
         lab1.font = [UIFont systemFontOfSize:12];
         lab1.center =  CGPointMake((self.bigView.frame.size.width)/2,CGRectGetHeight(self.bigView.frame)/2);
         lab1.text =@"有新的版本可供更新，您必须立即更新后才能使用本应用，请您点击“确定”后在App Store进行更新。";
-        CGRect X = self.bigView.frame;
-        NSLog(@"%@",NSStringFromCGRect(X));
+//        CGRect X = self.bigView.frame;
+//        NSLog(@"%@",NSStringFromCGRect(X));
         UILabel * line = [[UILabel alloc]initWithFrame:CGRectMake(0, 0,  CGRectGetWidth(_bigView.frame), 0.4f)];
         line.center = CGPointMake(CGRectGetWidth(_bigView.bounds)/2, CGRectGetHeight(_bigView.bounds) - 44+2);
         line.backgroundColor =[UIColor lightGrayColor];

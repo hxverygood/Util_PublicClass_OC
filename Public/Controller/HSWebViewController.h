@@ -19,6 +19,8 @@
 
 @interface HSWebViewController : HSBaseViewController
 
+@property (nonatomic, strong) NSString *isPost;
+@property (nonatomic, copy) NSString *bodyDict;
 @property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, strong) NSString *titleStr;
 @property (nonatomic, strong) NSString *urlStr;
@@ -27,6 +29,7 @@
 @property (nonatomic, strong) NSString *waterMarkContent;
 
 @property (nonatomic, strong) UIColor *progressViewColor;
+@property (nonatomic, assign) BOOL showProgressHUD;
 @property (nonatomic, assign) BOOL allowRotation;
 
 // 完成某项工作后是否pop回上一个VC

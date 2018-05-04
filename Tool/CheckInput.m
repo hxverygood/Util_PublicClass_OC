@@ -71,7 +71,7 @@
     NSAssert(min > 0 || max > 0, @"最小值或最大值必须大于1");
     NSAssert(min <= max, @"最小值必须比最大值小");
 
-    NSString *passWordRegex = [NSString stringWithFormat:@"^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{%ld,%ld}$", min, max];
+    NSString *passWordRegex = [NSString stringWithFormat:@"^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{%ld,%ld}$", (long)min, (long)max];
     NSPredicate *passWordPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",passWordRegex];
     return [passWordPredicate evaluateWithObject:passWord];
 }

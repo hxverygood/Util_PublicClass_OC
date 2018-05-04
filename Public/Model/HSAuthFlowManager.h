@@ -23,13 +23,15 @@
 @property (nonatomic, strong, readonly) NSArray *product2AuthNameArray;
 @property (nonatomic, strong, readonly) NSArray *product3AuthNameArray;
 @property (nonatomic, strong, readonly) NSArray *product4AuthNameArray;
+@property (nonatomic, strong, readonly) NSArray *product6AuthNameArray;
 @property (nonatomic, strong, readonly) NSArray *offlineProduct1AuthNameArray;
 @property (nonatomic, strong, readonly) NSArray *offlineProduct1PromotionAuthNames;
 @property (nonatomic, strong, readonly) NSArray *offlineProduct2AuthNameArray;
 @property (nonatomic, strong, readonly) NSArray *offlineProduct3AuthNameArray;
 @property (nonatomic, strong, readonly) NSArray *offlineProduct4AuthNameArray;
 @property (nonatomic, strong, readonly) NSArray *offlineProduct5AuthNameArray;
-
+@property (nonatomic, strong, readonly) NSArray *offlineProduct6AuthNameArray;
+@property (nonatomic, strong, readonly) NSArray *offlineProduct7AuthNameArray;
 @property (nonatomic, assign, readonly) CGFloat currentPercentInFlow;
 @property (nonatomic, assign, readonly) CGFloat percentAfterCurrentFlowComplete;
 @property (nonatomic, assign, readonly) NSInteger totalCount;
@@ -110,9 +112,15 @@
 - (NSInteger)authIsFinishedForOfflineProduct3;
 - (BOOL)offlineProduct3AuthIsNotFinishedAndJump;
 
-/// 线下产品 安居贷
+/// 线下产品 微加贷
 - (NSInteger)authIsFinishedForOfflineProduct4;
 - (BOOL)offlineProduct4AuthIsNotFinishedAndJump;
+/// 线下产品 新安居贷
+- (NSInteger)authIsFinishedForOfflineProduct6;
+- (BOOL)offlineProduct6AuthIsNotFinishedAndJump;
+/// 线下产品 网易贷（运营商、征信、淘宝、支付宝）
+- (NSInteger)authIsFinishedForOfflineProduct7;
+- (BOOL)offlineProduct7AuthIsNotFinishedAndJump;
 
 ///
 - (NSInteger)authIsFinishedForOfflineProduct5;
@@ -176,6 +184,10 @@
 - (void)jumpToCreditCardVC;
 /// 跳转收入证明认证VC
 - (void)jumpToIncomeVC;
+/// 跳转企查查VC
+- (void)jumpToQichachaVC;
+/// 跳转至支付宝认证VC
+- (void)jumpToAlipayVC;
 
 
 #pragma mark - Public Func
