@@ -78,4 +78,9 @@
 /// pop次数
 - (void)popToViewControllerWithPopCount:(NSInteger)count;
 
+/// 禁用右滑返回手势
++ (void)popGestureClose:(UIViewController *)vc;
+/// 开启右滑返回手势
++ (void)popGestureOpen:(UIViewController *)vc;
+
 @end
