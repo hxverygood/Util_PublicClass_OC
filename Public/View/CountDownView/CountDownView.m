@@ -15,6 +15,7 @@
 @property (nonatomic, strong) CountDownButton *button;
 @property (nonatomic, strong) CountDownLabel *label;
 
+@property (nonatomic, strong) NSTimer *timer;
 @property (nonatomic, assign) NSInteger setCountDownTime;
 @property (nonatomic, assign) NSInteger count;
 
@@ -70,9 +71,14 @@
     [self setupCodeButtonIsEnabled:NO];
     [self resetCountLabel];
     NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(countDown:) userInfo:nil repeats:YES];
+    _timer = timer;
     [timer fire];
 }
 
+- (void)timerStop {
+    [_timer invalidate];
+    _timer = nil;
+}
 
 
 
@@ -86,8 +92,7 @@
 
 - (void)countDownFromLastVC:(NSTimer *)timer {
     if (self.count == 0) {
-        [timer invalidate];
-        timer = nil;
+        [self timerStop];
         return;
     }
     _count -= 1;
@@ -98,8 +103,7 @@
     self.label.text = countingText;
     
     if (self.count == 0) {
-        [timer invalidate];
-        timer = nil;
+        [self timerStop];
         [self setupCodeButtonIsEnabled:YES];
         
         if (self.completeHandler) {

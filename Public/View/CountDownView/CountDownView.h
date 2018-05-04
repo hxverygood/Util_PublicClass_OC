@@ -24,5 +24,6 @@
                 countDownTime:(NSInteger)countDownTime;
 
 - (void)timerStart;
+- (void)timerStop;
 
 @end
