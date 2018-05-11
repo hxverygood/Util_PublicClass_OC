@@ -17,7 +17,7 @@
 #import "HSInterface+Main.h"                                // 首页API
 #import "HSHomeDataModel.h"                                 // 首页数据模型
 
-#import "HSCertificateViewController.h"                     // 实名认证VC
+//#import "HSCertificateViewController.h"                     // 实名认证VC
 #import "HSFacePlusRealNameVerificationVC.h"                // Face++
 #import "HSUserBasicInfoViewController.h"                   // 个人基础信息VC
 #import "HSCareerViewController.h"                          // 工作单位信息认证VC
@@ -47,7 +47,7 @@
 #import "HSAuthAlertView.h"                                 // 认证弹出框
 #import "HSLimitActivationViewController.h"                 // 激活额度VC
 #import "HSIncomeCertifyViewController.h"                   // 收入证明认证VC
-#import "HSThirdH5WebViewController.h"
+//#import "HSThirdH5WebViewController.h"
 #import "HSQichachaViewController.h"                        // 企查查VC
 #import "HSLoanListModel.h"
 
@@ -1799,12 +1799,12 @@ static HSAuthFlowManager * _instance = nil;
 
 /// 跳转至实名认证VC
 - (void)jumpToCertVC {
-    HSCertificateViewController *vc = [[HSCertificateViewController alloc] init];
-    vc.isInAuthFlow = YES;
-    vc.hidesBottomBarWhenPushed = YES;
-
-//    HSFacePlusRealNameVerificationVC *vc = [[HSFacePlusRealNameVerificationVC alloc] init];
+//    HSCertificateViewController *vc = [[HSCertificateViewController alloc] init];
+//    vc.isInAuthFlow = YES;
 //    vc.hidesBottomBarWhenPushed = YES;
+
+    HSFacePlusRealNameVerificationVC *vc = [[HSFacePlusRealNameVerificationVC alloc] init];
+    vc.hidesBottomBarWhenPushed = YES;
     
     UIViewController *currentVC = [UIViewController currentViewController];
     [currentVC.navigationController pushViewController:vc animated:YES];
@@ -1838,6 +1838,7 @@ static HSAuthFlowManager * _instance = nil;
 //        [currentVC.navigationController pushViewController:vc animated:YES];
 //        return;
         phone = [HSLoginInfo savedLoginInfo].phone;
+//        phone = @"18629084096";
     }
     else {
         phone = [HSLoginInfo savedLoginInfo].phone;
@@ -1847,6 +1848,8 @@ static HSAuthFlowManager * _instance = nil;
         [SVProgressHUD showInfoWithStatus:@"手机号为空，无法获取运营商信息"];
         return;
     }
+    
+//    phone = HS_APPDELEGATE.mobileTest ? @"18019749819" : phone;
     //        NSString *phone = user.phone;
     //    NSString *phone = @"18220834780";//移动
     //        NSString *phone = @"17629003948";//联通
@@ -1867,8 +1870,8 @@ static HSAuthFlowManager * _instance = nil;
 //                }
                 [SVProgressHUD dismiss];
                 
-#warning fix: tanzhi callrecord
-                [self jumpToCallRecordTanZhiVC];
+#warning fix: 3rdParty callrecord
+                [self jumpToCallRecord3rdPartyVC];
                 
                 
 //                HSThirdH5WebViewController * vc = [[HSThirdH5WebViewController alloc] init];
@@ -1886,9 +1889,7 @@ static HSAuthFlowManager * _instance = nil;
 //#warning fix: jump to originOperator
 //    [self jumpToOriginOperator];
     
-    if ([SVProgressHUD isVisible] == NO) {
-        [SVProgressHUD show];
-    }
+    [SVProgressHUD show];
     [HSInterface judjeFethOperatorWithPhoneCompletion:^(BOOL success, NSString *message, id model, NSInteger errorCode) {
         if (success) {
             [SVProgressHUD dismiss];
@@ -1904,9 +1905,8 @@ static HSAuthFlowManager * _instance = nil;
                 NSNumber *num = (NSNumber *)model;
                 NSInteger result = num.integerValue;
                 if (result == 1) {
-#warning fix: tanzhi callrecord
-                    [self jumpToCallRecordTanZhiVC];
-                    
+#warning fix: 3rdParty callrecord
+                    [self jumpToCallRecord3rdPartyVC];
                     
 //                    HSThirdH5WebViewController * vc = [[HSThirdH5WebViewController alloc] init];
 ////                    HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
@@ -1920,8 +1920,8 @@ static HSAuthFlowManager * _instance = nil;
             }
             else if ([model isEqualToString:@"1"])
             {
-#warning fix: tanzhi callrecord
-                [self jumpToCallRecordTanZhiVC];
+#warning fix: 3rdParty callrecord
+                [self jumpToCallRecord3rdPartyVC];
                 
 //                HSThirdH5WebViewController * vc = [[HSThirdH5WebViewController alloc] init];
 //                vc.needPop = YES;
@@ -1937,8 +1937,8 @@ static HSAuthFlowManager * _instance = nil;
 //            [SVProgressHUD showInfoWithStatus:message];
             [SVProgressHUD dismiss];
             
-#warning fix: tanzhi callrecord
-            [self jumpToCallRecordTanZhiVC];
+#warning fix: 3rdParty callrecord
+            [self jumpToCallRecord3rdPartyVC];
             
 //            HSThirdH5WebViewController * vc = [[HSThirdH5WebViewController alloc] init];
 //            vc.hidesBottomBarWhenPushed = YES;
@@ -1948,13 +1948,21 @@ static HSAuthFlowManager * _instance = nil;
     }];
 }
 
-// 跳转至第3方服务商“探知”获取运营商数据
-- (void)jumpToCallRecordTanZhiVC {
+// 跳转至第3方服务商
+- (void)jumpToCallRecord3rdPartyVC {
+    // “探知”获取运营商数据
     HSCallRecordTanzhiViewController *vc = [[HSCallRecordTanzhiViewController alloc] init];
     vc.hidesBottomBarWhenPushed = YES;
     UIViewController *currentVC = [UIViewController currentViewController];
     [currentVC.navigationController pushViewController:vc animated:YES];
     return;
+    
+    
+//    HSThirdH5WebViewController * vc = [[HSThirdH5WebViewController alloc] init];
+//    //                    HSCallRecordThirdPartyViewController *vc = [[HSCallRecordThirdPartyViewController alloc] init];
+//    vc.needPop = YES;
+//    vc.hidesBottomBarWhenPushed = YES;
+//    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)jumpToOriginOperator {

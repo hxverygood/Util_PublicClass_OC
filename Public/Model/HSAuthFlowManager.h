@@ -168,6 +168,8 @@
 - (void)jumpToCertVC;
 /// 获取当前用户手机号码是哪个运营商的，并跳转至相关认证界面
 - (void)fetchOperatorInfoAndJump;
+// 跳转至第3方服务商“探知”获取运营商数据
+- (void)jumpToCallRecord3rdPartyVC;
 /// 跳转至芝麻WebVC
 - (void)jumpToZhimaVC;
 /// 跳转至社保认证VC
