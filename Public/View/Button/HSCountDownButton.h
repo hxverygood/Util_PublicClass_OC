@@ -30,6 +30,7 @@ typedef NS_ENUM(NSInteger, CountDownStatus) {
 - (void)timerStart;
 //- (void)timerStop;
 - (void)showCountDownStatus;
+- (void)setupCodeButtonIsEnabled:(BOOL)enable;
 //- (void)hideCountDownStatus;
 
 @end

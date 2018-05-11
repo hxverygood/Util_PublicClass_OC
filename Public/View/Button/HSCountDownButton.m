@@ -107,20 +107,10 @@
 
 #pragma mark - Private Func
 
-- (void)timerStop {
-    [self.timer invalidate];
-    _timer = nil;
-    
-    if (self.statusBlock) {
-        self.statusBlock(CountDownTimerIsIdle);
-    }
-    self.countDownStatusInside = CountDownTimerIsIdle;
-}
-
 - (void)countDown {
     if (self.count == 0) {
         [self timerStop];
-        [self setupCodeButtonIsEnabled:YES];
+//        [self setupCodeButtonIsEnabled:YES];
         
         return;
     }
@@ -130,6 +120,17 @@
     }
     
     _count -= 1;
+}
+
+- (void)timerStop {
+    [self.timer invalidate];
+    _timer = nil;
+    
+    self.countDownStatusInside = CountDownTimerIsIdle;
+    
+    if (self.statusBlock) {
+        self.statusBlock(CountDownTimerIsIdle);
+    }
 }
 
 - (void)setupCodeButtonIsEnabled:(BOOL)enable {

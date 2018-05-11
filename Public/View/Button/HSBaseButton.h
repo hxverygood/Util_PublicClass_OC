@@ -13,6 +13,8 @@
 //#pragma mark - Properties
 
 //@property (nonatomic, strong) NSArray * _Nullable gradientColors;
+
+// 设置button是否是可用状态（不可用则置灰）
 @property (nonatomic, assign) BOOL isAvailable;
 
 
