@@ -21,6 +21,26 @@ static NSString *const scriptMessageHandlerName = @"submitResult";
 
 @implementation HSWebViewController
 
+#define POST_JS @"function my_post(path, params) {\
+var method = \"POST\";\
+var form = document.createElement(\"form\");\
+form.setAttribute(\"method\", method);\
+form.setAttribute(\"action\", path);\
+form.setAttribute(\"accept-charset\", \"UTF-8\");\
+for(var key in params){\
+if (params.hasOwnProperty(key)) {\
+var hiddenFild = document.createElement(\"input\");\
+hiddenFild.setAttribute(\"type\", \"hidden\");\
+hiddenFild.setAttribute(\"name\", key);\
+hiddenFild.setAttribute(\"value\", params[key]);\
+}\
+form.appendChild(hiddenFild);\
+}\
+document.body.appendChild(form);\
+form.submit();\
+}"
+
+
 #pragma mark - Getter
 
 - (UIProgressView *)progressView {
@@ -45,17 +65,6 @@ static NSString *const scriptMessageHandlerName = @"submitResult";
         WKUserContentController *userCC = self.wkWebConfig.userContentController;
         [userCC addScriptMessageHandler:self name:scriptMessageHandlerName];
         self.wkWebConfig.userContentController = userCC;
-        
-//        // 自适应屏幕宽度js
-//        NSString *jsString = @" var meta = document.createElement('meta');\
-//                                meta.setAttribute('name', 'viewport');\
-//                                meta.setAttribute('content', 'width=device-width');\
-//                                document.getElementsByTagName('head')[0].appendChild(meta);";
-//        
-//        WKUserScript *wkUserScript = [[WKUserScript alloc] initWithSource:jsString injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
-//        
-//        // 添加自适应屏幕宽度js调用的方法
-//        [wkWebConfig.userContentController addUserScript:wkUserScript];
         
         _webView = [[WKWebView alloc] initWithFrame:[UIView fullScreenFrame] configuration:self.wkWebConfig];
         [self.view addSubview:_webView];
@@ -88,8 +97,16 @@ static NSString *const scriptMessageHandlerName = @"submitResult";
 - (void)setUrlStr:(NSString *)urlStr {
     _urlStr = urlStr;
     
-    [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]]];
+    //[self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]]];
+
+    
 }
+
+-(void)setParamStr:(NSString *)paramStr {
+    _paramStr = paramStr;
+}
+
+
 
 #pragma mark - UI
 
@@ -121,7 +138,16 @@ static NSString *const scriptMessageHandlerName = @"submitResult";
     // 添加“加载进度”的监听
     [self.webView addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:nil];
 
-    [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.urlStr]]];
+    if ([NSString isBlankString:self.paramStr]) {
+        [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.urlStr]]];
+    }else {
+        NSString * js = [NSString stringWithFormat:@"%@my_post(\"%@\", %@)",POST_JS,self.urlStr,self.paramStr];
+        [self.webView evaluateJavaScript:js completionHandler:^(id _Nullable element, NSError * _Nullable error) {
+            NSLog(@"这里是我请求成功的数据");
+        }];
+    }
+    
+    
 }
 
 - (void)viewDidLayoutSubviews {

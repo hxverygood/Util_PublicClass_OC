@@ -19,14 +19,14 @@
 
 @interface HSWebViewController : HSBaseViewController
 
-@property (nonatomic, strong) NSString *isPost;
-@property (nonatomic, copy) NSString *bodyDict;
 @property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, strong) NSString *titleStr;
 @property (nonatomic, strong) NSString *urlStr;
 @property (nonatomic, assign) UIEdgeInsets webViewInsets;
 @property (nonatomic, assign) UIStatusBarStyle statusBarStyle;
 @property (nonatomic, strong) NSString *waterMarkContent;
+
+@property (nonatomic,strong)NSString *paramStr;
 
 @property (nonatomic, strong) UIColor *progressViewColor;
 @property (nonatomic, assign) BOOL showProgressHUD;
