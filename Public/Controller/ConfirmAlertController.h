@@ -48,6 +48,18 @@ typedef NS_ENUM(NSInteger, TextAlignmentOption) {
               viewController:(UIViewController * __nonnull)viewController
                  actionBlock:(void(^ __nullable)(NSInteger confirmIndex, UIAlertAction * __nullable cancelAction))actionBlock;
 
+
+/**
+ 在当前ViewController界面中间弹出的提示框
+ */
++ (instancetype _Nullable)showAlertWithTitle:(NSString * __nullable)title
+                                     message:(NSString * __nullable)message
+                                confirmTitle:(NSString * __nullable)confirmTitle
+                                 cancelTitle:(NSString * __nullable)cancelTitle
+                                 actionStyle:(UIAlertActionStyle)actionStyle
+                                 actionBlock:(void(^ __nullable)(NSInteger confirmIndexn, UIAlertAction * __nullable cancelAction))actionBlock;
+
+
 /**
  显示界面中间弹出的提示框
  

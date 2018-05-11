@@ -95,6 +95,23 @@
     [weakVC presentViewController:alertViewController animated:YES completion:nil];
 }
 
+/**
+ 在当前ViewController界面中间弹出的提示框
+ */
++ (instancetype _Nullable)showAlertWithTitle:(NSString * __nullable)title
+                                     message:(NSString * __nullable)message
+                                confirmTitle:(NSString * __nullable)confirmTitle
+                                 cancelTitle:(NSString * __nullable)cancelTitle
+                                 actionStyle:(UIAlertActionStyle)actionStyle
+                                 actionBlock:(void(^ __nullable)(NSInteger confirmIndexn, UIAlertAction * __nullable cancelAction))actionBlock {
+    UIViewController *viewController = [self currentViewController];
+    __weak typeof(viewController) weakVC = viewController;
+    ConfirmAlertController *alertViewController = [[ConfirmAlertController alloc] initWithTitle:title message:message buttonCount:2 confirmTitles:confirmTitle ? @[confirmTitle] : @[@"确定"] cancelTitle:cancelTitle style:UIAlertControllerStyleAlert actionStyle:actionStyle  viewController:viewController actionBlock:actionBlock];
+    [weakVC presentViewController:alertViewController animated:YES completion:nil];
+    
+    return alertViewController;
+}
+
 
 /**
  显示界面中间弹出的提示框
@@ -213,6 +230,48 @@
 
 - (void)show {
     [self.vc presentViewController:self animated:YES completion:nil];
+}
+
+
+
+#pragma mark - Private Func
+
+/// 获取当前VC
+- (UIViewController *)currentViewController {
+    // Find best view controller
+    UIViewController *viewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    return [self findBestViewController:viewController];
+}
+
+- (UIViewController *)findBestViewController:(UIViewController *)vc {
+    if (vc.presentedViewController) {
+        // Return presented view controller
+        return [self findBestViewController:vc.presentedViewController];
+    } else if ([vc isKindOfClass:[UISplitViewController class]]) {
+        // Return right hand side
+        UISplitViewController *svc = (UISplitViewController *) vc;
+        if (svc.viewControllers.count > 0)
+            return [self findBestViewController:svc.viewControllers.lastObject];
+        else
+            return vc;
+    } else if ([vc isKindOfClass:[UINavigationController class]]) {
+        // Return top view
+        UINavigationController *svc = (UINavigationController *) vc;
+        if (svc.viewControllers.count > 0)
+            return [self findBestViewController:svc.topViewController];
+        else
+            return vc;
+    } else if ([vc isKindOfClass:[UITabBarController class]]) {
+        // Return visible view
+        UITabBarController *svc = (UITabBarController *) vc;
+        if (svc.viewControllers.count > 0)
+            return [self findBestViewController:svc.selectedViewController];
+        else
+            return vc;
+    } else {
+        // Unknown view controller type, return last child view controller
+        return vc;
+    }
 }
 
 
