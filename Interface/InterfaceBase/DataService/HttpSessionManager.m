@@ -6,15 +6,15 @@
 //  Copyright © 2017年 hoomsun. All rights reserved.
 //
 
-#import "HSHttpSessionManager.h"
+#import "HttpSessionManager.h"
 
-@implementation HSHttpSessionManager
+@implementation HttpSessionManager
 
 + (instancetype)sharedSessionManager {
-    static HSHttpSessionManager *instance = nil;
+    static HttpSessionManager *instance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        instance = [[HSHttpSessionManager alloc] init];
+        instance = [[HttpSessionManager alloc] init];
 //        instance.requestSerializer = [AFJSONRequestSerializer serializer];
         instance.responseSerializer = [AFHTTPResponseSerializer serializer];
     });

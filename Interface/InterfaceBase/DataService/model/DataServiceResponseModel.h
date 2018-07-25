@@ -11,8 +11,8 @@
 /// 服务器接口返回对象
 @interface DataServiceResponseModel : JSONModel
 
-@property (nullable, nonatomic, strong) NSNumber<Optional> *errorCode; // 错误码
-@property (nullable, nonatomic, strong) NSString<Optional> *errorInfo; // 错误信息描述
+@property (nullable, nonatomic, strong) NSNumber<Optional> *errcode; // 错误码
+@property (nullable, nonatomic, strong) NSString<Optional> *message; // 错误信息描述
 @property (nullable, nonatomic, strong) NSString<Optional> *sessionId; // 缓存id，每次调用接口都会返回。需要保存到本地，供下次接口访问使用。
 
 // 接口返回json中的data字段。可能返回数组，也可能返回字典

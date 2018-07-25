@@ -8,9 +8,10 @@
 
 #import "DataService.h"
 #import "JSONModelLib.h"
-#import "HSConfig.h"
+#import "Config.h"
+#import "DataInterface.h"
 #import "DataService+DataServiceInternal.h"
-//#import "LoginInfo.h"
 #import "DataServiceResponseModel.h"
 #import "DataServiceCompletionModel.h"
-#import "HSHttpSessionManager.h"
+#import "LoginInfo.h"
+#import "HttpSessionManager.h"

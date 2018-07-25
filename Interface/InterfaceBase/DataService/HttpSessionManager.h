@@ -8,7 +8,7 @@
 
 #import <AFNetworking/AFNetworking.h>
 
-@interface HSHttpSessionManager : AFHTTPSessionManager
+@interface HttpSessionManager : AFHTTPSessionManager
 
 + (instancetype)sharedSessionManager;
 

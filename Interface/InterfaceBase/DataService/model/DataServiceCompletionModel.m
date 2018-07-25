@@ -30,7 +30,7 @@
 //        return NO;
 //    }
     
-    if (self.apiModel.errorCode.integerValue != 0) {
+    if (self.apiModel.errcode.integerValue != 0) {
         return NO;
     }
     

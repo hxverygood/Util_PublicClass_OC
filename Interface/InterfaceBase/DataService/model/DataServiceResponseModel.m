@@ -29,9 +29,7 @@
     if ([self.dataDictionary isKindOfClass:[NSDictionary class]]) {
         NSError *error = nil;
         id obj = [[cls alloc] initWithDictionary:self.dataDictionary error:&error];
-#ifdef DEBUG
         NSLog(@"%@", error);
-#endif
         if (obj) {
             return obj;
         }
