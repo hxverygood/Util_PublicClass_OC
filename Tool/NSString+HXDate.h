@@ -26,14 +26,16 @@ typedef NS_ENUM(NSInteger, DateFormatterType) {
  *
  *  @return 返回一个字符串
  */
-+ (instancetype)stringFromDateWithTimeStamp:(NSTimeInterval)timeStamp
++ (nullable instancetype)stringFromDateWithTimeStamp:(NSTimeInterval)timeStamp
                               dateFormatter:(DateFormatterType)dateFormaterType
-                               andSeparator:(NSString *)separator;
+                               andSeparator:(nullable NSString *)separator;
 
-+ (instancetype)stringFromCurrentTimeStampWithDateFormatter:(DateFormatterType)dateFormaterType
-                                               andSeparator:(NSString *)separator;
++ (nullable instancetype)stringFromCurrentTimeStampWithDateFormatter:(DateFormatterType)dateFormaterType andSeparator:(nullable NSString *)separator;
+
+/// 将时间戳字符串转换为指定时间格式的时间字符串
++ (nullable NSString *)convertToDateStringWithTimestampString:(nullable NSString *)timestampString dateFormatter:(DateFormatterType)dateFormaterType andSeparator:(nullable NSString *)separator;
 
 /// 获取当前时间戳
-+ (instancetype)getCurrentTimeStamp;
++ (nullable instancetype)getCurrentTimeStamp;
 
 @end

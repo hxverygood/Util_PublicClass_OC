@@ -113,4 +113,10 @@
 + (instancetype)attributedUnderLineWithString:(NSString *)string
                                         color:(UIColor *)color;
 
+/// 文字中添加图片
++ (instancetype)addPhotoWithString:(NSString *)string
+                           atIndex:(NSInteger)index
+                         imageName:(NSString *)imageName
+                            bounds:(CGRect)bounds;
+
 @end

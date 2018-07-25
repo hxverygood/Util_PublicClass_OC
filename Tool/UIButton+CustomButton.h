@@ -33,18 +33,15 @@
 /// 根据按钮是否可用设置背景色为灰色
 - (void)changeButtonAppearanceWithEnable:(BOOL)flag;
 
-/// 根据按钮是否可用设置按钮背景色
-- (void)changeButtonAppearanceWithEnable:(BOOL)flag
-                          backgroudColor:(UIColor *)color;
-
-/// 根据按钮是否可用设置背景色为自定义颜色或灰色
-- (void)changeButtonAppearanceWithEnable:(BOOL)flag
-                    normalBackgroudColor:(UIColor *)color;
-
-/// 根据按钮是否可用，设置title、背景色
-- (void)changeButtonAppearanceWithEnable:(BOOL)flag
-                                   title:(NSString *)title
-                          backgroudColor:(UIColor *)color;
+///// 根据按钮是否可用设置按钮背景色
+//- (void)changeButtonAppearanceWithEnable:(BOOL)flag backgroudColor:(UIColor *)color;
+//
+///// 根据按钮是否可用设置背景色为自定义颜色或灰色
+//- (void)changeButtonAppearanceWithEnable:(BOOL)flag
+//                    normalBackgroudColor:(UIColor *)color;
+//
+///// 根据按钮是否可用，设置title、背景色
+//- (void)changeButtonAppearanceWithEnable:(BOOL)flag title:(NSString *)title backgroudColor:(UIColor *)color;
 
 /// 设置文字、字体大小、颜色
 - (void)buttonWithTitle:(NSString *)title;

@@ -58,7 +58,7 @@
 
 //密码
 + (BOOL)validatePassword:(NSString *)passWord {
-    NSString *passWordRegex = @"^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$";
+    NSString *passWordRegex = @"^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$";
     NSPredicate *passWordPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",passWordRegex];
     return [passWordPredicate evaluateWithObject:passWord];
 }
@@ -212,7 +212,7 @@
     
     
     // 只验证字符数量
-    NSString *phoneRegex = @"[0-9]{11}";
+    NSString *phoneRegex = @"1[0-9]{10}";
     NSPredicate *phoneTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",phoneRegex];
     return [phoneTest evaluateWithObject:mobile];
 }
@@ -381,6 +381,13 @@
     return [numberAndCommaTest evaluateWithObject:string];
 }
 
+/// 判断输入的是否是金额
++ (BOOL)validateMoney:(NSString *)money {
+    NSString *phoneRegex = @"^[0-9]+(\\.[0-9]{1,2})?$";
+    NSPredicate *phoneTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",phoneRegex];
+    return [phoneTest evaluateWithObject:money];
+}
+
 
 //只验证字符数量
 + (BOOL)validateCharacterQuantity:(NSString *)string {
@@ -427,6 +434,54 @@
     }
     
     return l+(int)ceilf((float)(a)/2.0);
+}
+
+
+/// 检查银行卡是否合法(Luhn算法)
++ (BOOL)validateCardNumber:(NSString *)cardNumber {
+    BOOL isDigits = [CheckInput isDigitsWithString:cardNumber];
+    if (isDigits == NO) {
+        return NO;
+    }
+    int sum = 0;
+    int digit = 0;
+    int addend = 0;
+    BOOL timesTwo = false;
+    for (int i = (int)(cardNumber.length - 1); i >= 0; i--) {
+        digit = [cardNumber characterAtIndex:i] - '0';
+        if (timesTwo) {
+            addend = digit * 2;
+            if (addend > 9) {
+                addend -= 9;
+            }
+        }
+        else {
+            addend = digit;
+        }
+        sum += addend;
+        timesTwo = !timesTwo;
+    }
+    int modulus = sum % 10;
+    return modulus == 0;
+}
+
+/// 检查是否是纯数字
++ (BOOL)isDigitsWithString:(NSString*)s {
+    char c;
+    for (int i = 0; i < s.length; i++) {
+        c = [s characterAtIndex:i];
+        if (isdigit(c) == NO) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+/// 检查车牌号是否合法
++ (BOOL)validateCarPlateNumber:(NSString *)string {
+    NSString *plateNumberRegex = @"^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$";
+    NSPredicate *plateNumberPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", plateNumberRegex];
+    return [plateNumberPredicate evaluateWithObject:string];
 }
 
 @end

@@ -29,6 +29,11 @@
     [self changeSeparatorLeftInset:leftSpace];
 }
 
+/// 分割线距离左右两边距离相等时
+- (void)separatorLeftAndRightSpace:(CGFloat)space {
+    [self changeSeparatorLeftAndRightInset:space];
+}
+
 /// 是否显示分隔线
 - (void)showSeparator:(BOOL)needShow {
     if (needShow) {
@@ -52,6 +57,16 @@
     self.separatorInset = insets;
     self.layoutMargins = insets;
     self.preservesSuperviewLayoutMargins = leftInset <= 0.1 ? NO : YES;
+}
+
+- (void)changeSeparatorLeftAndRightInset:(CGFloat)twoSideInset {
+    if (twoSideInset < 0.0) {
+        return;
+    }
+    UIEdgeInsets insets = UIEdgeInsetsMake(0.0, twoSideInset, 0.0, twoSideInset);
+    self.separatorInset = insets;
+    self.layoutMargins = insets;
+    self.preservesSuperviewLayoutMargins = YES;
 }
 
 @end

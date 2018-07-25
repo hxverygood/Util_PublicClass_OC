@@ -11,9 +11,18 @@
 @implementation NSDate (Utils)
 
 + (NSDate * __nullable)currentDate {
-    NSDate *date = [NSDate date];
-    NSTimeInterval sec = [date timeIntervalSinceNow];
-    NSDate *currentDate = [[NSDate alloc] initWithTimeIntervalSinceNow:sec];
+    NSDate *currentDate = [NSDate date];
+//    NSTimeInterval sec = [date timeIntervalSinceNow];
+//    NSDate *currentDate = [[NSDate alloc] initWithTimeIntervalSinceNow:sec];
+
+//    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+//    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+//    formatter.timeZone = [NSTimeZone timeZoneWithName:@"Asia/Shanghai"];//东八区时间
+//    NSString *dateStr = [formatter stringFromDate:date];
+//    NSDate *currentDate = [formatter dateFromString:[NSString stringWithFormat:@"%@ +0800", dateStr]];
+
+//    NSInteger interval = [zone secondsFromGMTForDate:date];
+//    NSDate *currentDate = [[NSDate alloc] initWithTimeIntervalSinceNow:interval];
 
     return currentDate;
 }

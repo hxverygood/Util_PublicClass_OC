@@ -11,7 +11,7 @@
 @protocol BackButtonHandlerProtocol <NSObject>
 @optional
 // 重写下面的方法以拦截导航栏返回按钮点击事件，返回 YES 则 pop，NO 则不 pop
--(BOOL)navigationShouldPopOnBackButton;
+- (BOOL)navigationShouldPopOnBackButton;
 @end
 
 @interface UIViewController (CustomController)<BackButtonHandlerProtocol>
@@ -37,14 +37,14 @@
  @param backgroundColor 背景颜色
  */
 -(void)configNavigationBarByBackItemColor:(UIColor*)backItemColor TitleColor:(UIColor*)titleColor
-                   NaviBarBackgroundColor:(UIColor*)backgroundColor;
+                   naviBarBackgroundColor:(UIColor*)backgroundColor;
 
 /**
  设置状态栏的风格
 
  @param style 系统的枚举
  */
--(void)configStatusBarStyle:(UIStatusBarStyle)style;
+- (void)configStatusBarStyle:(UIStatusBarStyle)style;
 
 /// 从导航栈中移除某个UIViewController
 - (void)removeViewControllerFromNavigationStackWith:(Class)viewControllerClass;
@@ -82,5 +82,8 @@
 + (void)popGestureClose:(UIViewController *)vc;
 /// 开启右滑返回手势
 + (void)popGestureOpen:(UIViewController *)vc;
+
+/// 是否隐藏导航栏分隔线
+- (void)hideNavigationBarShadowImage:(BOOL)hide;
 
 @end

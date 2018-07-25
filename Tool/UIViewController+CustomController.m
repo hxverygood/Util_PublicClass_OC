@@ -88,14 +88,13 @@
 {
     BOOL navIsTranlucent = [UINavigationBar appearance].translucent;
     
-    BOOL isIPhoneX = [[UIScreen mainScreen] bounds].size.width == 375.f && [[UIScreen mainScreen] bounds].size.height == 812.f ? YES : NO;
-    CGFloat navHeight = isIPhoneX ? 88.0 : 64.0;
+    BOOL is_iPhoneX = ([[UIScreen mainScreen] bounds].size.width == 375.f && [[UIScreen mainScreen] bounds].size.height == 812.f) ? YES : NO;
+    CGFloat navHeight = is_iPhoneX ? 88.0 : 64.0;
     CGFloat heightDiff = navIsTranlucent ? 0.0 : navHeight;
     return heightDiff;
 }
 -(void)configNavigationBarByBackItemColor:(UIColor*)backItemColor TitleColor:(UIColor*)titleColor
-                   NaviBarBackgroundColor:(UIColor*)backgroundColor
-{
+                   naviBarBackgroundColor:(UIColor*)backgroundColor {
     //返回键的颜色
 //    [[UINavigationBar appearance] setTintColor:backItemColor];
     //title的颜色
@@ -107,8 +106,7 @@
 }
 
 /// 配置状态栏样式
--(void)configStatusBarStyle:(UIStatusBarStyle)style
-{
+- (void)configStatusBarStyle:(UIStatusBarStyle)style {
     [[UIApplication sharedApplication] setStatusBarStyle:style animated:YES];
 }
 
@@ -333,6 +331,17 @@
     }
 }
 
+/// 是否隐藏导航栏分隔线
+- (void)hideNavigationBarShadowImage:(BOOL)hide {
+    if (self.navigationController.navigationBar.translucent) {
+        // translucent = YES
+        self.navigationController.navigationBar.subviews[0].subviews[1].hidden = hide;
+    } else {
+        // translucent = NO
+        self.navigationController.navigationBar.subviews[0].subviews[0].hidden = hide;
+    }
+}
+
 
 
 #pragma mark - Private Func
@@ -352,6 +361,8 @@
 }
 
 @end
+
+
 @implementation UINavigationController (ShouldPopOnBackButton)
 
 

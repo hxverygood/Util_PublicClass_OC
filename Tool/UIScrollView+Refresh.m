@@ -46,12 +46,20 @@
 
 - (void)addFooterRefresh:(void (^)(void))complete
 {
-    self.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+    MJRefreshAutoNormalFooter *footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
         // 进入刷新状态就会回调这个Block
         if (complete) {
             complete();
         }
     }];
+
+    [footer setTitle:@"加载更多信息……" forState:MJRefreshStateRefreshing];
+    [footer setTitle:@"已显示全部信息" forState:MJRefreshStateNoMoreData];
+    // 设置刷新字体字号和颜色
+    footer.stateLabel.font = [UIFont systemFontOfSize:14.0];
+    footer.stateLabel.textColor = Gray180;
+
+    self.mj_footer = footer;
 }
 
 - (void)addHeaderWithRefreshingTarget:(id)target refreshingAction:(SEL)action
@@ -84,10 +92,14 @@
     [self.mj_footer endRefreshing];
 }
 
-- (void)endFooterRefreshingWithContentCount:(NSInteger)count
+- (void)endFooterRefreshingWithDataCount:(NSInteger)count
 {
     if (count == 0) {
         [self.mj_footer endRefreshingWithNoMoreData];
+    }
+    else {
+        self.mj_footer.hidden = NO;
+        [self.mj_footer resetNoMoreData];
     }
 }
 

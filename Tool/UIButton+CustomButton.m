@@ -44,17 +44,17 @@
     [self setTitleColor:titleColor forState:UIControlStateNormal];
 }
 
-/// 根据按钮是否可用设置背景色
-- (void)changeButtonAppearanceForButton:(UIButton *)button enable:(BOOL)flag backgroudColor:(UIColor *)color {
-    button.backgroundColor = color;
-    if (flag) {
-        button.enabled = YES;
-        button.alpha = 1.0;
-    } else {
-        button.enabled = NO;
-        button.alpha = 0.4;
-    }
-}
+///// 根据按钮是否可用设置背景色
+//- (void)changeButtonAppearanceForButton:(UIButton *)button enable:(BOOL)flag backgroudColor:(UIColor *)color {
+//    button.backgroundColor = color;
+//    if (flag) {
+//        button.enabled = YES;
+//        button.alpha = 1.0;
+//    } else {
+//        button.enabled = NO;
+//        button.alpha = 0.4;
+//    }
+//}
 
 /// 根据按钮是否可用设置背景色为灰色
 - (void)changeButtonAppearanceWithEnable:(BOOL)flag {
@@ -68,48 +68,48 @@
     }
 }
 
-/// 根据按钮是否可用设置背景色
-- (void)changeButtonAppearanceWithEnable:(BOOL)flag
-                          backgroudColor:(UIColor *)color {
-    self.backgroundColor = color;
-    if (flag) {
-        self.enabled = YES;
-        self.alpha = 1.0;
-    } else {
-        self.enabled = NO;
-        self.alpha = 0.4;
-    }
-}
-
-/// 根据按钮是否可用设置背景色为自定义颜色或灰色
-- (void)changeButtonAppearanceWithEnable:(BOOL)flag
-                    normalBackgroudColor:(UIColor *)color {
-    self.backgroundColor = [UIColor grayColor];
-    if (flag) {
-        self.enabled = YES;
-        self.backgroundColor = color;
-    } else {
-        self.enabled = NO;
-        self.backgroundColor = [UIColor grayColor];
-    }
-}
-
-/// 根据按钮是否可用，设置title、背景色
-- (void)changeButtonAppearanceWithEnable:(BOOL)flag
-                                   title:(NSString *)title
-                          backgroudColor:(UIColor *)color {
-    self.backgroundColor = color;
-    [self setTitle:title forState:UIControlStateNormal];
-    
-    if (flag) {
-        self.enabled = NO;
-        self.alpha = 0.4;
-        
-    } else {
-        self.enabled = YES;
-        self.alpha = 1.0;
-    }
-}
+///// 根据按钮是否可用设置背景色
+//- (void)changeButtonAppearanceWithEnable:(BOOL)flag
+//                          backgroudColor:(UIColor *)color {
+//    self.backgroundColor = color;
+//    if (flag) {
+//        self.enabled = YES;
+//        self.alpha = 1.0;
+//    } else {
+//        self.enabled = NO;
+//        self.alpha = 0.4;
+//    }
+//}
+//
+///// 根据按钮是否可用设置背景色为自定义颜色或灰色
+//- (void)changeButtonAppearanceWithEnable:(BOOL)flag
+//                    normalBackgroudColor:(UIColor *)color {
+//    self.backgroundColor = [UIColor grayColor];
+//    if (flag) {
+//        self.enabled = YES;
+//        self.backgroundColor = color;
+//    } else {
+//        self.enabled = NO;
+//        self.backgroundColor = [UIColor grayColor];
+//    }
+//}
+//
+///// 根据按钮是否可用，设置title、背景色
+//- (void)changeButtonAppearanceWithEnable:(BOOL)flag
+//                                   title:(NSString *)title
+//                          backgroudColor:(UIColor *)color {
+//    self.backgroundColor = color;
+//    [self setTitle:title forState:UIControlStateNormal];
+//    
+//    if (flag) {
+//        self.enabled = NO;
+//        self.alpha = 0.4;
+//        
+//    } else {
+//        self.enabled = YES;
+//        self.alpha = 1.0;
+//    }
+//}
 
 /// 设置文字、字体大小、颜色
 - (void)buttonWithTitle:(NSString *)title {

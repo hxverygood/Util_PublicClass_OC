@@ -8,6 +8,18 @@
 
 #import "NSString+HXString.h"
 #import <sys/utsname.h>
+#import <ifaddrs.h>
+#import <arpa/inet.h>
+#import <net/if.h>
+
+
+#define IOS_CELLULAR    @"pdp_ip0"
+#define IOS_WIFI        @"en0"
+#define IOS_VPN         @"utun0"
+#define IP_ADDR_IPv4    @"ipv4"
+#define IP_ADDR_IPv6    @"ipv6"
+
+
 @implementation NSString (HXString)
 
 /// 判断字符串是否为空
@@ -32,7 +44,7 @@
 }
 
 /// 指定text高度，计算text显示需要的宽度
-- (CGFloat)texWidthWithFont:(UIFont * _Nullable)font
+- (CGFloat)textWidthWithFont:(UIFont * _Nullable)font
                      height:(CGFloat)height {
     NSDictionary *attrsDictionary = @{@"NSFontAttributeName":font};
     NSAttributedString *text = [[NSAttributedString alloc] initWithString:self attributes:attrsDictionary];
@@ -41,6 +53,18 @@
     NSStringDrawingUsesFontLeading;
     
     CGRect boundingRect = [text boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, height) options:options context:nil];
+    return boundingRect.size.width;
+}
+
+/// 指定text宽度，计算text显示需要的gao'du
+- (CGFloat)textHeightWithFont:(UIFont * _Nullable)font
+                        width:(CGFloat)width {
+    NSDictionary *attrsDictionary = @{@"NSFontAttributeName":font};
+    NSAttributedString *text = [[NSAttributedString alloc] initWithString:self attributes:attrsDictionary];
+
+    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
+
+    CGRect boundingRect = [text boundingRectWithSize:CGSizeMake(width, CGFLOAT_MAX) options:options context:nil];
     return boundingRect.size.width;
 }
 
@@ -194,7 +218,7 @@
     if (!self) {
         return 0.0;
     }
-    CGFloat minimum = MAX((CGFloat)self.length * 0.15 + 0.5, 0.8);
+    CGFloat minimum = MAX((CGFloat)self.length * 0.16 + 0.5, 0.8);
     return MIN(minimum, 5.0);
 }
 
@@ -223,6 +247,11 @@
     NSURL *candidateURL = [NSURL URLWithString:self];
     return candidateURL && candidateURL.scheme && candidateURL.host;
 }
+
+
+
+#pragma mark - 获取设备信息
+
 //判断用户手机型号
 + (NSString * _Nullable)deviceVersion
 {
@@ -298,6 +327,99 @@
     return deviceString;
 }
 
+/// 获取手机IP
++ (NSString *)getIPAddressWithIPv4:(BOOL)preferIPv4 {
+    NSArray *searchArray = preferIPv4 ?
+    @[ IOS_VPN @"/" IP_ADDR_IPv4, IOS_VPN @"/" IP_ADDR_IPv6, IOS_WIFI @"/" IP_ADDR_IPv4, IOS_WIFI @"/" IP_ADDR_IPv6, IOS_CELLULAR @"/" IP_ADDR_IPv4, IOS_CELLULAR @"/" IP_ADDR_IPv6 ] :
+    @[ IOS_VPN @"/" IP_ADDR_IPv6, IOS_VPN @"/" IP_ADDR_IPv4, IOS_WIFI @"/" IP_ADDR_IPv6, IOS_WIFI @"/" IP_ADDR_IPv4, IOS_CELLULAR @"/" IP_ADDR_IPv6, IOS_CELLULAR @"/" IP_ADDR_IPv4 ] ;
+
+    NSDictionary *addresses = [self getIPAddresses];
+    NSLog(@"addresses: %@", addresses);
+
+    __block NSString *address;
+    [searchArray enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop)
+     {
+         address = addresses[key];
+         //筛选出IP地址格式
+         if([self isValidatIP:address]) *stop = YES;
+     } ];
+
+    return address ? address : @"0.0.0.0";
+}
+
+/// 验证IP
++ (BOOL)isValidatIP:(NSString *)ipAddress {
+    if (ipAddress.length == 0) {
+        return NO;
+    }
+    NSString *urlRegEx = @"^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+
+    NSError *error;
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:urlRegEx options:0 error:&error];
+
+    if (regex != nil) {
+        NSTextCheckingResult *firstMatch=[regex firstMatchInString:ipAddress options:0 range:NSMakeRange(0, [ipAddress length])];
+
+        if (firstMatch) {
+            NSRange resultRange = [firstMatch rangeAtIndex:0];
+            NSString *result=[ipAddress substringWithRange:resultRange];
+            //输出结果
+            NSLog(@"%@",result);
+            return YES;
+        }
+    }
+    return NO;
+}
+
+/// 获取IP
++ (NSDictionary *)getIPAddresses {
+    NSMutableDictionary *addresses = [NSMutableDictionary dictionaryWithCapacity:8];
+
+    // retrieve the current interfaces - returns 0 on success
+    struct ifaddrs *interfaces;
+    if(!getifaddrs(&interfaces)) {
+        // Loop through linked list of interfaces
+        struct ifaddrs *interface;
+        for (interface=interfaces; interface; interface=interface->ifa_next) {
+            if(!(interface->ifa_flags & IFF_UP) /* || (interface->ifa_flags & IFF_LOOPBACK) */ ) {
+                continue; // deeply nested code harder to read
+            }
+            const struct sockaddr_in *addr = (const struct sockaddr_in*)interface->ifa_addr;
+            char addrBuf[ MAX(INET_ADDRSTRLEN, INET6_ADDRSTRLEN) ];
+            if (addr && (addr->sin_family==AF_INET || addr->sin_family==AF_INET6)) {
+                NSString *name = [NSString stringWithUTF8String:interface->ifa_name];
+                NSString *type;
+                if (addr->sin_family == AF_INET) {
+                    if (inet_ntop(AF_INET, &addr->sin_addr, addrBuf, INET_ADDRSTRLEN)) {
+                        type = IP_ADDR_IPv4;
+                    }
+                }
+                else {
+                    const struct sockaddr_in6 *addr6 = (const struct sockaddr_in6*)interface->ifa_addr;
+                    if (inet_ntop(AF_INET6, &addr6->sin6_addr, addrBuf, INET6_ADDRSTRLEN)) {
+                        type = IP_ADDR_IPv6;
+                    }
+                }
+                if (type) {
+                    NSString *key = [NSString stringWithFormat:@"%@/%@", name, type];
+                    addresses[key] = [NSString stringWithUTF8String:addrBuf];
+                }
+            }
+        }
+        // Free memory
+        freeifaddrs(interfaces);
+    }
+    return [addresses count] ? addresses : nil;
+}
+
+
+
+#pragma mark - 字符串转换
+
+/// JsonString转NSDictionary
 - (NSDictionary *_Nullable)dictionaryWithJsonString {
     if (self == nil) {
         return nil;
@@ -313,6 +435,12 @@
         return nil;
     }
     return dic;
+}
+
+/// JsonString加转义字符
+- (NSString *)addEscapeCharacter {
+    NSString *escapeCharacter = [self stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
+    return escapeCharacter;
 }
 
 /// 保留金额小数点后2位
@@ -496,5 +624,22 @@
     return result;
 }
 
+
+
+#pragma mark - 密码加密
+
+- (NSString *)SHA256 {
+    const char *s = [self cStringUsingEncoding:NSASCIIStringEncoding];
+    NSData *keyData = [NSData dataWithBytes:s length:strlen(s)];
+
+    uint8_t digest[CC_SHA256_DIGEST_LENGTH] = {0};
+    CC_SHA256(keyData.bytes, (CC_LONG)keyData.length, digest);
+    NSData *out = [NSData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
+    NSString *hash = [out description];
+    hash = [hash stringByReplacingOccurrencesOfString:@" " withString:@""];
+    hash = [hash stringByReplacingOccurrencesOfString:@"<" withString:@""];
+    hash = [hash stringByReplacingOccurrencesOfString:@">" withString:@""];
+    return hash;
+}
 
 @end

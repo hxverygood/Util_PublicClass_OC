@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIkit.h>
+#import <CommonCrypto/CommonDigest.h>
 
 @interface NSString (HXString)
 
@@ -18,8 +19,12 @@
 + (NSString * _Nullable)filterWithString:(NSString * _Nullable)string;
 
 /// 指定text高度，计算text显示需要的宽度
-- (CGFloat)texWidthWithFont:(UIFont * _Nullable)font
-                     height:(CGFloat)height;
+- (CGFloat)textWidthWithFont:(UIFont * _Nullable)font
+                      height:(CGFloat)height;
+
+/// 指定text宽度，计算text显示需要的高度
+- (CGFloat)textHeightWithFont:(UIFont * _Nullable)font
+                        width:(CGFloat)width;
 
 /// 计算text是否需要多行显示
 - (BOOL)textNeedMoreLineCountWithFont:(UIFont * _Nullable)font
@@ -47,6 +52,9 @@
 /// 将数字字符串转换为千分位显示，保留2位小数
 - (NSString * _Nullable)convertWithThousandSeparatorAndTwoDigits;
 
+
+#pragma mark - 隐藏部分字符
+
 /// 隐藏身份证部分数字
 - (NSString * _Nullable)hidePartialIdCardNumber;
 /// 隐藏手机号部分数字
@@ -55,10 +63,12 @@
 - (NSString * _Nullable)hideEmail;
 /// 截取银行卡号后4位
 - (NSString * _Nullable)bankCardNumberLast4Digits;
-
 /// 隐藏部分字符串
 - (NSString * _Nullable)hideStringWithFrontPartialCount:(NSInteger)frontPartialCount
                                         endPartialCount:(NSInteger)endPartialCount;
+
+
+#pragma mark - 其它
 
 /// 使用SVProgressHUD时，根据文字多少计算HUD要显示的时间。计算方法来自SVProgressHUD
 - (CGFloat)hudShowDuration;
@@ -69,8 +79,14 @@
 //判断用户手机型号
 + (NSString * _Nullable)deviceVersion;
 
-/// NSString转NSDictionary
+/// 获取手机IP
++ (NSString *)getIPAddressWithIPv4:(BOOL)preferIPv4;
+
+/// JsonString转NSDictionary
 - (NSDictionary * _Nullable)dictionaryWithJsonString;
+
+/// JsonString加转义字符
+- (NSString *)addEscapeCharacter;
 
 /**
  金额转换为千分位金额
@@ -78,7 +94,7 @@
  @param digitString  未转换的金额
  @return 转换后的金额
  */
-+(NSString * _Nullable)separatedDigitStringWithStr:(NSString * _Nullable)digitString;
++ (NSString * _Nullable)separatedDigitStringWithStr:(NSString * _Nullable)digitString;
 
 /// 保留金额小数点后2位
 - (NSString * _Nullable)reserveMoneyWithTwoDigit;
@@ -97,7 +113,17 @@
  */
 - (NSInteger)integerLength;
 
+
+
+#pragma mark - 沙盒路径
+
 /// 获取沙盒Documents路径
 + (NSString * _Nullable)sandboxDocumentDirectoryPath;
+
+
+
+#pragma mark - 密码加密
+
+- (NSString *)SHA256;
 
 @end

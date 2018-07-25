@@ -16,6 +16,9 @@
 /// 分隔线距左侧距离
 - (void)separatorLeftSpace:(CGFloat)leftSpace;
 
+/// 分割线距离左右两边距离相等时
+- (void)separatorLeftAndRightSpace:(CGFloat)space;
+
 /// 是否显示分隔线
 - (void)showSeparator:(BOOL)needShow;
 

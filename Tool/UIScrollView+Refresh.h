@@ -59,10 +59,9 @@
 
 /**
  *  结束加载 （网络请求返回条数为0会自动隐藏上拉加载）
- *
  *  @param count 内容条数
  */
-- (void)endFooterRefreshingWithContentCount:(NSInteger)count;
+- (void)endFooterRefreshingWithDataCount:(NSInteger)count;
 
 /**
  *  隐藏下拉刷新

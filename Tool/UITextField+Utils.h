@@ -12,5 +12,7 @@
 
 /// 设置placeholder文字尺寸
 - (void)placeholderFontSize:(CGFloat)fontSize;
+/// 用于textField输入银行卡号时4位为一组，中间加空格
+- (BOOL)bankcard_shouldChangeCharactersInRange:(NSRange)range replacementSting:(NSString *)string;
 
 @end

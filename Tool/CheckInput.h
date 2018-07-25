@@ -68,13 +68,25 @@
 /// 数字+逗号
 + (BOOL)validateNumberAndComma:(NSString *)string;
 
+/// 判断输入的是否是金额
++ (BOOL)validateMoney:(NSString *)money;
+
 /// 只验证字符数量
 + (BOOL)validateCharacterQuantity:(NSString *)string;
 
 /// 检查所有textField或Label等UIView内容是否为空
 + (BOOL)checkAllTextFieldInputContentFromView:(UIView *)view;
 
+/// 检查银行卡是否合法(Luhn算法)
++ (BOOL)validateCardNumber:(NSString *)cardNumber;
+
+/// 检查是否是纯数字
++ (BOOL)isDigitsWithString:(NSString*)s;
+
 /// 统计  字数（除了空格等）
 + (int)countWord:(NSString *)s;
+
+/// 检查车牌号是否合法
++ (BOOL)validateCarPlateNumber:(NSString *)string;
 
 @end

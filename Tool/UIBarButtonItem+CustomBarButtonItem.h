@@ -21,6 +21,7 @@
                                 target:(id)target
                                 action:(SEL)action;
 
+/// 图片UIBarButtonItem
 + (UIBarButtonItem *)itemWithImageName:(NSString *)imageName
                   highlightedImageName:(NSString *)hlImageName
                             buttonSize:(CGSize)size

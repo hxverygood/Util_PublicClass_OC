@@ -39,10 +39,12 @@
                                                 withImageName:(NSString *)imageName {
     UIImage *backButtonImage = [[UIImage imageNamed:imageName] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     id appearance = nil;
-    if ([UIDevice currentDevice].systemVersion.floatValue < 9.0) {
-        appearance = [UIBarButtonItem appearanceWhenContainedIn:[navi class], nil];
-    } else {
+
+    if (@available(iOS 9, *)) {
         appearance = [UIBarButtonItem appearanceWhenContainedInInstancesOfClasses:@[[navi class]]];
+    }
+    else {
+        appearance = [UIBarButtonItem appearanceWhenContainedIn:[navi class], nil];
     }
     [appearance setBackButtonBackgroundImage:backButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
 
@@ -65,6 +67,7 @@
     return item;
 }
 
+/// 图片UIBarButtonItem
 + (UIBarButtonItem *)itemWithImageName:(NSString *)imageName
                   highlightedImageName:(NSString *)hlImageName
                             buttonSize:(CGSize)size

@@ -57,6 +57,8 @@
 - (UIImage *)clipImageWithRect:(CGRect)rect
                       andRatio:(CGFloat)ratio;
 
+/// 按比例缩放图片（指定宽度）
+- (UIImage *)scaleToWidth:(CGFloat)width;
 
 /**
  读取二维码

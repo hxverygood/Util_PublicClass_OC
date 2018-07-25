@@ -31,4 +31,7 @@
 - (unsigned long long)ac_unsignedLongLongForKey:(NSString *)key;
 - (BOOL)ac_boolForKey:(NSString *)key;
 
+/// 转换为字符串
+- (NSString *)toString;
+
 @end

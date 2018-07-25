@@ -263,4 +263,29 @@
     return attrStr;
 }
 
+
+/// 文字中添加图片
++ (instancetype)addPhotoWithString:(NSString *)string
+                           atIndex:(NSInteger)index
+                         imageName:(NSString *)imageName
+                            bounds:(CGRect)bounds {
+    return [[NSMutableAttributedString alloc] addPhotoWithString:string atIndex:index imageName:imageName bounds:bounds];
+}
+
+- (instancetype)addPhotoWithString:(NSString *)string
+                           atIndex:(NSInteger)index
+                         imageName:(NSString *)imageName
+                            bounds:(CGRect)bounds{
+    NSMutableAttributedString *attri = [[NSMutableAttributedString alloc] initWithString:string];
+
+    NSTextAttachment *attch = [[NSTextAttachment alloc] init];
+    attch.image = [UIImage imageNamed:imageName];
+    attch.bounds = bounds;
+
+    NSAttributedString *str = [NSAttributedString attributedStringWithAttachment:attch];
+    [attri insertAttributedString:str atIndex:index];
+
+    return attri;
+}
+
 @end
