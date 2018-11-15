@@ -60,6 +60,9 @@
 /// 按比例缩放图片（指定宽度）
 - (UIImage *)scaleToWidth:(CGFloat)width;
 
+/// 按比例进行缩放，使其宽度或高度都不大于某个值
+- (UIImage *)scaleToExpectedWidthOrHeight:(CGFloat)expectedWidthOrHeight;
+
 /**
  读取二维码
 

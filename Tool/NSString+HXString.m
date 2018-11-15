@@ -30,7 +30,7 @@
     if ([string isKindOfClass:[NSNull class]]) {
         return YES;
     }
-    if ([[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length]==0) {
+    if ([[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length]==0) {
         return YES;
     }
     return NO;
@@ -93,6 +93,9 @@
     return subStr;
 }
 
+
+
+#pragma mark - 金额
 /// 将字符串转换为数字，如果不是数字，则返回nil
 - (NSNumber * _Nullable)convertToNumber {
     if (!self) {
@@ -113,7 +116,7 @@
     NSNumberFormatter *formatter=[[NSNumberFormatter alloc]init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
     NSNumber *numberObj = [formatter numberFromString:self];
-    if (!numberObj) {
+    if (numberObj == nil) {
         return nil;
     }
     NSString *result = [NSString stringWithFormat:@"%.1f", numberObj.floatValue];
@@ -128,7 +131,7 @@
     
     // 判断是否是数字
     NSNumber *num = [self convertToNumber];
-    if (!num) {
+    if (num == nil) {
         return nil;
     }
     
@@ -146,16 +149,124 @@
     
     // 判断是否是数字
     NSNumber *num = [self convertToNumber];
-    if (!num) {
+    if (num == nil) {
         return nil;
     }
     
-    // 先保留小数点后2位
+    // 保留小数点后2位
     NSString *convertStr = [self reserveDecimalPartWithDigitCount:2 roundingMode:NSRoundUp];
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
     [numberFormatter setPositiveFormat:@"###,##0.00;"];
     NSString *resultStr = [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[convertStr doubleValue]]];
     return [resultStr copy];
+}
+
+/// 保留金额小数点后2位
+- (NSString * _Nullable)reserveMoneyWithTwoDigit {
+    NSString *convertStr = [self reserveDecimalPartWithDigitCount:2 roundingMode:NSRoundUp];
+    return convertStr;
+}
+
+/// 保留小数点后指定的位数
+- (NSString * _Nullable)reserveDecimalPartWithDigitCount:(NSInteger)count
+                                            roundingMode:(NSRoundingMode)roundMode {
+    if (self == nil) {
+        return nil;
+    }
+
+    // 判断是否是数字
+    NSNumber *num = [self convertToNumber];
+    if (num == nil) {
+        return nil;
+    }
+
+    // 先保留小数点后2位
+    NSString *convertStr = nil;
+    NSRange decimalPoint = [self rangeOfString:@"."];
+    NSInteger toIndex = -1;
+
+    if (decimalPoint.length > 0) {
+        toIndex = decimalPoint.location + count + 1;
+    }
+
+    if (toIndex != -1 &&
+        toIndex < self.length - 1) {
+        convertStr = [self substringToIndex:toIndex+1];
+    }
+    else {
+        convertStr = self;
+    }
+
+    NSDecimalNumberHandler *handler = [NSDecimalNumberHandler
+                                       decimalNumberHandlerWithRoundingMode:roundMode
+                                       scale:count
+                                       raiseOnExactness:NO
+                                       raiseOnOverflow:NO
+                                       raiseOnUnderflow:NO
+                                       raiseOnDivideByZero:YES];
+
+    // 通过字符串计算金额
+    NSDecimalNumber *decimalNumber = [NSDecimalNumber decimalNumberWithString:convertStr];
+    NSDecimalNumber *resultDecimalNumber = [decimalNumber decimalNumberByRoundingAccordingToBehavior:handler];
+    NSString *resultDecimalStr = [NSString stringWithFormat:@"%@", resultDecimalNumber];
+
+    // 显示2位小数
+    NSString *format = [NSString stringWithFormat:@"%%.%ldf", (long)count];
+    double number = [resultDecimalStr doubleValue];
+    NSString *resultStr = [NSString stringWithFormat:format, number];
+
+    return resultStr;
+}
+
+/**
+ 金额转换为千分位金额
+
+ @param digitString  未转换的金额
+ @return 转换后的金额
+ */
++(NSString * _Nullable)separatedDigitStringWithStr:(NSString * _Nullable)digitString
+{
+    if(!digitString || [digitString floatValue] == 0)
+    {
+        return @"0.00";
+    }
+    if (digitString.floatValue < 1000)
+    {
+        return [NSString stringWithFormat:@"%.2f",digitString.floatValue];
+    };
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setPositiveFormat:@",###;"];
+    return [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[digitString doubleValue]]];
+}
+
+
+
+#pragma mark - 隐藏部分字符
+
+/// 隐藏中文名字
+- (NSString * _Nullable)hidePartialName {
+    if (!self) {
+        return  nil;
+    }
+
+    NSString *result;
+    NSInteger frontCount = 0;
+    NSInteger endCount = 0;
+
+    if (self.length == 0) {
+        return nil;
+    }
+    else if (self.length == 1) {
+        return self;
+    }
+    else if (self.length >= 2) {
+        frontCount = 1;
+        endCount = 0;
+    }
+
+    result = [self hideStringWithFrontPartialCount:frontCount endPartialCount:endCount];
+
+    return result;
 }
 
 /// 隐藏身份证部分数字
@@ -249,6 +360,13 @@
 }
 
 
+/// 转换为UTF8
+- (NSString *)toUTF8 {
+    NSString *convertStr = [self stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLFragmentAllowedCharacterSet]];
+    return convertStr;
+}
+
+
 
 #pragma mark - 获取设备信息
 
@@ -327,94 +445,6 @@
     return deviceString;
 }
 
-/// 获取手机IP
-+ (NSString *)getIPAddressWithIPv4:(BOOL)preferIPv4 {
-    NSArray *searchArray = preferIPv4 ?
-    @[ IOS_VPN @"/" IP_ADDR_IPv4, IOS_VPN @"/" IP_ADDR_IPv6, IOS_WIFI @"/" IP_ADDR_IPv4, IOS_WIFI @"/" IP_ADDR_IPv6, IOS_CELLULAR @"/" IP_ADDR_IPv4, IOS_CELLULAR @"/" IP_ADDR_IPv6 ] :
-    @[ IOS_VPN @"/" IP_ADDR_IPv6, IOS_VPN @"/" IP_ADDR_IPv4, IOS_WIFI @"/" IP_ADDR_IPv6, IOS_WIFI @"/" IP_ADDR_IPv4, IOS_CELLULAR @"/" IP_ADDR_IPv6, IOS_CELLULAR @"/" IP_ADDR_IPv4 ] ;
-
-    NSDictionary *addresses = [self getIPAddresses];
-    NSLog(@"addresses: %@", addresses);
-
-    __block NSString *address;
-    [searchArray enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop)
-     {
-         address = addresses[key];
-         //筛选出IP地址格式
-         if([self isValidatIP:address]) *stop = YES;
-     } ];
-
-    return address ? address : @"0.0.0.0";
-}
-
-/// 验证IP
-+ (BOOL)isValidatIP:(NSString *)ipAddress {
-    if (ipAddress.length == 0) {
-        return NO;
-    }
-    NSString *urlRegEx = @"^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-
-    NSError *error;
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:urlRegEx options:0 error:&error];
-
-    if (regex != nil) {
-        NSTextCheckingResult *firstMatch=[regex firstMatchInString:ipAddress options:0 range:NSMakeRange(0, [ipAddress length])];
-
-        if (firstMatch) {
-            NSRange resultRange = [firstMatch rangeAtIndex:0];
-            NSString *result=[ipAddress substringWithRange:resultRange];
-            //输出结果
-            NSLog(@"%@",result);
-            return YES;
-        }
-    }
-    return NO;
-}
-
-/// 获取IP
-+ (NSDictionary *)getIPAddresses {
-    NSMutableDictionary *addresses = [NSMutableDictionary dictionaryWithCapacity:8];
-
-    // retrieve the current interfaces - returns 0 on success
-    struct ifaddrs *interfaces;
-    if(!getifaddrs(&interfaces)) {
-        // Loop through linked list of interfaces
-        struct ifaddrs *interface;
-        for (interface=interfaces; interface; interface=interface->ifa_next) {
-            if(!(interface->ifa_flags & IFF_UP) /* || (interface->ifa_flags & IFF_LOOPBACK) */ ) {
-                continue; // deeply nested code harder to read
-            }
-            const struct sockaddr_in *addr = (const struct sockaddr_in*)interface->ifa_addr;
-            char addrBuf[ MAX(INET_ADDRSTRLEN, INET6_ADDRSTRLEN) ];
-            if (addr && (addr->sin_family==AF_INET || addr->sin_family==AF_INET6)) {
-                NSString *name = [NSString stringWithUTF8String:interface->ifa_name];
-                NSString *type;
-                if (addr->sin_family == AF_INET) {
-                    if (inet_ntop(AF_INET, &addr->sin_addr, addrBuf, INET_ADDRSTRLEN)) {
-                        type = IP_ADDR_IPv4;
-                    }
-                }
-                else {
-                    const struct sockaddr_in6 *addr6 = (const struct sockaddr_in6*)interface->ifa_addr;
-                    if (inet_ntop(AF_INET6, &addr6->sin6_addr, addrBuf, INET6_ADDRSTRLEN)) {
-                        type = IP_ADDR_IPv6;
-                    }
-                }
-                if (type) {
-                    NSString *key = [NSString stringWithFormat:@"%@/%@", name, type];
-                    addresses[key] = [NSString stringWithUTF8String:addrBuf];
-                }
-            }
-        }
-        // Free memory
-        freeifaddrs(interfaces);
-    }
-    return [addresses count] ? addresses : nil;
-}
-
 
 
 #pragma mark - 字符串转换
@@ -441,66 +471,6 @@
 - (NSString *)addEscapeCharacter {
     NSString *escapeCharacter = [self stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
     return escapeCharacter;
-}
-
-/// 保留金额小数点后2位
-- (NSString * _Nullable)reserveMoneyWithTwoDigit {
-    return [self reserveDecimalPartWithDigitCount:2 roundingMode:NSRoundUp];
-}
-
-/// 保留小数点后指定的位数
-- (NSString * _Nullable)reserveDecimalPartWithDigitCount:(NSInteger)count
-                                            roundingMode:(NSRoundingMode)roundMode {
-    if (self == nil) {
-        return nil;
-    }
-    
-    // 判断是否是数字
-    NSNumber *num = [self convertToNumber];
-    if (!num) {
-        return nil;
-    }
-    
-    NSDecimalNumberHandler *handler = [NSDecimalNumberHandler
-                                       decimalNumberHandlerWithRoundingMode:roundMode
-                                       scale:count
-                                       raiseOnExactness:NO
-                                       raiseOnOverflow:NO
-                                       raiseOnUnderflow:NO
-                                       raiseOnDivideByZero:YES];
-    
-    // 通过字符串计算金额
-    NSDecimalNumber *decimalNumber = [NSDecimalNumber decimalNumberWithString:self];
-    NSDecimalNumber *resultDecimalNumber = [decimalNumber decimalNumberByRoundingAccordingToBehavior:handler];
-    NSString *resultDecimalStr = [NSString stringWithFormat:@"%@", resultDecimalNumber];
-    
-    // 显示2位小数
-    NSString *format = [NSString stringWithFormat:@"%%.%ldf", (long)count];
-    double number = [resultDecimalStr doubleValue];
-    NSString *resultStr = [NSString stringWithFormat:format, number];
-    
-    return resultStr;
-}
-
-/**
- 金额转换为千分位金额
- 
- @param digitString  未转换的金额
- @return 转换后的金额
- */
-+(NSString * _Nullable)separatedDigitStringWithStr:(NSString * _Nullable)digitString
-{
-    if(!digitString || [digitString floatValue] == 0)
-    {
-        return @"0.00";
-    }
-    if (digitString.floatValue < 1000)
-    {
-        return [NSString stringWithFormat:@"%.2f",digitString.floatValue];
-    };
-    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-    [numberFormatter setPositiveFormat:@",###;"];
-    return [numberFormatter stringFromNumber:[NSNumber numberWithDouble:[digitString doubleValue]]];
 }
 
 

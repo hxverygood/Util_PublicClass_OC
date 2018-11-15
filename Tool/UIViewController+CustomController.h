@@ -14,6 +14,8 @@
 - (BOOL)navigationShouldPopOnBackButton;
 @end
 
+
+
 @interface UIViewController (CustomController)<BackButtonHandlerProtocol>
 
 /// 设置下一个退出界面的返回图标
@@ -85,5 +87,8 @@
 
 /// 是否隐藏导航栏分隔线
 - (void)hideNavigationBarShadowImage:(BOOL)hide;
+
+/// 导航栈是否包含某个控制器
+- (BOOL)containViewControllerWithClassName:(NSString *)className;
 
 @end

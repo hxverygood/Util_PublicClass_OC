@@ -47,7 +47,7 @@
 
 - (UIViewContentMode)backgroundContentMode {
     NSNumber *rawValue = objc_getAssociatedObject(self, @selector(backgroundContentMode));
-    if (rawValue) {
+    if (rawValue != nil) {
         return (UIViewContentMode)rawValue.integerValue;
     }
     return UIViewContentModeScaleToFill;

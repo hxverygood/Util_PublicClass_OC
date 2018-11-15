@@ -33,7 +33,11 @@
 /// UIView 下面2个角设置圆角
 - (void)bottomCornerRadiusWithRect:(CGRect)rect;
 
+
 /// 是否包含某种类型的View
 - (BOOL)containSubviewClass:(Class)cls;
+
+/// 递归遍历subview
+- (__kindof UIView *)viewWithTag:(NSInteger)tag;
 
 @end

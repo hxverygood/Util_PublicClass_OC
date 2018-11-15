@@ -41,6 +41,10 @@
  */
 - (NSString * _Nullable)substringBehindCharacter:(NSString * _Nullable)chracter;
 
+
+
+#pragma mark - 转换为数字
+
 /// 将字符串转换为数字，如果不是数字，则返回nil
 - (NSNumber * _Nullable)convertToNumber;
 
@@ -55,6 +59,8 @@
 
 #pragma mark - 隐藏部分字符
 
+/// 隐藏中文名字
+- (NSString * _Nullable)hidePartialName;
 /// 隐藏身份证部分数字
 - (NSString * _Nullable)hidePartialIdCardNumber;
 /// 隐藏手机号部分数字
@@ -76,17 +82,17 @@
 /// 判断字符串是否是url
 - (BOOL)isUrl;
 
+/// 转换为UTF8
+- (NSString * _Nullable)toUTF8;
+
 //判断用户手机型号
 + (NSString * _Nullable)deviceVersion;
-
-/// 获取手机IP
-+ (NSString *)getIPAddressWithIPv4:(BOOL)preferIPv4;
 
 /// JsonString转NSDictionary
 - (NSDictionary * _Nullable)dictionaryWithJsonString;
 
 /// JsonString加转义字符
-- (NSString *)addEscapeCharacter;
+- (NSString * _Nullable)addEscapeCharacter;
 
 /**
  金额转换为千分位金额
@@ -123,7 +129,7 @@
 
 
 #pragma mark - 密码加密
-
-- (NSString *)SHA256;
+///SHA256加密，也可用YYKit中的分类方法
+- (NSString * _Nullable)SHA256;
 
 @end

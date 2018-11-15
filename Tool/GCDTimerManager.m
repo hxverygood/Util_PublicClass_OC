@@ -93,9 +93,13 @@
 
 
 // 开始计时
-- (void)startTimerCompletion:(TimerBLock)block {
-    self.currentBlock = block;
-    dispatch_resume(_timer);
+- (void)startTimerCompletion:(void(^)(NSInteger count))block {
+    if (block) {
+        self.currentBlock = block;
+        if (_timer) {
+            dispatch_resume(_timer);
+        }
+    }
 }
 
 

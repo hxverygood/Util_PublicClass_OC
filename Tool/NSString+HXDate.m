@@ -109,6 +109,14 @@
     return dateStr;
 }
 
+
++ (NSString *)dateStringAfterDays:(NSInteger)days {
+    NSDate *currentDate = [NSDate date];
+    NSDate *date = [currentDate dateByAddingTimeInterval:60 * 60 * 24 * days];
+    NSString *dateStr = [NSString getDateStringWithDate:date dateFormat:@"YYYY-MM-dd"];
+    return dateStr;
+}
+
 /// 将时间戳字符串转换为指定时间格式的时间字符串
 + (nullable NSString *)convertToDateStringWithTimestampString:(NSString *)timestampString dateFormatter:(DateFormatterType)dateFormaterType andSeparator:(NSString *)separator {
     if ([NSString isBlankString:timestampString]) {
@@ -116,14 +124,34 @@
     }
     else {
         NSNumber *timeNum = [timestampString convertToNumber];
-        if (timeNum) {
-            NSString *timeStr = [NSString stringFromDateWithTimeStamp:timeNum.doubleValue dateFormatter:DateFormatterTypeYMd andSeparator:@"."];
+        if (timeNum != nil) {
+            NSString *sep = [NSString isBlankString:separator] ? @"-" : separator;
+            NSString *timeStr = [NSString stringFromDateWithTimeStamp:timeNum.doubleValue dateFormatter:dateFormaterType andSeparator:sep];
             return timeStr;
         }
         else {
             return timestampString;
         }
     }
+}
+
+/// 将一定格式的时间字符串（年、月、日、时、分）转换为时间戳
++ (NSString * _Nullable)convertToTimestampStringFromFormatString:(NSString * _Nullable)formatDateString
+                                                       separator:(NSString * _Nullable)separator {
+    if ([self isBlankString:formatDateString]) {
+        return nil;
+    }
+
+    if ([self isBlankString:separator]) {
+        separator = @"";
+    }
+
+    NSDateFormatter *formatter = [self dateFormatterWithSeparator:separator];
+
+    NSDate *date = [formatter dateFromString:formatDateString];
+
+    NSString *timestampStr = [NSString stringWithFormat:@"%ld", (long)[date timeIntervalSince1970]];
+    return timestampStr;
 }
 
 /// 获取当前时间戳
@@ -134,11 +162,41 @@
     return curTime;
 }
 
+/// 获取 NSDate 对应的时间字符串（中国大陆地区）
++ (NSString *)getDateStringWithDate:(NSDate *)date
+                         dateFormat:(NSString *)dateFormat {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateFormat = dateFormat;
+    NSLocale *local = [[NSLocale alloc] initWithLocaleIdentifier:@"zh"];
+    formatter.locale = local;
+    NSString *dateStr = [formatter stringFromDate:date];
+    return dateStr;
+}
+
 
 #pragma mark - Private Func
 
++ (NSDateFormatter * _Nullable)dateFormatterWithSeparator:(NSString * _Nullable)separator {
+    if ([self isBlankString:separator]) {
+        separator = @"";
+    }
+
+    NSString *dateFormatterStr = dateFormatterStr = [NSString stringWithFormat:@"YYYY%@MM%@dd HH:mm", separator, separator];;
+
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateFormat = dateFormatterStr;
+    NSLocale *local = [[NSLocale alloc] initWithLocaleIdentifier:@"zh"];
+    formatter.locale = local;
+
+    return formatter;
+}
+
 /// 判断字符串是否为空
 + (BOOL)isBlankString:(NSString *)string {
+    if (![string isKindOfClass:[NSString class]]) {
+        return YES;
+    }
+
     if (string == nil || string == NULL) {
         return YES;
     }

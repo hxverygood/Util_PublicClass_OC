@@ -66,8 +66,8 @@
     
     [attributedString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:14] range:NSMakeRange(0, attributedString.length)];
     textView.attributedText = attributedString;
-    textView.linkTextAttributes = @{NSForegroundColorAttributeName: [UIColor colorWithHexString:@"7c91bd"],
-                                    NSUnderlineColorAttributeName: [UIColor colorWithHexString:@"9b9b9b"],
+    textView.linkTextAttributes = @{NSForegroundColorAttributeName: HEXCOLOR(0x7C91DB),
+                                    NSUnderlineColorAttributeName: HEXCOLOR(0x9b9b9b),
                                     NSUnderlineStyleAttributeName: @(NSUnderlinePatternSolid)};
     
     textView.delegate = self;

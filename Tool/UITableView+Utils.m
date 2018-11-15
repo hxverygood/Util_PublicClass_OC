@@ -13,8 +13,17 @@
 /// 用nibname注册tableViewCell
 - (void)registerNibWithNibNames:(NSArray<NSString *> *)nibNames {
     for (NSString *nibName in nibNames) {
-        [self registerNib:[UINib nibWithNibName:nibName bundle:nil] forCellReuseIdentifier:nibName];
+        UINib *nib = [UINib nibWithNibName:nibName bundle:nil];
+        [self registerNib:nib forCellReuseIdentifier:nibName];
     }
 }
+
+///// 用nibname注册tableViewCell
+//- (void)registerClassWithNames:(NSArray<NSString *> *)names {
+//    for (NSString *className in names) {
+//        UINib *nib = [UINib nibWithNibName:nibName bundle:nil];
+//        [self registerNib:nib forCellReuseIdentifier:nibName];
+//    }
+//}
 
 @end

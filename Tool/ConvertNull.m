@@ -18,7 +18,7 @@
     {
         return @"";
     }
-    else if (object==nil){
+    else if (object == nil){
         return @"";
     }
     return object;

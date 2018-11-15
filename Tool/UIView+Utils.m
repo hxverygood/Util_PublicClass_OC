@@ -13,14 +13,14 @@
 /// 获取占满屏幕时的frame（去除导航栏和tabbar）
 + (CGRect)fullScreenFrame {
     BOOL navIsTranlucent = [UINavigationBar appearance].translucent;
-    BOOL is_iPhoneX = ([[UIScreen mainScreen] bounds].size.width == 375.f && [[UIScreen mainScreen] bounds].size.height == 812.f) ? YES : NO;
+    BOOL is_iPhoneXSeries = [UIView isIPhoneXSeries];
 
     UIViewController *currentVC = [self currentViewController];
     BOOL naviBarIsHidden = currentVC.navigationController.isNavigationBarHidden;
 
-    CGFloat navHeight = is_iPhoneX ? 88.0 : 64.0;
+    CGFloat navHeight = is_iPhoneXSeries ? 88.0 : 64.0;
     CGFloat naviHeightDiff = (navIsTranlucent || naviBarIsHidden) ? 0.0 : navHeight;
-    CGFloat bottomDiff = is_iPhoneX ? 34.0 : 0.0;
+    CGFloat bottomDiff = is_iPhoneXSeries ? 34.0 : 0.0;
 
     CGFloat viewHeight = CGRectGetHeight([UIScreen mainScreen].bounds) - naviHeightDiff - bottomDiff;
     CGRect viewFrame = CGRectMake(0.0, 0.0, kScreenWidth, viewHeight);
@@ -87,6 +87,24 @@
     return NO;
 }
 
+/// 递归遍历subview
+- (__kindof UIView *)viewWithTag:(NSInteger)tag {
+    if (self.tag == tag) return self;
+
+    for (UIView *subview in self.subviews) {
+        if (subview.tag == tag) {
+            return subview;
+        }
+        else {
+            UIView *resultView = [subview viewWithTag:tag];
+            if (resultView) {
+                return resultView;
+            }
+        }
+    }
+    return nil;
+}
+
 
 
 #pragma mark - Private Func
@@ -127,6 +145,22 @@
         // Unknown view controller type, return last child view controller
         return vc;
     }
+}
+
++ (BOOL)isIPhoneXSeries {
+    BOOL iPhoneXSeries = NO;
+    if (UIDevice.currentDevice.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
+        return iPhoneXSeries;
+    }
+
+    if (@available(iOS 11.0, *)) {
+        UIWindow *mainWindow = [[[UIApplication sharedApplication] delegate] window];
+        if (mainWindow.safeAreaInsets.bottom > 0.0) {
+            iPhoneXSeries = YES;
+        }
+    }
+
+    return iPhoneXSeries;
 }
 
 @end

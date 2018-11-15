@@ -27,15 +27,26 @@ typedef NS_ENUM(NSInteger, DateFormatterType) {
  *  @return 返回一个字符串
  */
 + (nullable instancetype)stringFromDateWithTimeStamp:(NSTimeInterval)timeStamp
-                              dateFormatter:(DateFormatterType)dateFormaterType
-                               andSeparator:(nullable NSString *)separator;
+                                       dateFormatter:(DateFormatterType)dateFormaterType
+                                        andSeparator:(nullable NSString *)separator;
 
 + (nullable instancetype)stringFromCurrentTimeStampWithDateFormatter:(DateFormatterType)dateFormaterType andSeparator:(nullable NSString *)separator;
 
+/// 获取“几天后”的日期字符串
++ (NSString * _Nullable)dateStringAfterDays:(NSInteger)days;
+
 /// 将时间戳字符串转换为指定时间格式的时间字符串
-+ (nullable NSString *)convertToDateStringWithTimestampString:(nullable NSString *)timestampString dateFormatter:(DateFormatterType)dateFormaterType andSeparator:(nullable NSString *)separator;
++ (NSString * _Nullable)convertToDateStringWithTimestampString:(NSString * _Nullable)timestampString dateFormatter:(DateFormatterType)dateFormaterType andSeparator:(nullable NSString *)separator;
+
+/// 将一定格式的时间字符串（如：2018-08-01）转换为时间戳
++ (NSString * _Nullable)convertToTimestampStringFromFormatString:(NSString * _Nullable)date
+                                                       separator:(NSString * _Nullable)separator;
 
 /// 获取当前时间戳
 + (nullable instancetype)getCurrentTimeStamp;
+
+/// 获取 NSDate 对应的时间字符串（中国大陆地区）
++ (NSString * _Nullable)getDateStringWithDate:(NSDate * _Nullable)date
+                                   dateFormat:(NSString * _Nullable)dateFormat;
 
 @end

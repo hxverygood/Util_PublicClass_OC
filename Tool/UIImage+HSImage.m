@@ -90,7 +90,7 @@
 }
 
 /// 按比例缩放图片（指定宽度）
-- (UIImage *)scaleToWidth:(CGFloat)width{
+- (UIImage *)scaleToWidth:(CGFloat)width {
 
     // 如果传入的宽度比当前宽度还要大,就直接返回
 
@@ -101,22 +101,32 @@
     // 计算缩放之后的高度
     CGFloat height = (width / self.size.width) * self.size.height;
 
-    // 初始化要画的大小
-    CGRect  rect = CGRectMake(0, 0, width, height);
+    UIImage *image = [self generateNewImageWithWidth:width height:height];
 
-    // 1. 开启图形上下文
-    UIGraphicsBeginImageContext(rect.size);
+    return image;
+}
 
-    // 2. 画到上下文中 (会把当前image里面的所有内容都画到上下文)
-    [self drawInRect:rect];
+/// 按比例进行缩放，使其宽度或高度都不大于某个值
+- (UIImage *)scaleToExpectedWidthOrHeight:(CGFloat)expectedWidthOrHeight {
+    if (expectedWidthOrHeight > self.size.width &&
+        expectedWidthOrHeight > self.size.height) {
+        return self;
+    }
 
-    // 3. 取到图片
+    CGFloat width = 0.0;
+    CGFloat height = 0.0;
 
-    UIImage * image = UIGraphicsGetImageFromCurrentImageContext();
+    if (self.size.width >= self.size.height) {
+        width = expectedWidthOrHeight;
+        height = (width / self.size.width) * self.size.height;
+    }
+    else {
+        height = expectedWidthOrHeight;
+        width = (height / self.size.height) * self.size.width;
+    }
 
-    // 4. 关闭上下文
-    UIGraphicsEndImageContext();
-    // 5. 返回
+    UIImage *image = [self generateNewImageWithWidth:width height:height];
+
     return image;
 }
 
@@ -164,6 +174,31 @@
     [view.layer renderInContext:context];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
+    return image;
+}
+
+
+
+#pragma mark - Private Func
+
+- (UIImage *)generateNewImageWithWidth:(CGFloat)width
+                           height:(CGFloat)height {
+    // 初始化要画的大小
+    CGRect  rect = CGRectMake(0, 0, width, height);
+
+    // 1. 开启图形上下文
+    UIGraphicsBeginImageContext(rect.size);
+
+    // 2. 画到上下文中 (会把当前image里面的所有内容都画到上下文)
+    [self drawInRect:rect];
+
+    // 3. 取到图片
+
+    UIImage * image = UIGraphicsGetImageFromCurrentImageContext();
+
+    // 4. 关闭上下文
+    UIGraphicsEndImageContext();
+    // 5. 返回
     return image;
 }
 

@@ -38,7 +38,7 @@ typedef void(^TimerBLock) (NSInteger count);
                            repeat:(BOOL)repeat;
 
 // 开始计时
-- (void)startTimerCompletion:(TimerBLock)block;
+- (void)startTimerCompletion:(void(^)(NSInteger count))block;
 // 停止定时器
 - (void)stopTimer;
 // 挂起计时器(暂停)

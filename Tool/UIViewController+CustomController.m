@@ -88,8 +88,8 @@
 {
     BOOL navIsTranlucent = [UINavigationBar appearance].translucent;
     
-    BOOL is_iPhoneX = ([[UIScreen mainScreen] bounds].size.width == 375.f && [[UIScreen mainScreen] bounds].size.height == 812.f) ? YES : NO;
-    CGFloat navHeight = is_iPhoneX ? 88.0 : 64.0;
+    BOOL isIPhoneXSeries = [self isIPhoneXSeries];
+    CGFloat navHeight = isIPhoneXSeries ? 88.0 : 64.0;
     CGFloat heightDiff = navIsTranlucent ? 0.0 : navHeight;
     return heightDiff;
 }
@@ -342,9 +342,17 @@
     }
 }
 
+/// 导航栈是否包含某个控制器
+- (BOOL)containViewControllerWithClassName:(NSString *)className {
+    Class cls = NSClassFromString(className);
+    BOOL containVC = [self containViewControllerWith:cls];
+    return containVC;
+}
+
 
 
 #pragma mark - Private Func
+
 
 - (BOOL)containViewControllerWith:(Class)viewControllerClass {
     NSMutableArray *viewControllers = [[NSMutableArray alloc] initWithArray:self.navigationController.viewControllers];
@@ -360,6 +368,22 @@
     return flag;
 }
 
+- (BOOL)isIPhoneXSeries {
+    BOOL iPhoneXSeries = NO;
+    if (UIDevice.currentDevice.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
+        return iPhoneXSeries;
+    }
+
+    if (@available(iOS 11.0, *)) {
+        UIWindow *mainWindow = [[[UIApplication sharedApplication] delegate] window];
+        if (mainWindow.safeAreaInsets.bottom > 0.0) {
+            iPhoneXSeries = YES;
+        }
+    }
+
+    return iPhoneXSeries;
+}
+
 @end
 
 
@@ -368,15 +392,13 @@
 
 - (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item {
     
-    if([self.viewControllers count] < [navigationBar.items count])
-    {
+    if ([self.viewControllers count] < [navigationBar.items count]) {
         return YES;
     }
     
     BOOL shouldPop = YES;
     UIViewController* vc = [self topViewController];
-    if([vc respondsToSelector:@selector(navigationShouldPopOnBackButton)])
-    {
+    if ([vc respondsToSelector:@selector(navigationShouldPopOnBackButton)]) {
         shouldPop = [vc navigationShouldPopOnBackButton];
     }
     
@@ -386,7 +408,7 @@
         });
     } else {
         // 取消 pop 后，复原返回按钮的状态
-        for(UIView *subview in [navigationBar subviews]) {
+        for (UIView *subview in [navigationBar subviews]) {
             if(0. < subview.alpha && subview.alpha < 1.) {
                 [UIView animateWithDuration:.25 animations:^{
                     subview.alpha = 1.;
