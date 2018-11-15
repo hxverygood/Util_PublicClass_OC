@@ -10,7 +10,7 @@
 #import "WKWebView+Utils.h"
 #import "HUD.h"
 
-static NSString *const scriptMessageHandlerName = @"submitResult";
+//static NSString *const scriptMessageHandlerName = @"messageHandlerName";
 
 @interface WebViewController () <WKNavigationDelegate, WKScriptMessageHandler, NSURLSessionDelegate>
 //@property (weak, nonatomic) IBOutlet WKWebView *webView;
@@ -64,10 +64,12 @@ form.submit();\
         
         self.wkWebConfig = [[WKWebViewConfiguration alloc] init];
         self.wkWebConfig.allowsInlineMediaPlayback = YES;
-        WKUserContentController *userCC = self.wkWebConfig.userContentController;
-        
-        [userCC addScriptMessageHandler:self name:scriptMessageHandlerName];
-        self.wkWebConfig.userContentController = userCC;
+
+        if (![WebViewController isBlankString:_scriptMessageHandlerName]) {
+            WKUserContentController *userCC = self.wkWebConfig.userContentController;
+            [userCC addScriptMessageHandler:self name:_scriptMessageHandlerName];
+            self.wkWebConfig.userContentController = userCC;
+        }
         
         _webView = [[WKWebView alloc] initWithFrame:[UIView fullScreenFrame] configuration:self.wkWebConfig];
         [self.view addSubview:_webView];
@@ -119,14 +121,16 @@ form.submit();\
 
 
 - (void)viewDidDisappear:(BOOL)animated {
-    [_wkWebConfig.userContentController removeScriptMessageHandlerForName:scriptMessageHandlerName];
+    if (![WebViewController isBlankString:_scriptMessageHandlerName]) {
+        [_wkWebConfig.userContentController removeScriptMessageHandlerForName:_scriptMessageHandlerName];
+    }
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     self.view.backgroundColor = [UIColor whiteColor];
-    if (![NSString isBlankString:self.titleStr]) {
+    if (![WebViewController isBlankString:self.titleStr]) {
         self.title = self.titleStr;
     }
     
@@ -137,7 +141,7 @@ form.submit();\
     // 添加“加载进度”的监听
     [self.webView addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:nil];
 
-    if ([NSString isBlankString:self.paramStr]) {
+    if ([WebViewController isBlankString:self.paramStr]) {
         [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.urlStr]]];
     }else {
         NSString *js = [NSString stringWithFormat:@"%@my_post(\"%@\", %@)",POST_JS,self.urlStr,self.paramStr];
@@ -145,8 +149,13 @@ form.submit();\
             NSLog(@"这里是我请求成功的数据");
         }];
     }
-    
-    
+
+
+    /* 解决视频自动全屏播放结束后状态栏隐藏的问题 */
+    //监听UIWindow显示
+//    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(beginFullScreen) name:UIWindowDidBecomeVisibleNotification object:nil];
+    //监听UIWindow隐藏
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endFullScreen) name:UIWindowDidBecomeHiddenNotification object:nil];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -168,6 +177,15 @@ form.submit();\
         self.waterMarkImageView = [[UIImageView alloc] initWithImage:waterMarkImage];
         self.waterMarkImageView.frame = CGRectMake(0.0, navIsTranlucent ? 64.0 : 0.0, CGRectGetWidth(self.webView.frame), CGRectGetHeight(self.webView.frame));
         [self.view insertSubview:self.waterMarkImageView aboveSubview:self.webView];
+    }
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    if (_statusBarStyle) {
+        return _statusBarStyle;
+    }
+    else {
+        return UIStatusBarStyleDefault;
     }
 }
 
@@ -221,8 +239,8 @@ form.submit();\
     
     // 如果VC的标题为空，并且网页的标题不为空，则把网页标题赋值给VC标题
     NSString *webViewTitle = [webView.title copy];
-    if ([NSString isBlankString:self.title] &&
-        ![NSString isBlankString:webViewTitle]) {
+    if ([WebViewController isBlankString:self.title] &&
+        ![WebViewController isBlankString:webViewTitle]) {
         self.navigationItem.title = webViewTitle;
     }
     
@@ -301,13 +319,16 @@ form.submit();\
 #pragma mark - WKScriptMessageHandler
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
-    [self sendJSDataWithUserContentController:userContentController didReceiveScriptMessage:message];
+    if (self.delegate &&
+        [self.delegate respondsToSelector:@selector(wk_userContentController:didReceiveScriptMessage:)]) {
+        [self.delegate wk_userContentController:userContentController didReceiveScriptMessage:message];
+    }
 }
 
 
-- (void)sendJSDataWithUserContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
-    
-}
+//- (void)sendJSDataWithUserContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
+//
+//}
 
 #pragma mark - Func
 
@@ -384,6 +405,30 @@ form.submit();\
     
     return resultingImage;
 }
+
+// 结束全屏播放
+- (void)endFullScreen {
+    [[UIApplication sharedApplication] setStatusBarHidden:false withAnimation:UIStatusBarAnimationFade];
+}
+
+/// 判断字符串是否为空
++ (BOOL)isBlankString:(NSString *)string {
+    if (![string isKindOfClass:[NSString class]]) {
+        return YES;
+    }
+
+    if (string == nil || string == NULL) {
+        return YES;
+    }
+    if ([string isKindOfClass:[NSNull class]]) {
+        return YES;
+    }
+    if ([[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length]==0) {
+        return YES;
+    }
+    return NO;
+}
+
 
 
 #pragma mark - Dealloc

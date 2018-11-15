@@ -12,7 +12,15 @@
 
 #define kButtonColor    [UIColor colorWithRed:255/255.0 green:211/255.0 blue:5/255.0 alpha:1.0]
 
-static BOOL allowsEditing = NO;
+static BOOL allowsEditing = YES;
+
+typedef NS_ENUM(NSInteger, PhotoSelectionOption) {
+    PhotoSelectionByAll,
+    PhotoSelectionByPhotoLibrary,
+    PhotoSelectionByShot
+};
+
+
 
 @interface DeviceAuthorizationHelper () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
@@ -92,57 +100,108 @@ static BOOL allowsEditing = NO;
     }];
 }
 
-- (void)photoSelection {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:_pickerTitle message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+- (void)photoSelectionWithOption:(PhotoSelectionOption)option {
+    switch (option) {
+        case PhotoSelectionByAll:
+        {
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:_pickerTitle message:nil preferredStyle:UIAlertControllerStyleActionSheet];
 
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
-    [alertController addAction:cancel];
+            UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+            [alertController addAction:cancel];
 
-//    _imagePicker = [[UIImagePickerController alloc] init];
-
-    __weak typeof(self) weakself = self;
-    UIAlertAction *photoAction = [UIAlertAction actionWithTitle:@"从相册选取" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [DeviceAuthorizationHelper photoLibraryIsNotAuthorizedAndShowAlertWithCompletion:^(BOOL needAlert) {
-            if (needAlert) {
-                return;
-            }
-            else {
-                weakself.imagePicker.sourceType    = UIImagePickerControllerSourceTypePhotoLibrary;
-                weakself.imagePicker.delegate      = self;
-                weakself.imagePicker.allowsEditing = allowsEditing;
-                weakself.imagePicker.navigationBar.tintColor = kButtonColor;
-                [weakself.superViewController presentViewController:weakself.imagePicker animated:YES completion:^(){
-                     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+            __weak typeof(self) weakself = self;
+            UIAlertAction *photoAction = [UIAlertAction actionWithTitle:@"从相册选取" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [DeviceAuthorizationHelper photoLibraryIsNotAuthorizedAndShowAlertWithCompletion:^(BOOL needAlert) {
+                    if (needAlert) {
+                        return;
+                    }
+                    else {
+                        weakself.imagePicker.sourceType    = UIImagePickerControllerSourceTypePhotoLibrary;
+                        weakself.imagePicker.delegate      = weakself;
+                        weakself.imagePicker.allowsEditing = weakself.allowsEditing;
+                        weakself.imagePicker.navigationBar.tintColor = kButtonColor;
+                        [weakself.superViewController presentViewController:weakself.imagePicker animated:YES completion:^(){
+                            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+                        }];
+                    }
                 }];
-            }
-        }];
-    }];
-    [alertController addAction:photoAction];
+            }];
 
-    UIAlertAction *cameraAction = [UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [DeviceAuthorizationHelper cameraIsNotAuthorizedAndShowAlertWithCompletion:^(BOOL needAlert) {
-            if (needAlert) {
-                return;
-            }
-            else {
-                weakself.imagePicker.sourceType    = UIImagePickerControllerSourceTypeCamera;
-                weakself.imagePicker.delegate      = self;
-                weakself.imagePicker.allowsEditing = allowsEditing;
-                weakself.imagePicker.navigationBar.tintColor = kButtonColor;
-                [weakself.superViewController presentViewController:weakself.imagePicker animated:YES completion:^(){
-                     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+            UIAlertAction *cameraAction = [UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [DeviceAuthorizationHelper cameraIsNotAuthorizedAndShowAlertWithCompletion:^(BOOL needAlert) {
+                    if (needAlert) {
+                        return;
+                    }
+                    else {
+                        weakself.imagePicker.sourceType    = UIImagePickerControllerSourceTypeCamera;
+                        weakself.imagePicker.delegate      = weakself;
+                        weakself.imagePicker.allowsEditing = weakself.allowsEditing;
+                        weakself.imagePicker.navigationBar.tintColor = kButtonColor;
+                        [weakself.superViewController presentViewController:weakself.imagePicker animated:YES completion:^(){
+                            [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+                        }];
+                    }
                 }];
-            }
-        }];
-    }];
-    [alertController addAction:cameraAction];
+            }];
+            [alertController addAction:photoAction];
+            [alertController addAction:cameraAction];
 
-    [self.superViewController presentViewController:alertController animated:YES completion:nil];
+            [self.superViewController presentViewController:alertController animated:YES completion:nil];
+        }
+            break;
+
+        case PhotoSelectionByPhotoLibrary:
+        {
+            [DeviceAuthorizationHelper photoLibraryIsNotAuthorizedAndShowAlertWithCompletion:^(BOOL needAlert) {
+                if (needAlert) {
+                    return;
+                }
+                else {
+                    self.imagePicker.sourceType    = UIImagePickerControllerSourceTypePhotoLibrary;
+                    self.imagePicker.delegate      = self;
+                    self.imagePicker.allowsEditing = self.allowsEditing;
+                    self.imagePicker.navigationBar.tintColor = kButtonColor;
+                    [self.superViewController presentViewController:self.imagePicker animated:YES completion:^(){
+                        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+                    }];
+                }
+            }];
+        }
+            break;
+
+        case PhotoSelectionByShot:
+        {
+            [DeviceAuthorizationHelper cameraIsNotAuthorizedAndShowAlertWithCompletion:^(BOOL needAlert) {
+                if (needAlert) {
+                    return;
+                }
+                else {
+                    self.imagePicker.sourceType    = UIImagePickerControllerSourceTypeCamera;
+                    self.imagePicker.delegate      = self;
+                    self.imagePicker.allowsEditing = self.allowsEditing;
+                    self.imagePicker.navigationBar.tintColor = kButtonColor;
+                    [self.superViewController presentViewController:self.imagePicker animated:YES completion:^(){
+                        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+                    }];
+                }
+            }];
+        }
+            break;
+
+        default:
+            break;
+    }
 }
 
 - (void)photoSelectionWithCompletion:(void (^)(UIImage *image, BOOL isCancel))completion {
     self.photoSelectCompletion = completion;
-    [self photoSelection];
+    [self photoSelectionWithOption:PhotoSelectionByAll];
+}
+
+- (void)photoFromShotWithCompletion:(void (^)(UIImage *image, BOOL isCancel))completion {
+    self.photoSelectCompletion = completion;
+
+    [self photoSelectionWithOption:PhotoSelectionByShot];
 }
 
 + (void)locationIsNotAuthorizedAndShowAlertWithCompletion:(void (^)(BOOL needAlert, NSString *message))completion {
@@ -219,6 +278,7 @@ static BOOL allowsEditing = NO;
 
         weakself.imagePicker.delegate = nil;
         weakself.imagePicker = nil;
+        weakself.photoSelectCompletion = nil;
         [HUD dismiss];
     }];
 }
@@ -236,6 +296,7 @@ static BOOL allowsEditing = NO;
     [picker dismissViewControllerAnimated:YES completion:^{
         weakself.imagePicker.delegate = nil;
         weakself.imagePicker = nil;
+        weakself.photoSelectCompletion = nil;
     }];
 }
 
@@ -267,21 +328,17 @@ static BOOL allowsEditing = NO;
             actionBlock(YES);
         }
 
-        NSURL *url = nil;
+        NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
 
-        if ([[UIDevice currentDevice] systemVersion].floatValue < 10.0) {
-            // app名称
-            url = [NSURL URLWithString:[NSString stringWithFormat:@"prefs:root=%@",  [self bundleID]]];
-            if( [[UIApplication sharedApplication] canOpenURL:url] ) {
-                [[UIApplication sharedApplication] openURL:url];
-            }
-        } else {
-            url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+        if (@available(iOS 10, *)) {
             if (@available(iOS 10.0, *)) {
                 if( [[UIApplication sharedApplication] canOpenURL:url] ) {
-                    [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
-                    }];
+                    [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
                 }
+            }
+        } else {
+            if( [[UIApplication sharedApplication] canOpenURL:url] ) {
+                [[UIApplication sharedApplication] openURL:url];
             }
         }
     }];
@@ -348,7 +405,7 @@ static BOOL allowsEditing = NO;
     NSString *phoneUrlStr = [NSString stringWithFormat:@"tel://%@", phone];
     NSURL *url = [NSURL URLWithString:phoneUrlStr];
     if ([[UIApplication sharedApplication] canOpenURL:url]) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             [[UIApplication sharedApplication] openURL:url];
             if (completion) {
                 completion(YES, nil);

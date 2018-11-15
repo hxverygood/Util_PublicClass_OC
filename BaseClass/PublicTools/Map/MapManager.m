@@ -24,7 +24,7 @@
 @property (nonatomic, weak) UIView *mapContainerView;
 @property (nonatomic, strong) AMapLocationManager *locationManager;
 /// 定位回调，只用于持续定位或后台定位
-@property (nonatomic, copy) LocationUpdateBlock locationUpadteBlock;
+@property (nonatomic, copy) void (^locationUpadteBlock)(CLLocation *location, AMapLocationReGeocode *regeocode, NSError *error);
 /// 用户当前位置
 @property (nonatomic, strong) MAUserLocation *currentUserLocation;
 
@@ -33,7 +33,8 @@
 @property (nonatomic, copy) AMapLocationReGeocode *inner_currentRegeocode;
 
 /// 点标记
-@property (nonatomic, copy) NSMutableArray<MAPointAnnotation *> *inner_annotations;
+@property (nonatomic, strong) NSMutableArray<CustomAnnotation *> *inner_annotations;
+@property (nonatomic, strong) NSMutableArray<CustomAnnotation *> *order_annotations;
 @property (nonatomic, strong) CustomAnnotation *centerAnnotation;
 @property (nonatomic, strong) NSMutableArray<MAPointAnnotation *> *pointArr;  /// 用户线路绘制
 @property (nonatomic, strong) MAPolyline *routeLine;
@@ -68,11 +69,18 @@
     return _locationManager;
 }
 
-- (NSMutableArray<MAPointAnnotation *> *)inner_annotations {
+- (NSMutableArray<CustomAnnotation *> *)inner_annotations {
     if (!_inner_annotations) {
         _inner_annotations = [NSMutableArray array];
     }
     return _inner_annotations;
+}
+
+- (NSMutableArray<CustomAnnotation *> *)order_annotations {
+    if (!_order_annotations) {
+        _order_annotations = [NSMutableArray array];
+    }
+    return _order_annotations;
 }
 
 - (CustomAnnotation *)centerAnnotation {
@@ -107,6 +115,12 @@
     return _inner_currentRegeocode;
 }
 
+- (void)setSelectedAnnotationIndex:(NSInteger)selectedAnnotationIndex {
+    _selectedAnnotationIndex = selectedAnnotationIndex;
+
+    [self selectSingleAnnotationWithIndex:selectedAnnotationIndex];
+}
+
 
 
 #pragma mark - Initializer
@@ -117,8 +131,15 @@
         // 配置apiKey
         [AMapServices sharedServices].apiKey = kMapApiKey;
         [AMapServices sharedServices].enableHTTPS = YES;
+
+        [self resetSelectedAnnotationIndex];
     }
     return self;
+}
+
+/// 重置选中的anno序号
+- (void)resetSelectedAnnotationIndex {
+    _selectedAnnotationIndex = -1;
 }
 
 //+ (MapManager *)sharedManager {
@@ -166,7 +187,7 @@
 #pragma mark - Public Func
 #pragma mark 定位
 /// 一次定位
-- (void)startLocationOnceWithCompletion:(LocationUpdateBlock)completion {
+- (void)startLocationOnceWithCompletion:(void (^)(CLLocation *location, AMapLocationReGeocode *regeocode, NSError *error))completion {
 
     // 定位超时（如果定位精度是kCLLocationAccuracyBest，则设置为10s）
     self.locationManager.locationTimeout = 3;
@@ -183,18 +204,18 @@
 
         if (!error) {
             if (location) {
-                self.mapView.centerCoordinate = CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude);
-                [self.mapView setZoomLevel:15.1 animated:YES];
+                APPDELEGATE.mlongitude = location.coordinate.longitude;
+                APPDELEGATE.mlatitude = location.coordinate.latitude;
+
+                [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude) animated:YES];
+                [self.mapView setZoomLevel:11 animated:YES];
 
                 // 添加定位后的大头针
                 [self.mapView removeAnnotation:self.centerAnnotation];
                 self.centerAnnotation = nil;
                 self.centerAnnotation.coordinate = CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude);
-                [self addAnnotations:@[self.centerAnnotation]];
+                [self.mapView addAnnotation:self.centerAnnotation];
                 self.mapView.rotationDegree = 0.0;
-
-                APPDELEGATE.mlongitude = location.coordinate.longitude;
-                APPDELEGATE.mlatitude = location.coordinate.latitude;
 
                 // 屏幕中心添加大头针
 //                [self showCenterMark];
@@ -269,7 +290,8 @@
 
 /// 添加一组点标记（删除已有的同类型标记）
 //- (void)addAnnotations:(NSArray *)annotations style:(AnnotationViewStyle)style {
-- (void)addAnnotations:(NSArray *)annotations {
+- (void)addAnnotations:(NSArray *)annotations
+    refreshAnnotations:(BOOL)needRefreshAnnotations {
     if (self.mapView.superview == nil) {
         NSLog(@"请先使用 addMapInView:frame: 方法将地图添加至view");
         return;
@@ -279,37 +301,23 @@
         return;
     }
 
-//    id <MAAnnotation, CustomAnnotation> anno = annotations[0];
-//    CustomAnnotation *customAnnotation = (CustomAnnotation *)anno;
-
-
-//    if ([anno isKindOfClass:[CustomAnnotation class]]) {
-//        CustomAnnotation *customAnnotation = (CustomAnnotation *)anno;
-//        style = customAnnotation.style;
-//    }
-//    else if ([anno isKindOfClass:[CustomAnimtatedAnnotation class]]) {
-//        CustomAnimtatedAnnotation *animationAnnotation = (CustomAnimtatedAnnotation *)anno;
-//        style = animationAnnotation.style;
-//    }
-
-    NSMutableArray *needDeletedAnnotations = [NSMutableArray array];
-    NSArray *addedAnnotations = self.mapView.annotations;
-    for (int i = 0; i < addedAnnotations.count; i++) {
-        id <MAAnnotation, CustomAnnotation> addedAnno = addedAnnotations[i];
-        for (int j = 0; j < annotations.count; j++) {
-            id <MAAnnotation, CustomAnnotation> anno = annotations[j];
-            if (addedAnno.style == anno.style) {
-                [needDeletedAnnotations addObject:addedAnno];
-            }
-        }
-
-    }
-    if (needDeletedAnnotations.count > 0) {
-        [self.mapView removeAnnotations:[needDeletedAnnotations copy]];
+    if (needRefreshAnnotations) {
+        [self.inner_annotations removeAllObjects];
     }
 
+    [self.inner_annotations addObjectsFromArray:annotations];
+
+
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [self.mapView addAnnotations:annotations];
+//    });
     [self.mapView addAnnotations:annotations];
 }
+
+///// 选择某个标记
+//- (void)selectAnnotationWithIndex:(NSInteger *)index {
+//
+//}
 
 
 ///// 给导航增加标记点
@@ -337,6 +345,51 @@
 ////    }
 //}
 
+/// 单选annotation（作用：改变选择的anno样式，之前选择的改为默认样式）
+- (void)selectSingleAnnotationWithIndex:(NSInteger)index {
+    if (self.inner_annotations.count == 0) {
+        return;
+    }
+
+     _selectedAnnotationIndex = index;
+
+    // 找到地图上添加的点
+    int flag = -1;
+    for (int i = 0; i < self.inner_annotations.count; i++) {
+        id <MAAnnotation, CustomAnnotation> addedAnno = self.inner_annotations[i];
+
+        // 如果是之前选中的仓库点，则改为默认仓库标记，并记住当前的index
+        if (addedAnno.style == CustomAnnotationStyleSelectedDepot &&
+            i != index) {
+            addedAnno.style = CustomAnnotationStyleDepot;
+            flag = i;
+        }
+
+        // 如果是当前刚选择的index，则更改为选中标记
+        if (i == index) {
+            addedAnno.style = CustomAnnotationStyleSelectedDepot;
+        }
+    }
+
+    if (index < 0) {
+        NSLog(@"选择的仓库index: 0");
+        return;
+    }
+
+    CustomAnnotation *selectedAnno = self.inner_annotations[index];
+
+    // 如果没有找到之前选择的anno，则直接改变这次选择的anno样式
+    if (flag == -1) {
+        [self.mapView removeAnnotations:@[selectedAnno]];
+        [self.mapView addAnnotations:@[selectedAnno]];
+    }
+    else {
+        id <MAAnnotation, CustomAnnotation> addedSelectedDepotAnno = self.inner_annotations[flag];
+        [self.mapView removeAnnotations:@[addedSelectedDepotAnno, selectedAnno]];
+        [self.mapView addAnnotations:@[addedSelectedDepotAnno, selectedAnno]];
+    }
+}
+
 /// 在地图上删除所有点标记（除了中心点）
 - (void)removeAllAnnotations {
     NSMutableArray *needDeletedAnnotations = [NSMutableArray array];
@@ -348,8 +401,43 @@
             [needDeletedAnnotations addObject:tmpAnno];
         }
     }
-    [self.mapView removeAnnotations:needDeletedAnnotations];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.mapView removeAnnotations:needDeletedAnnotations];
+    });
+    [self resetSelectedAnnotationIndex];
 }
+
+/// 将选中的仓库定位点重置为默认的仓库样式
+- (void)resetDepotAnnotation {
+    for (int i = 0; i < self.inner_annotations.count; i++) {
+        CustomAnnotation *anno = self.inner_annotations[i];
+        if (anno.style == CustomAnnotationStyleSelectedDepot) {
+            anno.style = CustomAnnotationStyleDepot;
+            [self.mapView removeAnnotations:@[anno]];
+            [self.mapView addAnnotations:@[anno]];
+        }
+        else if(anno.style == CustomAnnotationStyleRemoteDepot ||
+                anno.style == CustomAnnotationStyleRemoteSeletedDepot) {
+            // 删除远程推送订单对应的仓库点anno
+            [self.mapView removeAnnotations:@[anno]];
+        }
+    }
+}
+
+/// 移除远程推送数据选中的仓库
+- (void)removeRemoteSeletedAnnotation {
+    NSArray *annotations = self.mapView.annotations;
+    for (int i = 0; i < annotations.count; i++) {
+        CustomAnnotation *anno = (CustomAnnotation *)annotations[i];
+        if (anno.style == CustomAnnotationStyleRemoteSeletedDepot) {
+            [self.mapView removeAnnotations:@[anno]];
+            break;
+        }
+    }
+}
+
+
 
 
 #pragma mark 折线
@@ -432,7 +520,6 @@
 
 //定位失败
 - (void)mapView:(MAMapView *)mapView didFailToLocateUserWithError:(NSError *)error {
-    NSLog(@"mapView 定位失败 ❌");
     NSString *errorString = @"";
     switch([error code]) {
         case kCLErrorDenied:
@@ -448,6 +535,8 @@
             errorString = @"An unknown error has occurred";
             break;
     }
+
+    NSLog(@"mapView 定位失败 ❌: %@", errorString);
 }
 
 - (void)mapViewDidStopLocatingUser:(MAMapView *)mapView {
@@ -536,6 +625,69 @@
             }
                 break;
 
+            case CustomAnnotationStyleDepot:
+            {
+                reuseIndentifier = @"DepotReuseIndentifier";
+
+                CustomAnnotationView *annotationView = (CustomAnnotationView*)[mapView dequeueReusableAnnotationViewWithIdentifier:reuseIndentifier];
+                if (annotationView == nil) {
+                    annotationView = [[CustomAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIndentifier];
+                }
+                annotationView.zIndex = 80;
+                annotationView.canShowCallout = NO;    // 设置气泡可以弹出，默认为NO
+                annotationView.animatesDrop = NO;      // 设置标注动画显示，默认为NO
+                annotationView.draggable = NO;         // 设置标注可以拖动，默认为NO
+                annotationView.pinColor = MAPinAnnotationColorRed;
+                annotationView.annotation = annotation;
+                annotationView.image = [UIImage imageNamed:@"ic_point_normal"];
+                annotationView.centerOffset = CGPointMake(0.0, -16.0);
+
+                return annotationView;
+            }
+                break;
+
+            case CustomAnnotationStyleSelectedDepot:
+            {
+                reuseIndentifier = @"SelectedDepotReuseIndentifier";
+
+                CustomAnnotationView *annotationView = (CustomAnnotationView*)[mapView dequeueReusableAnnotationViewWithIdentifier:reuseIndentifier];
+                if (annotationView == nil) {
+                    annotationView = [[CustomAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIndentifier];
+                }
+                annotationView.zIndex = 90;
+                annotationView.canShowCallout = NO;    // 设置气泡可以弹出，默认为NO
+                annotationView.animatesDrop = NO;      // 设置标注动画显示，默认为NO
+                annotationView.draggable = NO;         // 设置标注可以拖动，默认为NO
+                annotationView.pinColor = MAPinAnnotationColorRed;
+                annotationView.annotation = annotation;
+                annotationView.image = [UIImage imageNamed:@"ic_point_light"];
+                annotationView.centerOffset = CGPointMake(0.0, -20.0);
+
+                return annotationView;
+            }
+                break;
+
+            case CustomAnnotationStyleRemoteSeletedDepot:
+            {
+                reuseIndentifier = @"RemoteSeletedDepotReuseIndentifier";
+
+                CustomAnnotationView *annotationView = (CustomAnnotationView*)[mapView dequeueReusableAnnotationViewWithIdentifier:reuseIndentifier];
+                if (annotationView == nil) {
+                    annotationView = [[CustomAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reuseIndentifier];
+                }
+                annotationView.zIndex = 91;
+                annotationView.canShowCallout = NO;    // 设置气泡可以弹出，默认为NO
+                annotationView.animatesDrop = NO;      // 设置标注动画显示，默认为NO
+                annotationView.draggable = NO;         // 设置标注可以拖动，默认为NO
+                annotationView.pinColor = MAPinAnnotationColorRed;
+                annotationView.annotation = annotation;
+                annotationView.image = [UIImage imageNamed:@"ic_point_light"];
+                annotationView.centerOffset = CGPointMake(0.0, -20.0);
+
+                return annotationView;
+            }
+                break;
+
             case CustomAnnotationStyleNaviStartPoint:
             {
                 reuseIndentifier = @"NaviStartPointReuseIndentifier";
@@ -549,6 +701,7 @@
                 annotationView.draggable = NO;          // 设置标注可以拖动，默认为NO
                 annotationView.annotation = annotation;
                 annotationView.image = [UIImage imageNamed:@"navi_point_begin"];
+                annotationView.centerOffset = CGPointMake(0.0, -16.0);
 
                 return annotationView;
             }
@@ -566,7 +719,8 @@
                 annotationView.animatesDrop = YES;      // 设置标注动画显示，默认为NO
                 annotationView.draggable = NO;          // 设置标注可以拖动，默认为NO
                 annotationView.annotation = annotation;
-                annotationView.image = [UIImage imageNamed:@"ic_point_light"];
+                annotationView.image = [UIImage imageNamed:@"navi_point_finish"];
+                annotationView.centerOffset = CGPointMake(0.0, -16.0);
 
                 return annotationView;
             }
@@ -585,6 +739,7 @@
                 annotationView.draggable = NO;          // 设置标注可以拖动，默认为NO
                 annotationView.annotation = annotation;
                 annotationView.image = [UIImage imageNamed:@"navi_point_finish"];
+                annotationView.centerOffset = CGPointMake(0.0, -16.0);
 
                 return annotationView;
             }
@@ -655,30 +810,30 @@
     if ([view isKindOfClass:[CustomAnnotationView class]]) {
 
         /* 调整map的中心，以便完全展示callout */
-        CustomAnnotationView *cusView = (CustomAnnotationView *)view;
-        CGRect cusViewFrame = cusView.calloutView.frame;
-        CGRect frame = [cusView convertRect:cusViewFrame toView:self.mapView];
-        frame = UIEdgeInsetsInsetRect(frame, UIEdgeInsetsMake(kCalloutViewMargin, kCalloutViewMargin, kCalloutViewMargin, kCalloutViewMargin));
+//        CustomAnnotationView *cusView = (CustomAnnotationView *)view;
+//        CGRect cusViewFrame = cusView.calloutView.frame;
+//        CGRect frame = [cusView convertRect:cusViewFrame toView:self.mapView];
+//        frame = UIEdgeInsetsInsetRect(frame, UIEdgeInsetsMake(kCalloutViewMargin, kCalloutViewMargin, kCalloutViewMargin, kCalloutViewMargin));
+//
+//        CGRect mapViewBounds = self.mapView.bounds;
+//        if (!CGRectContainsRect(mapViewBounds, frame)) {
+//            /* Calculate the offset to make the callout view show up. */
+//            CGSize offset = [self offsetToContainRect:frame inRect:self.mapView.frame];
+//
+//            CGPoint theCenter = self.mapView.center;
+//            theCenter = CGPointMake(theCenter.x - offset.width, theCenter.y - offset.height);
+//
+//            CLLocationCoordinate2D coordinate = [self.mapView convertPoint:theCenter toCoordinateFromView:self.mapView];
+//
+//            [self.mapView setCenterCoordinate:coordinate animated:YES];
+//        }
 
-        CGRect mapViewBounds = self.mapView.bounds;
-        if (!CGRectContainsRect(mapViewBounds, frame)) {
-            /* Calculate the offset to make the callout view show up. */
-            CGSize offset = [self offsetToContainRect:frame inRect:self.mapView.frame];
-
-            CGPoint theCenter = self.mapView.center;
-            theCenter = CGPointMake(theCenter.x - offset.width, theCenter.y - offset.height);
-
-            CLLocationCoordinate2D coordinate = [self.mapView convertPoint:theCenter toCoordinateFromView:self.mapView];
-
-            [self.mapView setCenterCoordinate:coordinate animated:YES];
-        }
-
-        // 获取callout对应的annotation
+        // 获取点击对应的annotation
         MAPointAnnotation *anno = (MAPointAnnotation *)view.annotation;
         // flag用于标记是否找到了对应的annotation，初始值为-1
         NSInteger flag = -1;
-        for (int i = 0; i < _inner_annotations.count; i++) {
-            MAPointAnnotation *annotation = _inner_annotations[i];
+        for (int i = 0; i < self.inner_annotations.count; i++) {
+            CustomAnnotation *annotation = (CustomAnnotation *)self.inner_annotations[i];
             if (annotation == anno) {
                 flag = i;
                 break;
@@ -686,10 +841,19 @@
         }
 
         if (flag > -1) {
-            if (self.annotationViewDataSource &&
-                [self.annotationViewDataSource respondsToSelector:@selector(annotationViewSelectWithIndex:)]) {
-                NSString *content = [self.annotationViewDataSource annotationViewSelectWithIndex:flag];
-                [cusView.calloutView setContent:content];
+            // 如果当前选择的序号和之前的相同，则不更新地图上的标记，也不通知代理类进行更多操作
+            if (flag == _selectedAnnotationIndex) {
+                NSLog(@"点击了相同的仓库坐标");
+                return;
+            }
+
+            NSLog(@"点击的仓库序号是: %ld", (long)flag);
+            [self selectSingleAnnotationWithIndex:flag];
+
+            if (self.delegate &&
+                [self.delegate respondsToSelector:@selector(annotationViewSelectWithIndex:)]) {
+                [self.delegate annotationViewSelectWithIndex:flag];
+//                [cusView.calloutView setContent:content];
             }
         }
     }

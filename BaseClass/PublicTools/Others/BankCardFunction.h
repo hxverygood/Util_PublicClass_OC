@@ -14,9 +14,9 @@
 + (NSString *)getBankNameWithShortEnglish:(NSString *)shortEnglish;
 
 /// 根据银行卡号前6位获取发卡行和卡片信息
-+ (nullable NSString *)getBankNameWithCardNumber:(NSString *)cardNumber;
++ (NSString *)getBankNameWithCardNumber:(NSString *)cardNumber;
 
-/// 转换金额（小数点后2位）
-+ (nullable NSString*)getMoney:(NSString *)money;
+/// 转换金额（带千分符，小数点后2位）
++ (NSString*)getMoney:(NSString *)money;
 
 @end

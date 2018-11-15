@@ -14,6 +14,7 @@
 
 #import <WXApi.h>
 #import "WeixinOrderModel.h"
+
 #import "UPPaymentControl.h"
 
 
@@ -29,6 +30,13 @@ static NSString *const wx_appid = @"wx5c7e55d73f30d263";
 
 
 @implementation PaymentManager
+
+#pragma mark - Getter
+
+- (BOOL)isWeixinInstalled {
+    return [WXApi isWXAppInstalled];
+}
+
 
 #pragma mark - Initializer
 
@@ -62,7 +70,11 @@ static NSString *const wx_appid = @"wx5c7e55d73f30d263";
     _alipay_order = [self alipay_orderStringToModel:orderString];
 
     if (orderString) {
-        [[AlipaySDK defaultService] payOrder:orderString fromScheme:appScheme callback:callback];
+        [[AlipaySDK defaultService] payOrder:orderString fromScheme:appScheme callback:^(NSDictionary *resultDic) {
+            if (resultDic) {
+                [self alipay_handleResultWithResultCode:[resultDic ac_intForKey:@"resultStatus"]];
+            }
+        }];
     }
     else {
         if (callback) {

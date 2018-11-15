@@ -23,10 +23,10 @@ typedef void (^LocationUpdateBlock)(CLLocation *location, AMapLocationReGeocode 
 //};
 
 
-@protocol AnnotationViewDataSource <NSObject>
+@protocol AnnotationViewDelegate <NSObject>
 
 @optional
-- (NSString *)annotationViewSelectWithIndex:(NSInteger)index;
+- (void)annotationViewSelectWithIndex:(NSInteger)index;
 
 @end
 
@@ -36,14 +36,16 @@ typedef void (^LocationUpdateBlock)(CLLocation *location, AMapLocationReGeocode 
 @property (nonatomic, strong) MAMapView *mapView;
 @property (nonatomic, copy, readonly) CLLocation *currentLocation;
 @property (nonatomic, copy, readonly) AMapLocationReGeocode *currentRegeocode;
-@property (nonatomic, weak) id<AnnotationViewDataSource> annotationViewDataSource;
+@property (nonatomic, weak) id<AnnotationViewDelegate> delegate;
+@property (nonatomic, assign) NSInteger selectedAnnotationIndex;
+
 
 //+ (MapManager *)sharedManager;
 - (void)addMapInView:(UIView *)mapContainerView
                frame:(CGRect)frame;
 
 /// 一次定位
-- (void)startLocationOnceWithCompletion:(LocationUpdateBlock)completion;
+- (void)startLocationOnceWithCompletion:(void (^)(CLLocation *location, AMapLocationReGeocode *regeocode, NSError *error))completion;
 /// 在回调存在的情况下 开始 后台/持续 定位
 - (void)restartBackgroudLocation;
 
@@ -53,11 +55,26 @@ typedef void (^LocationUpdateBlock)(CLLocation *location, AMapLocationReGeocode 
 /// 停止定位
 - (void)stopUpdatingLocation;
 
-/// 添加一组点标记（删除已有的同类型标记）
-- (void)addAnnotations:(NSArray *)annotations;
 
+/**
+ 添加一组点标记
+
+ @param annotations 标记
+ @param needRefreshAnnotations 是否需要删除原有标记
+ */
+- (void)addAnnotations:(NSArray *)annotations
+    refreshAnnotations:(BOOL)needRefreshAnnotations;
+/// 选择某个标记（标记变为选中样式）
+- (void)selectSingleAnnotationWithIndex:(NSInteger)index;
 /// 在地图上删除所有点标记（除了中心点）
 - (void)removeAllAnnotations;
+/// 将选中的仓库定位点重置为默认的仓库样式
+- (void)resetDepotAnnotation;
+/// 移除远程推送订单选中的仓库
+- (void)removeRemoteSeletedAnnotation;
+
+/// 重置选中参考的序号
+- (void)resetSelectedAnnotationIndex;
 
 /// 添加单一数据折线
 //- (void)addSinglePolylineWithCoordinates:(CLLocationCoordinate2D *)coordinates;

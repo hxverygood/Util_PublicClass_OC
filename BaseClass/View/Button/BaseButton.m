@@ -53,7 +53,7 @@ static const CGFloat defaultFontSize = 16.0;
 
 - (UIColor *)unableBackgroundColor {
     if (!_unableBackgroundColor) {
-        _unableBackgroundColor = [UIColor colorWithRed:190/255.0 green:190/255.0 blue:190/255.0 alpha:1.0];
+        _unableBackgroundColor = [UIColor colorWithRed:220/255.0 green:220/255.0 blue:220/255.0 alpha:1.0];
     }
     return _unableBackgroundColor;
 }

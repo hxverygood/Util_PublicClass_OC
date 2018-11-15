@@ -20,14 +20,16 @@
 
 @property (nonatomic, copy) NSString * pickerTitle;
 @property (nonatomic, weak) UIViewController * superViewController;
+@property (nonatomic, assign) BOOL allowsEditing;
 @property (nonatomic, assign) id<ImageChooseControlDelegate> delegate;
 @property (nonatomic, strong, readonly) UIImage * image;
 
 + (void)cameraIsNotAuthorizedAndShowAlertWithCompletion:(void (^)(BOOL needAlert))completion;
 + (void)photoLibraryIsNotAuthorizedAndShowAlertWithCompletion:(void (^)(BOOL needAlert))completion;
 
-- (void)photoSelection;
+//- (void)photoSelection;
 - (void)photoSelectionWithCompletion:(void (^)(UIImage *image, BOOL isCancel))completion;
+- (void)photoFromShotWithCompletion:(void (^)(UIImage *image, BOOL isCancel))completion;
 
 + (void)locationIsNotAuthorizedAndShowAlertWithCompletion:(void (^)(BOOL needAlert, NSString *message))completion;
 

@@ -76,7 +76,13 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
 
-    _noDataView.frame = self.bounds;
+    if (CGRectEqualToRect(_noDataViewFrame, CGRectZero)) {
+        _noDataView.frame = self.bounds;
+    }
+    else {
+        _noDataView.frame = CGRectMake(0.0, 0.0, CGRectGetWidth(_noDataViewFrame), CGRectGetHeight(_noDataViewFrame));
+        _noDataView.center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
+    }
 }
 
 
@@ -84,7 +90,14 @@
 #pragma mark - CYLTableViewPlaceHolder Delegate
 
 - (UIView *)makePlaceHolderView {
-    _noDataView = [[HSNoDataCustomeView alloc] initWithFrame:self.bounds imageName:_placeholderImageName content:_placeholderContent];
+    if (CGRectEqualToRect(_noDataViewFrame, CGRectZero)) {
+        _noDataView = [[HSNoDataCustomeView alloc] initWithFrame:self.bounds imageName:_placeholderImageName content:_placeholderContent];
+    }
+    else {
+        _noDataView = [[HSNoDataCustomeView alloc] initWithFrame:CGRectMake(0.0, 0.0, CGRectGetWidth(_noDataViewFrame), CGRectGetHeight(_noDataViewFrame)) imageName:_placeholderImageName content:_placeholderContent];
+        _noDataView.center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
+    }
+
     return _noDataView;
 }
  

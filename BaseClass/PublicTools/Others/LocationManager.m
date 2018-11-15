@@ -67,7 +67,7 @@
                 NSString *subLocality = placemark.subLocality;
                 self.subLocality = subLocality;
                 // 省市区拼接为字符串
-                NSString *currentCity = [NSString string];
+                NSString *currentCity = nil;
                 currentCity = [NSString stringWithFormat:@"%@%@%@",administrativeArea,city,subLocality];
 #ifdef DEBUG
                 NSLog(@"当前地址：%@",currentCity);
@@ -165,16 +165,13 @@
     __weak typeof(currentVC) weakCurrentVC = currentVC;
     [ConfirmAlertController actionSheetWithTitle:@"提示" message:message confirmTitle:nil cancelTitle:nil actionStyle:UIAlertActionStyleDestructive viewController:weakCurrentVC actionBlock:^(NSInteger confirmIndex, UIAlertAction * _Nullable cancelAction) {
         if (confirmIndex == 0) {
-            NSURL *url = nil;
+            NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
             if (@available(iOS 10, *)) {
-                url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
                 if ([[UIApplication sharedApplication] canOpenURL:url]) {
-                    [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
-                    }];
+                    [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
                 }
             }
             else {
-                url = [NSURL URLWithString:@"prefs:root=LOCATION_SERVICES"];
                 if ([[UIApplication sharedApplication] canOpenURL:url]) {
                     [[UIApplication sharedApplication] openURL:url];
                 }

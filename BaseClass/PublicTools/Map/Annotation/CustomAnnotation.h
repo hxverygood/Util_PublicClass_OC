@@ -12,6 +12,10 @@ typedef NS_ENUM(NSInteger, CustomAnnotationStyle) {
     CustomAnnotationStyleDefault,                   // 默认anno
     CustomAnnotationStyleMapCenter,                 // 地图中心anno
     CustomAnnotationStyleUserLocation,              // 用户定位anno
+    CustomAnnotationStyleDepot,                     // 仓库anno
+    CustomAnnotationStyleSelectedDepot,             // 选中的仓库anno
+    CustomAnnotationStyleRemoteDepot,               // 远程推送订单对应的仓库anno
+    CustomAnnotationStyleRemoteSeletedDepot,        // 选中远程推送订单对应的仓库anno
     CustomAnnotationStyleAnimation,                 // 点平滑移动
     CustomAnnotationStyleNaviStartPoint,            // 导航起始点
     CustomAnnotationStyleNaviEndPoint,              // 导航终点

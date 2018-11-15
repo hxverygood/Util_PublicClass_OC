@@ -11,7 +11,7 @@
 static char *singleRouteArrayKey = "singleRouteArrayKey";
 static char *routesMutableArrayKey = "routesMutableArrayKey";
 
-#define PolylineStrokeColor [UIColor colorWithRed:0 green:1 blue:0 alpha:0.8]
+#define PolylineStrokeColor [UIColor colorWithRed:70/255.0 green:194/255.0 blue:132/255.0 alpha:1.0]
 
 @interface MapManager () <MAMapViewDelegate>
 
@@ -78,11 +78,10 @@ static char *routesMutableArrayKey = "routesMutableArrayKey";
 
 #pragma mark - MAMapView Delegate
 
-- (MAOverlayRenderer *)mapView:(MAMapView *)mapView rendererForOverlay:(id <MAOverlay>)overlay
-{
-    if ([overlay isKindOfClass:[MAPolyline class]])
-    {
-        MAPolylineRenderer *polylineRenderer = [[MAPolylineRenderer alloc] initWithPolyline:overlay];
+- (MAOverlayRenderer *)mapView:(MAMapView *)mapView rendererForOverlay:(id <MAOverlay>)overlay {
+    if ([overlay isKindOfClass:[MAPolyline class]]) {
+        MAPolyline *polyline = (MAPolyline *)overlay;
+        MAPolylineRenderer *polylineRenderer = [[MAPolylineRenderer alloc] initWithPolyline:polyline];
         polylineRenderer.lineWidth    = 8.f;
         polylineRenderer.strokeColor  = PolylineStrokeColor;
         polylineRenderer.lineJoinType = kMALineJoinRound;
@@ -121,7 +120,7 @@ static char *routesMutableArrayKey = "routesMutableArrayKey";
     double centerLonSpan = [lonResult[1] doubleValue];
 
     CLLocationCoordinate2D center = CLLocationCoordinate2DMake(centerLat, centerLon);
-    MACoordinateSpan span = MACoordinateSpanMake(centerLatSpan*2 + 0.01, centerLonSpan*2 + 0.01);
+    MACoordinateSpan span = MACoordinateSpanMake(centerLatSpan*3.0, centerLonSpan*3.0);
     [self.mapView setRegion:MACoordinateRegionMake(center, span) animated:YES];
 }
 

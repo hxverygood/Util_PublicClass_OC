@@ -11,6 +11,9 @@
 @interface HUD : UIView
 
 + (void)defaultConfig;
+/// HUD是否正在显示
++ (BOOL)isVisible;
+
 + (void)show;
 + (void)showWithStatus:(nullable NSString *)status;
 + (void)showInfoWithStatus:(nullable NSString *)status;

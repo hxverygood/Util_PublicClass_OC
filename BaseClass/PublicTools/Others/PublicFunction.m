@@ -39,7 +39,10 @@
 }
 
 
-
+/// 屏幕常亮
++ (void)screenAlwaysOn:(BOOL)turnOn {
+    [UIApplication sharedApplication].idleTimerDisabled = turnOn;
+}
 
 
 #pragma mark - 计算缓存

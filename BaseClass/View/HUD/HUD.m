@@ -62,6 +62,12 @@
     [SVProgressHUD sharedView].imageViewSize = CGSizeMake(imageViewWidth*380/588, imageViewWidth);
 }
 
+/// HUD是否正在显示
++ (BOOL)isVisible {
+    BOOL isVisible = [SVProgressHUD isVisible];
+    return isVisible;
+}
+
 + (void)show {
 //    [SVProgressHUD show];
 

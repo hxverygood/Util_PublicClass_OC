@@ -22,6 +22,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.tintColor = MainColor;
+        self.font = [UIFont systemFontOfSize:15.0];
 //        self.textContainerInset = UIEdgeInsetsZero;
 //        self.textContainer.lineFragmentPadding = 0;
 
@@ -35,6 +36,7 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.tintColor = MainColor;
+        self.font = [UIFont systemFontOfSize:15.0];
 //        self.textContainerInset = UIEdgeInsetsZero;
 //        self.textContainer.lineFragmentPadding = 0;
 

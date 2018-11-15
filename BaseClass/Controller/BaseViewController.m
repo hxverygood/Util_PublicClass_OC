@@ -88,6 +88,8 @@ static CGFloat naviFontSize = 18.0;
 - (void)changeNavigationBar {
     
     if (_navbarIsDark) {
+        self.navigationController.navigationBar.hidden = NO;
+        
         // 状态栏样式
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
         
@@ -112,6 +114,8 @@ static CGFloat naviFontSize = 18.0;
     }
     
     if (_navbarIsTrans) {
+        self.navigationController.navigationBar.hidden = NO;
+
         // 状态栏样式
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
 
@@ -137,6 +141,8 @@ static CGFloat naviFontSize = 18.0;
         
     }
     else {
+        self.navigationController.navigationBar.hidden = NO;
+
         // 状态栏样式
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
         //[self backBarButtonItemWithImageName:@""];

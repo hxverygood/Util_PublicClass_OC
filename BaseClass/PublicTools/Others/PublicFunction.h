@@ -17,6 +17,9 @@
 /// 获取App的版本号
 + (NSString *)appVersion;
 
+/// 屏幕常亮
++ (void)screenAlwaysOn:(BOOL)turnOn;
+
 /// 计算整个Cache目录大小
 + (float)cacheFolderSize;
 /// 清理Cache目录缓存

@@ -97,6 +97,7 @@
     [self.timer fire];
 }
 
+
 //- (void)hideCountDownStatus {
 //    [self setupCodeButtonIsEnabled:YES];
 //}
@@ -124,6 +125,8 @@
 }
 
 - (void)timerStop {
+    NSLog(@"停止 button 的倒计时");
+
     [self.timer invalidate];
     _timer = nil;
     

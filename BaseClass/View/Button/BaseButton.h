@@ -16,10 +16,10 @@
 
 // 设置button是否是可用状态（不可用则置灰）
 @property (nonatomic, assign) BOOL isAvailable;
-@property (nonatomic, strong) UIColor *defaultTitleColor;
-@property (nonatomic, strong) UIColor *defaultBackgrouodColor;
-@property (nonatomic, strong) UIColor *unableTitleColor;
-@property (nonatomic, strong) UIColor *unableBackgroundColor;
+@property (nonatomic, strong) UIColor * _Nullable defaultTitleColor;
+@property (nonatomic, strong) UIColor * _Nullable defaultBackgrouodColor;
+@property (nonatomic, strong) UIColor * _Nullable unableTitleColor;
+@property (nonatomic, strong) UIColor * _Nullable unableBackgroundColor;
 
 
 #pragma mark - Initializer

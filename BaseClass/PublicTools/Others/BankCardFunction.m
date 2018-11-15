@@ -497,10 +497,10 @@
     }
 }
 
-/// 转换金额（小数点后2位）
+/// 转换金额（带千分符，小数点后2位）
 + (nullable NSString*)getMoney:(NSString *)money {
     NSNumber *moneyNum = [money convertToNumber];
-    if (moneyNum) {
+    if (moneyNum != nil) {
         NSString *withdrawStr = [money convertWithThousandSeparatorAndTwoDigits];
         return withdrawStr;
     }

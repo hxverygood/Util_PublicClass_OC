@@ -244,13 +244,4 @@ static CGFloat height = 220.0;
     }];
 }
 
-
-#pragma mark - Private Func
-
-- (BOOL)is_iPhoneX {
-    BOOL iPhoneX = ([[UIScreen mainScreen] bounds].size.width == 375.f && [[UIScreen mainScreen] bounds].size.height == 812.f) ? YES : NO;
-    return iPhoneX;
-}
-
-
 @end

@@ -71,8 +71,11 @@
 
 /// 查找controllerName对应的value(MapManager类型)，停止mapManager的定位
 - (void)stopLocatingWithControllerName:(NSString *)controllerName {
-    [self.mapManagerDictPool objectForKey:controllerName];
-    NSLog(@"stopLocating");
+    MapManager *mapManager = [self.mapManagerDictPool objectForKey:controllerName];
+    if (mapManager) {
+        [mapManager stopUpdatingLocation];
+        NSLog(@"stopLocating");
+    }
 }
 
 /// 查找controllerName对应的mapManager，停止mapManager的定位并置为nil

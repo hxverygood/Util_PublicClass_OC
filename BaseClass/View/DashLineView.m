@@ -106,7 +106,7 @@ static CGFloat lineSpacing = 3.0;
     self.backgroundColor = [UIColor clearColor];
 
     BOOL exist = NO;
-    exist = _shapeLayer ? YES : NO;
+    exist = _shapeLayer != nil ? YES : NO;
 
 //    CAShapeLayer *shapeLayer = [CAShapeLayer layer];
     [self.shapeLayer setBounds:self.bounds];

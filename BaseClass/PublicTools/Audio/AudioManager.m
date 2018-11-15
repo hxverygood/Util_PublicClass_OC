@@ -129,7 +129,7 @@ void soundCompleteCallback(SystemSoundID soundID, void *clientData){
     NSString *audioFile = [[NSBundle mainBundle] pathForResource:filename ofType:nil];
     NSURL *fileUrl = [NSURL fileURLWithPath:audioFile];
     _audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:fileUrl error:nil];
-    __unused NSString *msg = [NSString stringWithFormat:@"音频文件声道数:%ld\n音频文件持续时间:%gs", _audioPlayer.numberOfChannels, _audioPlayer.duration];
+    __unused NSString *msg = [NSString stringWithFormat:@"音频文件声道数:%ld\n音频文件持续时间:%gs", (long)_audioPlayer.numberOfChannels, _audioPlayer.duration];
 //    NSLog(@"%@",msg);
 
     if (_audioPlayer) {

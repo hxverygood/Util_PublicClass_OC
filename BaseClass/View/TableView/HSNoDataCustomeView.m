@@ -76,8 +76,9 @@ static float const fontSize = 16.0;
     // 计算label和image组合所形成区域的高度，以此确定imageView和lable的Y值
     CGFloat tipsContainerHeight = imageViewNoDataRect.size.height + imageView_label_spacing + noDataLabelRect.size.height;
     CGFloat tipsContainerY = (viewHeight - tipsContainerHeight) / 2;
-    imageViewNoDataRect.origin.y = tipsContainerY;
-    noDataLabelRect.origin.y = imageViewNoDataRect.origin.y + imageViewNoDataRect.size.height + 30.0;
+    // 为了视觉效果，再向上偏移30
+    imageViewNoDataRect.origin.y = tipsContainerY - 30.0;
+    noDataLabelRect.origin.y = imageViewNoDataRect.origin.y + imageViewNoDataRect.size.height + imageView_label_spacing;
 
     self.noDataImageView.frame = imageViewNoDataRect;
     self.noDataLabel.frame = noDataLabelRect;
