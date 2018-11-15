@@ -15,6 +15,7 @@
 static NSString *const kLoginInfoFileName = @"info";
 static NSString *const kBasicInfoFileName = @"basicInfo";
 static NSString *const kVoiceBroadcast = @"voiceBroadcast";
+static NSString *const kAcceptOrder = @"acceptOrder";
 static NSString *const kRegistrationID = @"registrationID";
 
 
@@ -32,9 +33,9 @@ static NSString *const kRegistrationID = @"registrationID";
 /// 判断是否登录
 + (BOOL)judgeLoginStatus{
     if ([LoginInfo savedLoginInfo]) {
-        return YES ;
+        return YES;
     }
-    return NO ;
+    return NO;
 }
 
 
@@ -101,61 +102,7 @@ static NSString *const kRegistrationID = @"registrationID";
     if (exist) {
         [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
     }
-
-    //    // 删除sessionId
-    //    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"com.xabaili.sessionid"];
 }
-
-
-//#pragma mark - 用户认证信息保存、修改、删除（视每个项目的情况而定）
-
-
-/// 接口自动使用此方法来获取保存的用户信息
-//+ (nonnull NSDictionary *)loginInfo {
-//    LDUser *model = [self savedLoginInfo];
-//    if (model) {
-//        NSString *idCard = model.paperid;
-//        NSString *UUID = model.uuid;
-//        if (idCard && UUID) {
-//            return @{
-//                     @"idCard": idCard,
-//                     @"UUID": UUID
-//                     };
-//        }
-//    }
-//    return @{};
-//}
-
-
-///// 保存头像的链接地址
-//+ (void)saveAvatarImageURLStr:(nonnull NSString *)avatarImageURLStr {
-//    if (avatarImageURLStr.length>0 && ![avatarImageURLStr isEqualToString:@" "]) {
-//        LDUser *user = [self savedLoginInfo];
-//        user.photopath = avatarImageURLStr;
-//        [self saveLoginInfo:user];
-//    }
-//}
-
-///// 获取UID，如果没有则创建并保存
-//+ (nonnull NSString *)fetchUUID {
-//    LDUser *user = [self savedLoginInfo];
-//    
-//    NSString *uuid = [[NSUUID UUID] UUIDString];
-//    
-//    // 如果没有保存得到用户信息，则重新获取UUID
-//    if (!user) {
-//        return uuid;
-//    }
-//
-//    // 如果用户信息存在，但没有UUID信息，则重新获取
-//    if ([NSString isBlankString:user.uuid]) {
-//        return uuid;
-//    }
-//    
-//    // 如果用户信息里保存有UUID则直接返回
-//    uuid = user.uuid;
-//    return uuid;
-//}
 
 
 
@@ -178,12 +125,53 @@ static NSString *const kRegistrationID = @"registrationID";
 }
 
 /// 重置语音播报状态为YES
-+ (void)ResetVoiceBroadcastState {
++ (void)resetVoiceBroadcastState {
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults setBool:YES forKey:kVoiceBroadcast];
     [userDefaults synchronize];
 }
 
+
+
+#pragma mark 是否开启抢单（视每个项目的情况而定）
+/// 保存是否开启抢单功能的状态
++ (void)saveAcceptOrderState:(BOOL)needAcceptOrder {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setBool:needAcceptOrder forKey:kAcceptOrder];
+    [userDefaults synchronize];
+}
+
+/// 读取是否开启抢单功能的状态
++ (BOOL)savedAcceptOrderState {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    BOOL needVoiceBroadcast = [userDefaults boolForKey:kAcceptOrder];
+    return needVoiceBroadcast;
+}
+
+/// 重置语音播报状态为YES
++ (void)resetAcceptOrderState {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setBool:NO forKey:kAcceptOrder];
+    [userDefaults synchronize];
+}
+
+
+
+#pragma mark - 重置及删除保存的信息
+
+/// 删除所有本地归档的数据
++ (void)removeAllSavedInfo {
+    [LoginInfo removeSavedBasicInfo];
+    [LoginInfo removeSavedLoginInfo];
+}
+
+/// 重置UserDefault信息
++ (void)resetUserDefault {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setBool:YES forKey:kVoiceBroadcast];
+    [userDefaults setBool:NO forKey:kAcceptOrder];
+    [userDefaults synchronize];
+}
 
 
 //#pragma mark 极光推送

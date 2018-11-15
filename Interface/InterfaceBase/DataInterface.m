@@ -69,9 +69,9 @@
     } else if (model.apiModel.dataArray != nil) {
         data = model.apiModel.dataArray;
     }else{
-        data = model.data ;
+        data = model.data;
     }
-    errInfo = model.apiModel.message ;
+    errInfo = model.apiModel.message;
     
     switch (model.localErrorCode) {
         case kDataServiceStatusNetworkError:
@@ -91,6 +91,9 @@
             errInfo = newErrorDesc;
             break;
         }
+        case kDataServiceStatusUnknown:
+            errInfo = @"网络异常，请稍候再试";
+            break;
             
         default:
             break;

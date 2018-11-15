@@ -57,19 +57,28 @@
     }
 
     self.baseUrlString = urlString;
-    
-    NSDictionary *newParams;
-    NSMutableDictionary *body = [[NSMutableDictionary alloc] initWithDictionary:params];
 
-    // 如果需要包含Token
-    if ([self excludeTokenForAPIName:apiName] == NO &&
-        ![body.allKeys containsObject:@"token"]) {
-        body[@"token"] = [LoginInfo savedLoginInfo].token;
+    
+    id newParams;
+    NSMutableDictionary *body = nil;
+
+    // 如果参数是“空对象”，则直接给 newParmas 赋值
+    if ([params isKindOfClass:[NSNull class]]) {
+        newParams = params;
     }
-    newParams = body;
-    NSLog(@"\n%@\n%@", urlString, newParams);
+    else {
+        body = [[NSMutableDictionary alloc] initWithDictionary:params];
+        // 如果需要包含Token
+        if ([self excludeTokenForAPIName:apiName] == NO &&
+            ![body.allKeys containsObject:@"token"]) {
+            body[@"token"] = [LoginInfo savedLoginInfo].token;
+        }
+        newParams = body;
+    }
 
-    
+    NSLog(@"\n%@\n%@", urlString, [newParams isKindOfClass:[NSNull class]] ? @"NSNull params" : params);
+
+
     HttpSessionManager *manager = [HttpSessionManager sharedSessionManager];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/plain", nil];
 
@@ -176,30 +185,35 @@
              fileDatas:(NSArray * __nullable)fileDatas
              fileNames:(NSArray * __nullable)fileNames
             completion:(void (^ __nullable)(DataServiceCompletionModel * __nullable model))completion {
+
     NSString *urlString = nil;
-    if (mainDirectory) {
-        if (server && mainDirectory) {
-            mainDirectory = [NSString stringWithFormat:@"%@/%@", server, mainDirectory];
+    if (!server || [DataService isBlankString:server]) {
+        server = @"";
+    }
+    urlString = server;
+
+    if (mainDirectory && ![DataService isBlankString:mainDirectory]) {
+        if ([DataService isBlankString:urlString]) {
+            urlString = mainDirectory;
         }
-        else
-        {
-            mainDirectory = @"";
+        else {
+            urlString = [NSString stringWithFormat:@"%@/%@", urlString, mainDirectory];
         }
-
-    } else {
-        mainDirectory = @"";
-    }
-    self.baseUrlString = mainDirectory;
-
-    if ([mainDirectory isEqualToString:@""]) {
-        urlString = [NSString stringWithFormat:@"%@", apiName];
-    }
-    else
-    {
-        urlString = [NSString stringWithFormat:@"%@/%@", mainDirectory, apiName];
     }
 
-    NSString * encodedString= [urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+
+    if (![DataService isBlankString:apiName]) {
+        if ([DataService isBlankString:urlString]) {
+            urlString = apiName;
+        }
+        else {
+            urlString = [NSString stringWithFormat:@"%@/%@", urlString, apiName];
+        }
+    }
+
+    self.baseUrlString = urlString;
+
+    NSString *encodedString= [urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
 
     NSDictionary *newParams;
     NSMutableDictionary *body = [[NSMutableDictionary alloc] initWithDictionary:params];
@@ -250,17 +264,19 @@
 
     // 设置网络访问超时时间
     manager.requestSerializer.timeoutInterval = timeoutInterval;
+    
     // 编码格式
     manager.requestSerializer.stringEncoding = NSUTF8StringEncoding;
     [manager.requestSerializer setValue:@"multipart/form-data" forHTTPHeaderField:@"Content-Type"];
 
     NSURLSessionDataTask *dataTask = [manager POST:encodedString parameters:newParams constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        for (int i = 0; i < fileDatas.count; i++) {
+        for (int i = 0; i < [fileDatas count]; i++) {
             NSData *imageData = fileDatas[i];
             NSString *fileName = fileNames[i];
+            NSLog(@"上传文件名：%@", fileName);
             if (imageData != nil)
             {
-                [formData appendPartWithFileData:imageData name:@"file" fileName:fileName mimeType:@"image/jpeg"];
+                [formData appendPartWithFileData:imageData name:fileName fileName:fileName mimeType:@"image/jpeg"];
             }
         }
     } progress:^(NSProgress * _Nonnull uploadProgress) {
@@ -303,30 +319,30 @@
 
 
         // 组合访问路径
-        NSString *urlString = nil;
-        if (!server || [DataService isBlankString:server]) {
-            server = @"";
-        }
-        urlString = server;
-
-        if (mainDirectory && ![DataService isBlankString:mainDirectory]) {
-            if ([DataService isBlankString:urlString]) {
-                urlString = mainDirectory;
-            }
-            else {
-                urlString = [NSString stringWithFormat:@"%@/%@", urlString, mainDirectory];
-            }
-        }
-
-
-        if (![DataService isBlankString:apiName]) {
-            if ([DataService isBlankString:urlString]) {
-                urlString = apiName;
-            }
-            else {
-                urlString = [NSString stringWithFormat:@"%@/%@", urlString, apiName];
-            }
-        }
+//        NSString *urlString = nil;
+//        if (!server || [DataService isBlankString:server]) {
+//            server = @"";
+//        }
+//        urlString = server;
+//
+//        if (mainDirectory && ![DataService isBlankString:mainDirectory]) {
+//            if ([DataService isBlankString:urlString]) {
+//                urlString = mainDirectory;
+//            }
+//            else {
+//                urlString = [NSString stringWithFormat:@"%@/%@", urlString, mainDirectory];
+//            }
+//        }
+//
+//
+//        if (![DataService isBlankString:apiName]) {
+//            if ([DataService isBlankString:urlString]) {
+//                urlString = apiName;
+//            }
+//            else {
+//                urlString = [NSString stringWithFormat:@"%@/%@", urlString, apiName];
+//            }
+//        }
 
         NSLog(@"\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>> api return >>>>>>>>>>>>>>>>>>>>>>>>>>>\n\%@/%@/\n%@\n%@\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n_", server, mainDirectory, apiName, json);
         if (err) {
@@ -446,7 +462,8 @@
 
 /// 请求参数不包含Token
 - (BOOL)excludeTokenForAPIName:(NSString *)apiName {
-    NSArray *excludeItems = @[@"get_verification_code", @"regist", @"login", @"vehicle_type/list", @"lose_password", @"validateAndCacheCardInfo.json"];
+    NSArray *excludeItems = @[@"get_verification_code", @"regist", @"login", @"vehicle_type/list", @"lose_password", @"validateAndCacheCardInfo.json", @"be_delievered", @"thirdparty/getmuid"];
+
     if ([excludeItems containsObject:apiName]) {
         return YES;
     }
@@ -499,6 +516,9 @@
     }
     else if (error.code == -1011) {
         compModel.localErrorCode = kDataServiceStatusRequestFaild;
+    }
+    else {
+        compModel.localErrorCode =  kDataServiceStatusUnknown;
     }
     
     compModel.localErrorDescription = error.localizedDescription;

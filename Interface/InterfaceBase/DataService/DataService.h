@@ -13,13 +13,13 @@ FOUNDATION_EXPORT NSString *const kAPIBaseURL;
 
 /// 本地接口错误信息
 typedef NS_ENUM(NSUInteger, DataServiceStatus) {
-    kDataServiceStatusUnknown = 0 << 1,
     kDataServiceStatusOK = 0,
     kDataServiceStatusNetworkError,
     kDataServiceStatusRequestFaild,
     kDataServiceStatusRequestParamsBadFormat,
     kDataServiceStatusResponseBadFormat,
-    kDataServiceStatusResponseServerError
+    kDataServiceStatusResponseServerError,
+    kDataServiceStatusUnknown
 };
 
 

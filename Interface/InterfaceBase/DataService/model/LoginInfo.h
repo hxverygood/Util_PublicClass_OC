@@ -42,14 +42,31 @@
 
 #pragma mark - Others
 
-#pragma mark 语音播报状态
+#pragma mark 语音播报状态（视每个项目的情况而定）
 /// 保存语音播报状态信息
 + (void)saveVoiceBroadcastState:(BOOL)needVoiceBroadcast;
 /// 读取语音播报状态信息
 + (BOOL)savedVoiceBroadcastState;
 /// 重置语音播报状态为YES
-+ (void)ResetVoiceBroadcastState;
++ (void)resetVoiceBroadcastState;
 
+
+#pragma mark 是否开启抢单（视每个项目的情况而定）
+/// 保存是否开启抢单功能的状态
++ (void)saveAcceptOrderState:(BOOL)needAcceptOrder;
+/// 读取是否开启抢单功能的状态
++ (BOOL)savedAcceptOrderState;
+/// 重置语音播报状态为YES
++ (void)resetAcceptOrderState;
+
+
+
+#pragma mark - 重置及删除保存的信息
+
+/// 删除所有本地归档的数据
++ (void)removeAllSavedInfo;
+/// 重置UserDefault信息
++ (void)resetUserDefault;
 
 //#pragma mark 极光推送
 ///// 保存极光推送用到的RegistrationID
