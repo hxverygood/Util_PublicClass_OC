@@ -7,7 +7,7 @@
 
 @class GCDTimerManager;
 
-typedef void(^TimerBLock) (NSInteger count);
+typedef void(^TimerBlock) (NSInteger count);
 
 @protocol GCDTimerManagerDelegate <NSObject>
 
@@ -19,9 +19,11 @@ typedef void(^TimerBLock) (NSInteger count);
 
 @interface GCDTimerManager : NSObject
 
+@property (nonatomic, copy) NSString *identifier;
+
 // 时间间隔
 @property(nonatomic, assign) NSTimeInterval  timeInterval;
-@property(nonatomic, assign) id<GCDTimerManagerDelegate> delegate;
+@property(nonatomic, weak) id<GCDTimerManagerDelegate> delegate;
 
 /// 初始化无限循环倒计时器
 - (instancetype)initWithDelayTime:(NSInteger)delayTime
@@ -39,11 +41,12 @@ typedef void(^TimerBLock) (NSInteger count);
 
 // 开始计时
 - (void)startTimerCompletion:(void(^)(NSInteger count))block;
-// 停止定时器
-- (void)stopTimer;
 // 挂起计时器(暂停)
 - (void)suspendTimer;
 // 继续计时器
 - (void)resumeTimer;
+// 停止定时器
+- (void)stopTimer;
+//- (void)stopTimerWithCompletion:(void (^)(void))completionHandler;
 
 @end
